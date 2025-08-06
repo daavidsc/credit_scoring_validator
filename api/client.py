@@ -42,7 +42,7 @@ def construct_payload(row: dict) -> dict:
             "disability_status": row.get("disability_status"),
             "education_level": row.get("education_level"),
             "marital_status": row.get("marital_status"),
-            "postal_code": row.get("postal_code"),
+            "postal_code": str(row.get("postal_code")),
             "language_preference": row.get("language_preference"),
         },
         "scoring_parameters": SCORING_PARAMETERS
@@ -51,6 +51,7 @@ def construct_payload(row: dict) -> dict:
 
 def send_request(row: dict) -> dict:
     payload = construct_payload(row)
+    logger.info(f"🔍 Sending request for row: {row.get('name')} with payload: {payload}")
     try:
         response = requests.post(
             f"{API_URL}/score",
