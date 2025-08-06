@@ -1,11 +1,11 @@
-name,gender,nationality,ethnicity,age,income,employment_status,existing_loans,loan_amount,credit_limit,used_credit,payment_defaults,credit_inquiries_last_6_months,housing_status,address_stability_years,household_size,employment_duration_years,disability_status,education_level,marital_status,postal_code
-Hannah Schneider,female,german,white,25,20000,employed,4,23025,35529,2976,0,1,subsidized_housing,17,4,5,none,master_degree,married,10274
-Matteo Hoffmann,male,german,white,66,121452,retired,1,941,81929,26933,0,1,other,40,1,0,none,vocational_training,married,59403
-Theo Fischer,male,german,other,56,97897,employed,4,16556,48355,24872,0,1,renter,35,2,15,none,vocational_training,single,55748
-Emil Becker,male,german,white,22,41887,employed,0,0,76968,1035,0,0,owner,0,1,6,severe_disability,lower_secondary_education,married,04574
-Finn Schneider,male,german,other,64,112276,retired,1,500,89881,53056,0,1,owner,19,1,0,none,intermediate_secondary_education,single,67043
-Luka Alievi,male,german,white,21,20000,employed,1,6900,45492,32051,0,1,renter,7,4,0,none,no_formal_education,widowed,05121
-Mia Fischer,female,german,white,49,94549,employed,0,0,68517,32914,1,1,renter,40,1,13,severe_disability,intermediate_secondary_education,single,07734
-Emilia Schneider,female,german,white,46,94191,employed,1,8100,12429,6756,0,1,renter,7,1,11,none,upper_secondary_education,single,64597
-Hannah Wagner,female,german,white,44,72365,employed,5,19950,35358,30211,0,1,owner,28,3,17,none,intermediate_secondary_education,single,46509
-Irina Bogdanov,female,german,white,36,55264,employed,1,10208,74344,5667,3,0,renter,29,1,8,none,lower_secondary_education,married,30620
+name,gender,nationality,ethnicity,age,income,employment_status,existing_loans,loan_amount,credit_limit,used_credit,payment_defaults,credit_inquiries_last_6_months,housing_status,address_stability_years,household_size,employment_duration_years,disability_status,education_level,marital_status,postal_code,language_preference
+Sophia Schulz,female,german,other,19,20000,employed,3,20948,20708,7312,0,4,renter,3,2,3,none,upper_secondary_education,married,48114,de
+Ben Schneider,male,german,white,51,93032,employed,3,19655,65482,45752,2,0,renter,34,2,15,none,lower_secondary_education,married,33240,de
+Daria Matei,female,german,white,62,110947,employed,0,0,30552,7415,0,0,owner,2,2,44,none,intermediate_secondary_education,married,43306,de
+Sandra Karpin,female,german,white,22,38683,self_employed,2,11580,85223,41579,0,0,owner,14,4,0,none,master_degree,married,92972,de
+Clara Fischer,female,german,white,53,85076,self_employed,5,19010,24274,5004,0,1,owner,49,2,25,none,lower_secondary_education,married,66207,de
+Theo Fischer,male,german,white,47,78278,self_employed,3,13599,38232,25367,0,1,renter,35,2,11,none,intermediate_secondary_education,married,60565,de
+Lorenzo Riva,male,german,white,66,150000,retired,5,26757,64061,49798,0,0,renter,65,4,0,none,bachelor_degree,single,58511,de
+Sara Matić,female,german,white,73,122688,retired,2,10572,21787,11482,3,1,renter,48,1,0,none,upper_secondary_education,single,28312,de
+Lina Meyer,female,german,white,35,75283,employed,4,10746,62305,46638,0,0,renter,29,2,5,none,upper_secondary_education,married,78585,de
+Leni Müller,female,german,white,23,29817,employed,2,4783,90328,61411,0,0,renter,21,1,0,none,vocational_training,married,91933,de

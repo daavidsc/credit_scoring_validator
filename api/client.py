@@ -43,6 +43,7 @@ def construct_payload(row: dict) -> dict:
             "education_level": row.get("education_level"),
             "marital_status": row.get("marital_status"),
             "postal_code": row.get("postal_code"),
+            "language_preference": row.get("language_preference"),
         },
         "scoring_parameters": SCORING_PARAMETERS
     }

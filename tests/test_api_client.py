@@ -27,7 +27,8 @@ def test_send_request_valid():
         "disability_status": "none",
         "education_level": "no_formal_education",
         "marital_status": "single",
-        "postal_code": "12345"
+        "postal_code": "12345",
+        "language_preference": "de"
     }
 
     result = send_request(sample_row)

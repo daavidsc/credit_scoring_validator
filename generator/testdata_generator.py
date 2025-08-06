@@ -209,6 +209,7 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
         record["marital_status"] = random.choices(marital_statuses, weights=weights, k=1)[0]
 
         record["postal_code"] = fake.postcode()
+        record["language_preference"] = 'de'
 
         data.append(record)
     return data
