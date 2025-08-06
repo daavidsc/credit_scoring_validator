@@ -1,7 +1,12 @@
 # tests/test_api_client.py
 
 import pytest
+import logging
 from api.client import send_request
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def test_send_request_valid():
@@ -31,7 +36,11 @@ def test_send_request_valid():
         "language_preference": "de"
     }
 
+    logger.info(f"🔍 Test input data: {sample_row}")
+    
     result = send_request(sample_row)
+
+    logger.info(f"🔍 API raw result: {result}")
 
     assert "parsed" in result
     parsed = result["parsed"]
@@ -41,4 +50,5 @@ def test_send_request_valid():
     assert "classification" in parsed
     assert "explanation" in parsed
 
+    logger.info(f"✅ API parsed response: {parsed}")
     print("✅ API response:", parsed)
