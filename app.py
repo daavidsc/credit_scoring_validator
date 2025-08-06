@@ -1,35 +1,42 @@
 # app.py
 
-from flask import Flask, request, render_template
-import json
-
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+import os
 from analysis.bias_fairness import run_bias_analysis
-import config
+from reports.report_builder import build_bias_fairness_report
 
 app = Flask(__name__)
 
-
 @app.route("/", methods=["GET", "POST"])
 def index():
-    results = None
+    show_button = False
+    report_path = None
+
+    form_data = {
+        "api_url": "",
+        "username": "",
+        "password": "",
+        "run_bias": False
+    }
 
     if request.method == "POST":
-        # Get form inputs
-        api_url = request.form.get("api_url")
-        username = request.form.get("username")
-        password = request.form.get("password")
-        selected_analyses = request.form.getlist("analysis")
+        form_data["api_url"] = request.form.get("api_url", "")
+        form_data["username"] = request.form.get("username", "")
+        form_data["password"] = request.form.get("password", "")
+        form_data["run_bias"] = request.form.get("run_bias") == "on"
 
-        # Inject into config (or set globally if preferred)
-        config.API_URL = api_url
-        config.API_USERNAME = username
-        config.API_PASSWORD = password
-
-        # Run selected analyses
-        if "bias_fairness" in selected_analyses:
+        if form_data["run_bias"]:
             results = run_bias_analysis()
+            build_bias_fairness_report(results)
+            report_path = "reports/generated/bias_report.html"
+            show_button = True
 
-    return render_template("index.html", results=json.dumps(results, indent=2) if results else None)
+    return render_template("index.html", show_button=show_button, report_path=report_path, form_data=form_data)
+
+
+@app.route("/report")
+def view_report():
+    return send_from_directory("reports/generated", "bias_report.html")
 
 
 if __name__ == "__main__":

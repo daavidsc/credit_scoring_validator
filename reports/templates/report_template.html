@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bias & Fairness Report</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+            background: #f9f9f9;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+            background: white;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📊 Bias & Fairness Analysis Report</h1>
+
+    {% for attr, attr_results in results.items() %}
+    <h2>🔍 Protected Attribute: {{ attr }}</h2>
+
+    <h3>📈 Demographic Parity</h3>
+    <table>
+        <tr>
+            <th>Group</th>
+            <th>Total</th>
+            <th>Approved</th>
+            <th>Approval Rate</th>
+        </tr>
+        {% for group, values in attr_results.demographic_parity.items() %}
+        <tr>
+            <td>{{ group }}</td>
+            <td>{{ values.total }}</td>
+            <td>{{ values.positive }}</td>
+            <td>{{ "%.2f"|format(values.positive / values.total * 100) }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>⚖️ Disparate Impact Ratio</h3>
+    <p>{{ "%.2f"|format(attr_results.disparate_impact_ratio) }}</p>
+
+    <h3>🔁 Counterfactual Fairness</h3>
+    <ul>
+        <li>
+            Violation Rate:
+            {% if attr_results.counterfactual_fairness.violation_ratio is not none %}
+            {{ "%.2f"|format(attr_results.counterfactual_fairness.violation_ratio * 100) }}%
+            {% else %}
+            Not available
+            {% endif %}
+        </li>
+        <li>Violations: {{ attr_results.counterfactual_fairness.violations }}</li>
+        <li>Total Tests: {{ attr_results.counterfactual_fairness.total_tests }}</li>
+    </ul>
+    {% endfor %}
+
+</body>
+
+</html>

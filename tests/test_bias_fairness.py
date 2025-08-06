@@ -1,7 +1,12 @@
 # tests/test_bias_fairness.py
 
 import pytest
-from analysis.bias_fairness import run_bias_analysis, PROTECTED_ATTRIBUTES
+import json
+import os
+from analysis.bias_fairness import run_bias_analysis, load_jsonl, PROTECTED_ATTRIBUTES
+
+RESPONSES_PATH = "results/responses/bias_fairness.jsonl"
+LOG_PATH = "results/logs/api_calls.log"
 
 def test_bias_analysis_structure():
     results = run_bias_analysis()
@@ -14,11 +19,9 @@ def test_bias_analysis_structure():
         assert attr in results
         attr_result = results[attr]
 
-        # Check required keys
         assert "demographic_parity" in attr_result
         assert "disparate_impact_ratio" in attr_result
 
-        # Check demographic parity structure
         dp = attr_result["demographic_parity"]
         assert isinstance(dp, dict)
         for group, stats in dp.items():
@@ -27,8 +30,26 @@ def test_bias_analysis_structure():
             assert isinstance(stats["total"], int)
             assert isinstance(stats["positive"], int)
 
-        # Check disparate impact ratio is float
         dir_value = attr_result["disparate_impact_ratio"]
         assert isinstance(dir_value, float)
 
-    print("✅ Bias analysis test passed.")
+    print("✅ Bias analysis structure test passed.")
+
+def test_log_api_requests_and_responses_to_file():
+    responses = load_jsonl(RESPONSES_PATH)
+    assert len(responses) > 0, "No responses loaded from JSONL file."
+
+    os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+
+    with open(LOG_PATH, "w") as f:
+        f.write(f"📄 Logged {len(responses)} API calls\n\n")
+
+        for i, entry in enumerate(responses):
+            f.write(f"\n🔹 API Call #{i+1}\n")
+            f.write("Input:\n")
+            f.write(json.dumps(entry["input"], indent=2))
+            f.write("\nOutput:\n")
+            f.write(json.dumps(entry["output"], indent=2))
+            f.write("\n" + "-"*80 + "\n")
+
+    print(f"✅ API calls logged to {LOG_PATH}")
