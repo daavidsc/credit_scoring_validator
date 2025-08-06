@@ -1,0 +1,22 @@
+name,gender,nationality,ethnicity,income,employment_status,existing_loans,loan_amount,credit_limit,used_credit,payment_defaults,credit_inquiries_last_6_months,housing_status,address_stability_years,household_size,age,employment_duration_years,disability_status,education_level,marital_status,postal_code,language_preference
+Henry Weber,male,DE,white,101927,employed,4,30483,23163,11427,1,4,owner,0,1,72,26,none,high_school,widowed,82162,ks
+Noah Schulz,male,DE,white,102105,employed,2,34029,50220,12833,0,4,owner,4,5,38,5,none,high_school,widowed,07960,li
+Lėja Vasiliauskienė,female,LT,other,63448,unemployed,2,10505,24003,4741,0,0,renter,14,5,72,27,none,master,married,55191,raj
+Ruòxī Lam,female,CN,asian,32252,employed,4,24595,88217,24437,0,3,owner,3,2,46,13,none,master,single,61904,lb
+Lara Meyer,female,LU,other,34749,employed,5,22618,19197,17211,0,0,renter,0,5,44,6,none,high_school,divorced,06470,ms
+Leon Schmidt,male,DE,white,85017,employed,3,30798,14529,5139,3,1,renter,5,5,48,1,none,high_school,single,72237,lg
+Viktoriya Bogdanov,female,RU,white,102667,employed,3,19914,32087,28893,0,2,owner,3,1,36,17,none,bachelor,single,81558,nn
+Andreea Popa,female,RO,white,81233,retired,0,842,68253,7902,2,1,owner,5,2,31,8,none,high_school,single,64014,ga
+Ella Hoffmann,female,DE,white,107551,self-employed,0,20086,70408,9910,0,1,owner,8,4,26,6,none,phd,married,26994,ti
+Sophia Hoffmann,female,DE,white,54696,retired,3,31780,61478,43885,0,0,owner,3,6,67,2,none,bachelor,divorced,70129,my
+Clara Schneider,female,DE,asian,61121,employed,0,31869,91418,76483,0,2,owner,7,4,21,3,none,bachelor,single,73274,te
+Clara Schmidt,female,DE,white,79784,employed,1,25876,87196,51293,1,3,renter,0,5,54,18,none,master,single,95793,id
+Clara Fischer,female,DE,white,80573,employed,2,14025,36416,16788,0,1,renter,5,1,40,20,none,high_school,married,04255,vi
+Clara Schulz,female,DE,white,81156,employed,3,20085,16371,10335,1,0,owner,17,6,29,2,none,high_school,single,78134,lb
+Azra Çelik,female,TR,other,47875,employed,1,13467,4236,2032,0,2,renter,3,2,24,3,none,high_school,widowed,81407,xh
+Leni Weber,female,DE,white,54032,employed,1,11042,89796,62622,0,4,owner,14,2,43,27,none,high_school,married,51049,li
+Paul Hoffmann,male,DE,white,80882,employed,2,24828,32720,16296,0,3,owner,1,2,24,1,severe,high_school,widowed,03831,mai
+Ella Weber,female,DE,white,70277,employed,5,15703,23752,20161,2,0,renter,13,4,29,8,none,high_school,divorced,61023,eu
+Leon Fischer,male,DE,white,102454,self-employed,5,13464,71821,20929,1,3,renter,5,1,80,64,none,master,divorced,91734,ru
+Mia Müller,female,DE,white,86741,employed,4,16006,19116,1402,1,1,owner,0,6,78,15,none,master,married,42478,rw
+Noah Meyer,male,DE,white,30300,employed,4,17815,25176,2422,0,0,owner,8,7,80,36,none,high_school,married,14254,sat
