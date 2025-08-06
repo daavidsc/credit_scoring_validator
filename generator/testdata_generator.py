@@ -82,11 +82,18 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
 
         record["name"] = person_data['full_name']
         record["gender"] = person_data['gender']
-        record["nationality"] = person_data['nationality']
+        
+        # Randomly change about 1.5% of people to non_binary
+        if random.random() < 0.015:
+            record["gender"] = "non_binary"
+        
+        #record["nationality"] = person_data['nationality']
+        record["nationality"] = 'DE' #For now, as API only allows german, eu or non-eu
         nationality = record["nationality"]
         possible_ethnicities = nationality_ethnicity_mapping.get(nationality, [('other', 1.0)]) # Default to 'other' if nationality not in map
         ethnicity_choices, weights = zip(*possible_ethnicities)
         record["ethnicity"] = random.choices(ethnicity_choices, weights=weights, k=1)[0]
+        record["nationality"] = 'german' #For now, as API only allows german, eu or non-eu
 
         record["age"] = fake.random_int(min=18, max=80)
         # Adjust mean income based on age
@@ -104,23 +111,26 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
         age = record["age"]
         if age < 60:
             employment_status_distribution = [
-                ('employed', 0.85),
+                ('employed', 0.80),
                 ('unemployed', 0.05),
-                ('self-employed', 0.1),
+                ('self_employed', 0.10),
+                ('student', 0.05),
                 ('retired', 0.0) # Very low chance of being retired at young age
             ]
         elif age < 65:
              employment_status_distribution = [
-                ('employed', 0.7),
+                ('employed', 0.68),
                 ('unemployed', 0.05),
-                ('self-employed', 0.1),
+                ('self_employed', 0.10),
+                ('student', 0.02),
                 ('retired', 0.15) # Increased chance of being retired
             ]
         else:
              employment_status_distribution = [
-                ('employed', 0.1),
+                ('employed', 0.09),
                 ('unemployed', 0.02),
-                ('self-employed', 0.03),
+                ('self_employed', 0.03),
+                ('student', 0.01),
                 ('retired', 0.85) # High chance of being retired at older age
             ]
 
@@ -168,20 +178,33 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
 
 
         # Ensure employment_duration_years <= age - 16 (approximate working age start)
-        record["employment_duration_years"] = fake.random_int(min=0, max=record["age"]-16 if record["age"] >= 16 else 0)
+        # Set employment duration to 0 for retired, students, and unemployed
+        if record["employment_status"] in ['retired', 'student', 'unemployed']:
+            record["employment_duration_years"] = 0
+        else:
+            record["employment_duration_years"] = fake.random_int(min=0, max=record["age"]-16 if record["age"] >= 16 else 0)
 
         # Use random.choices for weighted selection of disability_status
-        disability_status_distribution = [('none',0.9), ('mild',0.04), ('severe',0.06)]
+        disability_status_distribution = [('none',0.9), ('registered_disability',0.04), ('severe_disability',0.06)]
         disability_statuses, weights = zip(*disability_status_distribution)
         record["disability_status"] = random.choices(disability_statuses, weights=weights, k=1)[0]
 
         # Use random.choices for weighted selection of education_level
-        education_level_distribution = [('no_formal_education', 0.03), ('high_school', 0.5), ('bachelor', 0.25), ('master', 0.2), ('phd', 0.02)]
+        education_level_distribution = [
+            ('no_formal_education', 0.02), 
+            ('lower_secondary_education', 0.15), 
+            ('intermediate_secondary_education', 0.25), 
+            ('upper_secondary_education', 0.20), 
+            ('vocational_training', 0.25), 
+            ('bachelor_degree', 0.08), 
+            ('master_degree', 0.04), 
+            ('doctoral_degree', 0.01)
+        ]
         education_levels, weights = zip(*education_level_distribution)
         record["education_level"] = random.choices(education_levels, weights=weights, k=1)[0]
 
         # Use random.choices for weighted selection of marital_status
-        marital_status_distribution = [('single', 0.33), ('married', 0.5), ('divorced', 0.1), ('widowed', 0.07)]
+        marital_status_distribution = [('single', 0.30), ('married', 0.47), ('registered_partnership', 0.06), ('divorced', 0.10), ('widowed', 0.07)]
         marital_statuses, weights = zip(*marital_status_distribution)
         record["marital_status"] = random.choices(marital_statuses, weights=weights, k=1)[0]
 
@@ -190,7 +213,7 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
         data.append(record)
     return data
 
-sample_size = 10000 # Increased sample size for better distribution representation
+sample_size = 10 
 
 
 nationality_ethnicity_mapping = {
