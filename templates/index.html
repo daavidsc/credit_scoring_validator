@@ -163,30 +163,45 @@
             const loadingText = document.getElementById('loadingText');
             const loadingSubtext = document.getElementById('loadingSubtext');
             
-            const steps = [
+            const initialSteps = [
                 { progress: 10, text: 'Loading dataset...', subtext: 'Reading test data and configurations' },
-                { progress: 25, text: 'Collecting API responses...', subtext: 'This is the longest step - processing credit scores' },
-                { progress: 60, text: 'Analyzing demographic patterns...', subtext: 'Computing fairness metrics' },
-                { progress: 80, text: 'Running counterfactual tests...', subtext: 'Testing for disparate treatment' },
-                { progress: 95, text: 'Generating report...', subtext: 'Creating visualizations and summaries' },
-                { progress: 100, text: 'Complete!', subtext: 'Analysis finished successfully' }
+                { progress: 25, text: 'Preparing API requests...', subtext: 'Setting up authentication and payloads' }
             ];
             
             let currentStep = 0;
             
             function updateProgress() {
-                if (currentStep < steps.length) {
-                    const step = steps[currentStep];
+                if (currentStep < initialSteps.length) {
+                    const step = initialSteps[currentStep];
                     progressBar.style.width = step.progress + '%';
                     progressText.textContent = step.progress + '% complete';
                     loadingText.textContent = step.text;
                     loadingSubtext.textContent = step.subtext;
                     
                     currentStep++;
+                    setTimeout(updateProgress, 2000); // 2 seconds between initial steps
+                } else if (currentStep === initialSteps.length) {
+                    // Switch to indeterminate progress for API processing
+                    progressBar.style.width = '30%';
+                    progressBar.classList.add('pulse');
+                    progressText.textContent = 'Processing...';
+                    loadingText.textContent = 'Making API calls...';
+                    loadingSubtext.textContent = 'This may take several minutes depending on dataset size';
+                    currentStep++;
                     
-                    // Vary timing based on step (API calls take longer)
-                    const delay = currentStep === 2 ? 8000 : 3000; // Step 2 (API calls) takes longer
-                    setTimeout(updateProgress, delay);
+                    // Set a heartbeat to remind user the process is still running
+                    setInterval(function() {
+                        const messages = [
+                            'Still processing API requests...',
+                            'Getting credit scores for each record...',
+                            'This step takes the longest time...',
+                            'Please wait, analysis is still running...',
+                            'Processing demographic data...',
+                            'Almost done with API calls...'
+                        ];
+                        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                        loadingSubtext.textContent = randomMessage;
+                    }, 15000); // Change message every 15 seconds
                 }
             }
             

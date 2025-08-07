@@ -53,10 +53,14 @@ def send_request(row: dict) -> dict:
     payload = construct_payload(row)
     logger.info(f"🔍 Sending request for row: {row.get('name')} with payload: {payload}")
     try:
+        # Import config each time to get updated values from Flask app
+        from config import API_URL, USERNAME, PASSWORD
+        
         response = requests.post(
             f"{API_URL}/score",
             json=payload,
-            auth=HTTPBasicAuth(USERNAME, PASSWORD)
+            auth=HTTPBasicAuth(USERNAME, PASSWORD),
+            timeout=30
             #verify="github_codespaces.crt"
         )
         response.raise_for_status()
