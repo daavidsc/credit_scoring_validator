@@ -11,6 +11,14 @@ logger = setup_logger("bias_fairness", "results/logs/bias_fairness.log")
 
 PROTECTED_ATTRIBUTES = ["gender", "ethnicity", "nationality", "disability_status", "marital_status"]
 
+# Reference to global status for progress updates
+analysis_status = None
+
+def set_status_reference(status_ref):
+    """Set reference to global analysis status"""
+    global analysis_status
+    analysis_status = status_ref
+
 
 def save_jsonl(data, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -27,6 +35,11 @@ def load_jsonl(path):
 def collect_responses(input_path, output_path):
     df = pd.read_csv(input_path)
     responses = []
+    total_rows = len(df)
+
+    if analysis_status:
+        analysis_status["progress"] = 30
+        analysis_status["message"] = f"Processing {total_rows} records through API..."
 
     for i, row in df.iterrows():
         input_data = row.to_dict()
@@ -35,10 +48,21 @@ def collect_responses(input_path, output_path):
             "input": input_data,
             "output": prediction
         })
+        
+        # Update progress
+        progress = 30 + int((i + 1) / total_rows * 50)  # 30-80% for API calls
+        if analysis_status:
+            analysis_status["progress"] = progress
+            analysis_status["message"] = f"Processed {i + 1}/{total_rows} API requests..."
+            
         logger.info(f"Processed row {i + 1}/{len(df)}")
 
     save_jsonl(responses, output_path)
     logger.info(f"Saved responses to {output_path}")
+    
+    if analysis_status:
+        analysis_status["progress"] = 80
+        analysis_status["message"] = "API calls complete, analyzing bias patterns..."
 
 
 def demographic_parity(responses, protected_attr, positive_class="Good"):
