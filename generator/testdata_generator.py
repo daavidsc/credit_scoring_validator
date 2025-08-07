@@ -87,13 +87,11 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
         if random.random() < 0.015:
             record["gender"] = "non_binary"
         
-        #record["nationality"] = person_data['nationality']
-        record["nationality"] = 'DE' #For now, as API only allows german, eu or non-eu
+        record["nationality"] = person_data['nationality']
         nationality = record["nationality"]
         possible_ethnicities = nationality_ethnicity_mapping.get(nationality, [('other', 1.0)]) # Default to 'other' if nationality not in map
         ethnicity_choices, weights = zip(*possible_ethnicities)
         record["ethnicity"] = random.choices(ethnicity_choices, weights=weights, k=1)[0]
-        record["nationality"] = 'german' #For now, as API only allows german, eu or non-eu
 
         record["age"] = fake.random_int(min=18, max=80)
         # Adjust mean income based on age
