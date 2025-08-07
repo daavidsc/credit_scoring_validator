@@ -6,82 +6,274 @@
     <title>Bias & Fairness Report</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 40px;
-            background: #f9f9f9;
+            background: #f8f9fa;
+            line-height: 1.6;
         }
 
         h1 {
             color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
         }
 
         h2 {
             color: #3498db;
-            margin-top: 30px;
+            margin-top: 40px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
         }
+
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+        }
+
+        .summary-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .bias-level {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .bias-high { background-color: #e74c3c; }
+        .bias-low { background-color: #f39c12; }
+        .bias-minimal { background-color: #27ae60; }
 
         table {
             border-collapse: collapse;
             width: 100%;
             margin-top: 10px;
             background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         th,
         td {
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
         }
 
         th {
             background: #3498db;
             color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 10px 0;
+            display: inline-block;
+            min-width: 200px;
+            margin-right: 20px;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .explanation {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .alert {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>📊 Bias & Fairness Analysis Report</h1>
+    <h1>📊 Enhanced Bias & Fairness Analysis Report</h1>
+    
+    <div class="summary-box">
+        <h3>📋 Executive Summary</h3>
+        <p>This report analyzes potential bias in credit scoring decisions across protected attributes using two complementary approaches:</p>
+        <ul>
+            <li><strong>Observational Analysis:</strong> Compares overall outcomes across demographic groups</li>
+            <li><strong>Counterfactual Analysis:</strong> Tests for disparate treatment by changing only protected attributes</li>
+        </ul>
+    </div>
 
     {% for attr, attr_results in results.items() %}
-    <h2>🔍 Protected Attribute: {{ attr }}</h2>
+    <h2>🔍 Protected Attribute: {{ attr|title }}</h2>
 
-    <h3>📈 Demographic Parity</h3>
-    <table>
-        <tr>
-            <th>Group</th>
-            <th>Total</th>
-            <th>Approved</th>
-            <th>Approval Rate</th>
-        </tr>
-        {% for group, values in attr_results.demographic_parity.items() %}
-        <tr>
-            <td>{{ group }}</td>
-            <td>{{ values.total }}</td>
-            <td>{{ values.positive }}</td>
-            <td>{{ "%.2f"|format(values.positive / values.total * 100) }}%</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="summary-box">
+        <h3>📈 Observational Analysis (Disparate Impact)</h3>
+        
+        <div class="explanation">
+            <strong>What this measures:</strong> Whether different demographic groups receive different outcomes overall. 
+            This could be due to legitimate differences (income, credit history) or potential bias.
+        </div>
 
-    <h3>⚖️ Disparate Impact Ratio</h3>
-    <p>{{ "%.2f"|format(attr_results.disparate_impact_ratio) }}</p>
+        <div class="metric-card">
+            <div class="metric-value">{{ "%.2f"|format(attr_results.disparate_impact_ratio) }}</div>
+            <div class="metric-label">Disparate Impact Ratio</div>
+        </div>
+        
+        {% if attr_results.disparate_impact_ratio < 0.8 %}
+        <div class="warning">
+            ⚠️ <strong>Potential Disparate Impact:</strong> Ratio below 0.8 suggests significant differences in outcomes between groups.
+        </div>
+        {% endif %}
 
-    <h3>🔁 Counterfactual Fairness</h3>
-    <ul>
-        <li>
-            Violation Rate:
-            {% if attr_results.counterfactual_fairness.violation_ratio is not none %}
-            {{ "%.2f"|format(attr_results.counterfactual_fairness.violation_ratio * 100) }}%
+        <h4>Credit Score Classifications by Group</h4>
+        <table>
+            <tr>
+                <th>Group</th>
+                <th>Total</th>
+                <th>"Good" Ratings</th>
+                <th>"Good" Rate</th>
+                <th>Avg Score</th>
+                <th>Poor</th>
+                <th>Average</th>
+                <th>Good</th>
+            </tr>
+            {% for group, values in attr_results.demographic_parity.items() %}
+            <tr>
+                <td><strong>{{ group }}</strong></td>
+                <td>{{ values.total }}</td>
+                <td>{{ values.positive }}</td>
+                <td>{{ "%.1f"|format(values.positive / values.total * 100) }}%</td>
+                <td>{{ "%.1f"|format(values.scores|sum / values.scores|length) if values.scores else "N/A" }}</td>
+                <td>{{ "%.1f"|format(values.classifications.Poor / values.total * 100) }}%</td>
+                <td>{{ "%.1f"|format(values.classifications.Average / values.total * 100) }}%</td>
+                <td>{{ "%.1f"|format(values.classifications.Good / values.total * 100) }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="summary-box">
+        <h3>� Counterfactual Analysis (Disparate Treatment)</h3>
+        
+        <div class="explanation">
+            <strong>What this measures:</strong> Whether the model treats identical people differently based solely on protected attributes. 
+            This directly tests for unfair bias by keeping all other factors constant.
+        </div>
+
+        {% set cf = attr_results.counterfactual_fairness %}
+        
+        <div class="metric-card">
+            <div class="metric-value">
+                {% if cf.violation_ratio is not none %}
+                {{ "%.1f"|format(cf.violation_ratio * 100) }}%
+                {% else %}
+                N/A
+                {% endif %}
+            </div>
+            <div class="metric-label">Bias Violation Rate</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-value">{{ cf.violations or "N/A" }}</div>
+            <div class="metric-label">Total Violations</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-value">{{ cf.sample_size or "N/A" }}</div>
+            <div class="metric-label">Sample Size Tested</div>
+        </div>
+
+        {% if cf.bias_level %}
+        <span class="bias-level bias-{{ cf.bias_level|lower }}">{{ cf.bias_level }} BIAS</span>
+        {% endif %}
+
+        {% if cf.violation_ratio is not none %}
+            {% if cf.violation_ratio > 0.05 %}
+            <div class="alert">
+                🚨 <strong>HIGH BIAS DETECTED:</strong> {{ "%.1f"|format(cf.violation_ratio * 100) }}% of identical profiles received different outcomes when only {{ attr }} was changed. This suggests potential discriminatory treatment.
+            </div>
+            {% elif cf.violation_ratio > 0.01 %}
+            <div class="warning">
+                ⚠️ <strong>LOW BIAS DETECTED:</strong> {{ "%.1f"|format(cf.violation_ratio * 100) }}% violation rate indicates some potential bias that should be investigated.
+            </div>
             {% else %}
-            Not available
+            <div class="explanation">
+                ✅ <strong>MINIMAL BIAS:</strong> Very low violation rate ({{ "%.1f"|format(cf.violation_ratio * 100) }}%) suggests the model treats people fairly regardless of {{ attr }}.
+            </div>
             {% endif %}
-        </li>
-        <li>Violations: {{ attr_results.counterfactual_fairness.violations }}</li>
-        <li>Total Tests: {{ attr_results.counterfactual_fairness.total_tests }}</li>
-    </ul>
+        {% else %}
+        <div class="explanation">
+            ℹ️ Counterfactual analysis not available - insufficient distinct values in the dataset.
+        </div>
+        {% endif %}
+
+        {% if cf.total_tests %}
+        <p><strong>Analysis Details:</strong></p>
+        <ul>
+            <li>Tested {{ cf.total_tests }} counterfactual comparisons across {{ cf.sample_size }} profiles</li>
+            <li>Violations detected when score differed by ≥10 points or classification changed</li>
+            <li>Each violation represents a case where changing only {{ attr }} affected the credit decision</li>
+        </ul>
+        {% endif %}
+    </div>
+
+    <div class="summary-box">
+        <h3>💡 Interpretation Guide</h3>
+        <ul>
+            <li><strong>High Disparate Impact + High Counterfactual Violations:</strong> Strong evidence of discriminatory bias</li>
+            <li><strong>High Disparate Impact + Low Counterfactual Violations:</strong> Likely due to legitimate differences in financial profiles</li>
+            <li><strong>Low Disparate Impact + High Counterfactual Violations:</strong> Hidden bias that affects individuals but doesn't show in aggregate</li>
+            <li><strong>Low Disparate Impact + Low Counterfactual Violations:</strong> Fair treatment across groups</li>
+        </ul>
+    </div>
+
     {% endfor %}
+
+    <div class="summary-box">
+        <h3>🎯 Recommendations</h3>
+        <ul>
+            <li><strong>Disparate Impact Ratio < 0.8:</strong> Review model features and consider bias mitigation techniques</li>
+            <li><strong>Counterfactual Violations > 5%:</strong> Investigate model for direct discrimination and consider algorithmic auditing</li>
+            <li><strong>Both metrics concerning:</strong> Immediate action required - consider model retraining with fairness constraints</li>
+            <li><strong>Regular monitoring:</strong> Implement ongoing bias testing as part of model governance</li>
+        </ul>
+    </div>
 
 </body>
 
