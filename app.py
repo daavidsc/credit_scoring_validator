@@ -68,7 +68,14 @@ def run_analysis_background(form_data):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # Provide default form data for template
+    form_data = {
+        "api_url": "",
+        "username": "",
+        "password": "",
+        "run_bias": False
+    }
+    return render_template("index.html", form_data=form_data)
 
 
 @app.route("/start_analysis", methods=["POST"])
@@ -105,49 +112,6 @@ def start_analysis():
 def get_status():
     """Get the current analysis status"""
     return jsonify(analysis_status)
-
-
-@app.route("/", methods=["POST"])
-def index_post():
-    # Keep the old endpoint for compatibility, but redirect to new async approach
-    form_data = {
-        "api_url": request.form.get("api_url", ""),
-        "username": request.form.get("username", ""),
-        "password": request.form.get("password", ""),
-        "run_bias": request.form.get("run_bias") == "on"
-    }
-
-    if request.method == "POST":
-        form_data["api_url"] = request.form.get("api_url", "")
-        form_data["username"] = request.form.get("username", "")
-        form_data["password"] = request.form.get("password", "")
-        form_data["run_bias"] = request.form.get("run_bias") == "on"
-
-        # Validate required fields
-        if form_data["run_bias"] and not all([form_data["api_url"], form_data["username"], form_data["password"]]):
-            result = "❌ Error: Please fill in all API configuration fields."
-            return render_template("index.html", show_button=False, report_path=None, 
-                                   form_data=form_data, result=result)
-
-        if form_data["run_bias"]:
-            try:
-                # Update config with form values
-                config.API_URL = form_data["api_url"]
-                config.USERNAME = form_data["username"] 
-                config.PASSWORD = form_data["password"]
-                
-                results = run_bias_analysis()
-                build_bias_fairness_report(results)
-                report_path = "reports/generated/bias_report.html"
-                show_button = True
-                result = "✅ Bias analysis completed successfully!"
-                
-            except Exception as e:
-                result = f"❌ Error running analysis: {str(e)}"
-                app.logger.error(f"Analysis failed: {str(e)}")
-
-    return render_template("index.html", show_button=show_button, report_path=report_path, 
-                          form_data=form_data, result=result)
 
 
 @app.route("/report")
