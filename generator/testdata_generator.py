@@ -214,7 +214,7 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
         data.append(record)
     return data
 
-sample_size = 10 
+sample_size = 30
 
 
 nationality_ethnicity_mapping = {
