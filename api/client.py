@@ -4,12 +4,13 @@ import requests
 from requests.auth import HTTPBasicAuth
 from config import API_URL, USERNAME, PASSWORD
 from utils.logger import setup_logger
+import json
 
 logger = setup_logger("api_client", "results/logs/api_client.log")
 
 
 SCORING_PARAMETERS = {
-    "model": "openrouter/horizon-beta",
+    "model": "openai/gpt-oss-20b:free",
     "temperature": 1,
     "top_p": 1,
     "max_tokens": 512,
@@ -70,6 +71,7 @@ def send_request(row: dict) -> dict:
         try:
             content = data["metadata"]["choices"][0]["message"]["content"]
             parsed_content = eval(content)  # ⚠️ Assumes it’s JSON string in string form
+            #parsed_content = json.loads(content)  # ⚠️ Assumes it’s JSON string in string form
         except Exception as e:
             logger.warning(f"Could not parse content from message: {e}")
             parsed_content = {}

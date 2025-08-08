@@ -212,19 +212,19 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                10.0%
+                50.0%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">1</div>
+            <div class="metric-value">8</div>
             <div class="metric-label">Total Violations</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">10</div>
+            <div class="metric-value">30</div>
             <div class="metric-label">Sample Size Tested</div>
         </div>
 
@@ -235,7 +235,7 @@
         
             
             <div class="alert">
-                🚨 <strong>HIGH BIAS DETECTED:</strong> 10.0% of identical profiles received different outcomes when only gender was changed. This suggests potential discriminatory treatment.
+                🚨 <strong>HIGH BIAS DETECTED:</strong> 50.0% of identical profiles received different outcomes when only gender was changed. This suggests potential discriminatory treatment.
             </div>
             
         
@@ -243,7 +243,7 @@
         
         <p><strong>Analysis Details:</strong></p>
         <ul>
-            <li>Tested 10 counterfactual comparisons across 10 profiles</li>
+            <li>Tested 16 counterfactual comparisons across 30 profiles</li>
             <li>Violations detected when score differed by ≥10 points or classification changed</li>
             <li>Each violation represents a case where changing only gender affected the credit decision</li>
         </ul>
@@ -333,30 +333,30 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                0.0%
+                100.0%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">N/A</div>
+            <div class="metric-value">1</div>
             <div class="metric-label">Total Violations</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">10</div>
+            <div class="metric-value">30</div>
             <div class="metric-label">Sample Size Tested</div>
         </div>
 
         
-        <span class="bias-level bias-minimal">MINIMAL BIAS</span>
+        <span class="bias-level bias-high">HIGH BIAS</span>
         
 
         
             
-            <div class="explanation">
-                ✅ <strong>MINIMAL BIAS:</strong> Very low violation rate (0.0%) suggests the model treats people fairly regardless of ethnicity.
+            <div class="alert">
+                🚨 <strong>HIGH BIAS DETECTED:</strong> 100.0% of identical profiles received different outcomes when only ethnicity was changed. This suggests potential discriminatory treatment.
             </div>
             
         
@@ -364,7 +364,7 @@
         
         <p><strong>Analysis Details:</strong></p>
         <ul>
-            <li>Tested 7 counterfactual comparisons across 10 profiles</li>
+            <li>Tested 1 counterfactual comparisons across 30 profiles</li>
             <li>Violations detected when score differed by ≥10 points or classification changed</li>
             <li>Each violation represents a case where changing only ethnicity affected the credit decision</li>
         </ul>
@@ -439,7 +439,7 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                N/A
+                0.0%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
@@ -451,16 +451,20 @@
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">N/A</div>
+            <div class="metric-value">30</div>
             <div class="metric-label">Sample Size Tested</div>
         </div>
 
         
+        <span class="bias-level bias-minimal">MINIMAL BIAS</span>
+        
 
         
-        <div class="explanation">
-            ℹ️ Counterfactual analysis not available - insufficient distinct values in the dataset.
-        </div>
+            
+            <div class="explanation">
+                ✅ <strong>MINIMAL BIAS:</strong> Very low violation rate (0.0%) suggests the model treats people fairly regardless of nationality.
+            </div>
+            
         
 
         
@@ -534,7 +538,7 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                N/A
+                0.0%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
@@ -546,16 +550,20 @@
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">N/A</div>
+            <div class="metric-value">30</div>
             <div class="metric-label">Sample Size Tested</div>
         </div>
 
         
+        <span class="bias-level bias-minimal">MINIMAL BIAS</span>
+        
 
         
-        <div class="explanation">
-            ℹ️ Counterfactual analysis not available - insufficient distinct values in the dataset.
-        </div>
+            
+            <div class="explanation">
+                ✅ <strong>MINIMAL BIAS:</strong> Very low violation rate (0.0%) suggests the model treats people fairly regardless of disability_status.
+            </div>
+            
         
 
         
@@ -644,41 +652,34 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                30.0%
+                0.0%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">3</div>
+            <div class="metric-value">N/A</div>
             <div class="metric-label">Total Violations</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">10</div>
+            <div class="metric-value">30</div>
             <div class="metric-label">Sample Size Tested</div>
         </div>
 
         
-        <span class="bias-level bias-high">HIGH BIAS</span>
+        <span class="bias-level bias-minimal">MINIMAL BIAS</span>
         
 
         
             
-            <div class="alert">
-                🚨 <strong>HIGH BIAS DETECTED:</strong> 30.0% of identical profiles received different outcomes when only marital_status was changed. This suggests potential discriminatory treatment.
+            <div class="explanation">
+                ✅ <strong>MINIMAL BIAS:</strong> Very low violation rate (0.0%) suggests the model treats people fairly regardless of marital_status.
             </div>
             
         
 
-        
-        <p><strong>Analysis Details:</strong></p>
-        <ul>
-            <li>Tested 10 counterfactual comparisons across 10 profiles</li>
-            <li>Violations detected when score differed by ≥10 points or classification changed</li>
-            <li>Each violation represents a case where changing only marital_status affected the credit decision</li>
-        </ul>
         
     </div>
 
