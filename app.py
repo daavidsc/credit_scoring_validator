@@ -35,6 +35,7 @@ def run_analysis_background(form_data):
         config.API_URL = form_data["api_url"]
         config.USERNAME = form_data["username"] 
         config.PASSWORD = form_data["password"]
+        config.MODEL = form_data.get("model", "gpt-3.5-turbo-0125")
         
         analysis_status["progress"] = 20
         analysis_status["message"] = "Configuration updated, running analysis..."
@@ -73,7 +74,8 @@ def index():
         "api_url": "",
         "username": "",
         "password": "",
-        "run_bias": False
+        "run_bias": False,
+        "model": "gpt-3.5-turbo-0125"
     }
     return render_template("index.html", form_data=form_data)
 
@@ -90,7 +92,8 @@ def start_analysis():
         "api_url": request.form.get("api_url", ""),
         "username": request.form.get("username", ""),
         "password": request.form.get("password", ""),
-        "run_bias": request.form.get("run_bias") == "on"
+        "run_bias": request.form.get("run_bias") == "on",
+        "model": request.form.get("model", "gpt-3.5-turbo-0125")
     }
     
     # Validate required fields

@@ -9,18 +9,20 @@ import json
 logger = setup_logger("api_client", "results/logs/api_client.log")
 
 
-SCORING_PARAMETERS = {
-    "model": "openai/gpt-oss-20b:free",
-    "temperature": 1,
-    "top_p": 1,
-    "max_tokens": 512,
-    "presence_penalty": 0,
-    "frequency_penalty": 0,
-    "seed": 0
-}
-
-
 def construct_payload(row: dict) -> dict:
+    # Import config each time to get updated model value
+    from config import MODEL
+    
+    scoring_parameters = {
+        "model": MODEL,
+        "temperature": 1,
+        "top_p": 1,
+        "max_tokens": 512,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "seed": 0
+    }
+    
     return {
         "name": row.get("name"),
         "income": row.get("income"),
@@ -46,7 +48,7 @@ def construct_payload(row: dict) -> dict:
             "postal_code": str(row.get("postal_code")),
             "language_preference": row.get("language_preference"),
         },
-        "scoring_parameters": SCORING_PARAMETERS
+        "scoring_parameters": scoring_parameters
     }
 
 
@@ -67,14 +69,22 @@ def send_request(row: dict) -> dict:
         response.raise_for_status()
         data = response.json()
 
-        # Try extracting core prediction
-        try:
-            content = data["metadata"]["choices"][0]["message"]["content"]
-            parsed_content = eval(content)  # ⚠️ Assumes it’s JSON string in string form
-            #parsed_content = json.loads(content)  # ⚠️ Assumes it’s JSON string in string form
-        except Exception as e:
-            logger.warning(f"Could not parse content from message: {e}")
-            parsed_content = {}
+        # Handle the new API response format
+        if "credit_score" in data:
+            # New format: direct response with credit_score, classification, explanation
+            parsed_content = {
+                "credit_score": data.get("credit_score"),
+                "classification": data.get("classification"),
+                "explanation": data.get("explanation")
+            }
+        else:
+            # Try old format if available
+            try:
+                content = data["metadata"]["choices"][0]["message"]["content"]
+                parsed_content = eval(content)  # ⚠️ Assumes it's JSON string in string form
+            except Exception as e:
+                logger.warning(f"Could not parse content from message: {e}")
+                parsed_content = {}
 
         # Log core info
         logger.info(f"[{row.get('name')}] → Score: {parsed_content.get('credit_score')} | "

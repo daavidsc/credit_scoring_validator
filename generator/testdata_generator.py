@@ -206,7 +206,7 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
         marital_statuses, weights = zip(*marital_status_distribution)
         record["marital_status"] = random.choices(marital_statuses, weights=weights, k=1)[0]
 
-        record["postal_code"] = fake.postcode()
+        record["postal_code"] = fake.postcode().zfill(5)  # Ensure 5 digits with leading zeros
         record["language_preference"] = 'de'
 
         data.append(record)

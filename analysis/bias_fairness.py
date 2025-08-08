@@ -39,21 +39,21 @@ def collect_responses(input_path, output_path):
 
     if analysis_status:
         analysis_status["progress"] = 30
-        analysis_status["message"] = f"Processing {total_rows} records through API..."
+        analysis_status["message"] = f"Starting API calls for {total_rows} profiles..."
 
     for i, row in df.iterrows():
         input_data = row.to_dict()
+        
+        if analysis_status:
+            progress = 30 + int((i + 1) / total_rows * 50)  # 30-80% for API calls
+            analysis_status["progress"] = progress
+            analysis_status["message"] = f"Making API call {i + 1}/{total_rows}: {input_data.get('name', 'Unknown')}..."
+        
         prediction = send_request(input_data)
         responses.append({
             "input": input_data,
             "output": prediction
         })
-        
-        # Update progress
-        progress = 30 + int((i + 1) / total_rows * 50)  # 30-80% for API calls
-        if analysis_status:
-            analysis_status["progress"] = progress
-            analysis_status["message"] = f"Processed {i + 1}/{total_rows} API requests..."
             
         logger.info(f"Processed row {i + 1}/{len(df)}")
 
@@ -62,7 +62,7 @@ def collect_responses(input_path, output_path):
     
     if analysis_status:
         analysis_status["progress"] = 80
-        analysis_status["message"] = "API calls complete, analyzing bias patterns..."
+        analysis_status["message"] = "All API calls completed successfully! Starting bias pattern analysis..."
 
 
 def demographic_parity(responses, protected_attr, positive_class="Good"):
@@ -159,8 +159,14 @@ def counterfactual_fairness(df, protected_attr, values, sample_size=100):
     
     # Sample a subset for more focused testing
     sample_df = df.sample(n=min(sample_size, len(df)), random_state=42)
+    total_sample_rows = len(sample_df)
 
-    for _, row in sample_df.iterrows():
+    for idx, (_, row) in enumerate(sample_df.iterrows()):
+        if analysis_status:
+            # More granular progress within counterfactual testing
+            cf_progress = int((idx / total_sample_rows) * 100)
+            analysis_status["message"] = f"Counterfactual testing {protected_attr}: {idx+1}/{total_sample_rows} profiles ({cf_progress}%)"
+        
         input_data = row.to_dict()
         original_value = input_data.get(protected_attr)
         if original_value not in values:
@@ -232,15 +238,36 @@ def run_bias_analysis():
 
     # Always load original dataset (needed for counterfactuals)
     df = pd.read_csv(dataset_path)
+    total_attributes = len(PROTECTED_ATTRIBUTES)
+
+    if analysis_status:
+        analysis_status["progress"] = 25
+        analysis_status["message"] = f"Loaded {len(df)} records, checking for existing API responses..."
 
     if not os.path.exists(response_path):
+        if analysis_status:
+            analysis_status["progress"] = 30
+            analysis_status["message"] = "No existing responses found, making API calls..."
         collect_responses(dataset_path, response_path)
+    else:
+        if analysis_status:
+            analysis_status["progress"] = 80
+            analysis_status["message"] = "Found existing API responses, starting bias analysis..."
 
     responses = load_jsonl(response_path)
 
+    if analysis_status:
+        analysis_status["progress"] = 82
+        analysis_status["message"] = f"Loaded {len(responses)} API responses, analyzing bias patterns..."
+
     results = {}
 
-    for attr in PROTECTED_ATTRIBUTES:
+    for i, attr in enumerate(PROTECTED_ATTRIBUTES):
+        if analysis_status:
+            progress = 82 + int((i / total_attributes) * 15)  # 82-97% for bias analysis
+            analysis_status["progress"] = progress
+            analysis_status["message"] = f"Analyzing bias patterns for {attr} ({i+1}/{total_attributes})..."
+        
         logger.info(f"🔍 Analyzing demographic parity for: {attr}")
 
         dp_groups = demographic_parity(responses, protected_attr=attr)
@@ -254,6 +281,8 @@ def run_bias_analysis():
         # Counterfactual fairness (only if enough values)
         unique_vals = df[attr].dropna().unique().tolist()
         if len(unique_vals) >= 2:
+            if analysis_status:
+                analysis_status["message"] = f"Running counterfactual tests for {attr} with {len(unique_vals)} different values..."
             # Use smaller sample size for focused bias testing
             cf_result = counterfactual_fairness(df, protected_attr=attr, values=unique_vals, sample_size=200)
         else:
@@ -263,6 +292,10 @@ def run_bias_analysis():
             }
 
         results[attr]["counterfactual_fairness"] = cf_result
+
+    if analysis_status:
+        analysis_status["progress"] = 98
+        analysis_status["message"] = "Bias analysis complete, finalizing results..."
 
     return results
 

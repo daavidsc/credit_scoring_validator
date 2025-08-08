@@ -40,11 +40,38 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center px-4">
-    <form method="POST" id="analysisForm" class="bg-white shadow-lg rounded-xl p-8 max-w-xl w-full space-y-6">
+    <form method="POST" id="analysisForm" class="bg-white shadow-lg rounded-xl p-8 max-w-xl w-full space-y-6 relative">
+        <!-- Settings Icon -->
+        <div class="absolute top-4 right-4">
+            <button type="button" id="settingsBtn" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </button>
+        </div>
+        
         <h2 class="text-2xl font-bold text-center text-blue-600">📊 LLM Evaluation Dashboard</h2>
         <p class="text-sm text-center text-gray-500">Configure your API and run evaluation modules</p>
 
@@ -89,6 +116,9 @@
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none">
             </div>
         </div>
+
+        <!-- Hidden field for model selection -->
+        <input type="hidden" name="model" id="modelField" value="{{ form_data.model or 'gpt-3.5-turbo-0125' }}">
 
         <!-- Module Checkboxes -->
         <div>
@@ -224,14 +254,22 @@
             progressText.textContent = status.progress + '% complete';
             loadingText.textContent = status.message;
             
-            if (status.progress < 100) {
-                if (status.progress > 20) {
-                    loadingSubtext.textContent = 'Making API calls and analyzing bias patterns...';
-                    progressBar.classList.add('pulse');
-                } else {
-                    loadingSubtext.textContent = 'Setting up analysis environment...';
-                    progressBar.classList.remove('pulse');
-                }
+            // More detailed subtext based on progress
+            if (status.progress < 30) {
+                loadingSubtext.textContent = 'Setting up analysis environment and loading data...';
+                progressBar.classList.remove('pulse');
+            } else if (status.progress < 80) {
+                loadingSubtext.textContent = 'Making API calls to test each profile (this takes the most time)...';
+                progressBar.classList.add('pulse');
+            } else if (status.progress < 95) {
+                loadingSubtext.textContent = 'API calls complete! Analyzing bias patterns across protected attributes...';
+                progressBar.classList.add('pulse');
+            } else if (status.progress < 98) {
+                loadingSubtext.textContent = 'Running counterfactual tests to detect disparate treatment...';
+                progressBar.classList.add('pulse');
+            } else {
+                loadingSubtext.textContent = 'Finalizing results and generating bias report...';
+                progressBar.classList.remove('pulse');
             }
         }
 
@@ -277,7 +315,86 @@
             resultContent.innerHTML = `❌ Error: ${errorMessage}`;
             resultContent.className = 'bg-red-50 border border-red-200 p-4 rounded-md text-sm text-red-700';
         }
+
+        // Settings Modal Functionality
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.add('show');
+            // Set current model value in the dropdown
+            const currentModel = document.getElementById('modelField').value;
+            document.getElementById('modelSelect').value = currentModel;
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('show');
+        }
+
+        function saveSettings() {
+            const selectedModel = document.getElementById('modelSelect').value;
+            document.getElementById('modelField').value = selectedModel;
+            
+            // Update the settings display
+            document.getElementById('currentModel').textContent = selectedModel;
+            
+            closeSettingsModal();
+            
+            // Show a brief confirmation
+            const settingsBtn = document.getElementById('settingsBtn');
+            const originalColor = settingsBtn.className;
+            settingsBtn.className = settingsBtn.className.replace('text-gray-500', 'text-green-500');
+            setTimeout(() => {
+                settingsBtn.className = originalColor;
+            }, 1000);
+        }
+
+        // Add event listeners when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+            document.getElementById('closeModal').addEventListener('click', closeSettingsModal);
+            document.getElementById('saveSettings').addEventListener('click', saveSettings);
+            
+            // Close modal when clicking outside
+            document.getElementById('settingsModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSettingsModal();
+                }
+            });
+            
+            // Set initial model display
+            const currentModel = document.getElementById('modelField').value;
+            document.getElementById('currentModel').textContent = currentModel;
+        });
     </script>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">Settings</h3>
+                <button type="button" id="closeModal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">OpenAI Model</label>
+                    <select id="modelSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                        <option value="gpt-3.5-turbo-0125">GPT-3.5 Turbo (gpt-3.5-turbo-0125)</option>
+                        <option value="gpt-4-turbo-2024-04-09">GPT-4 Turbo (gpt-4-turbo-2024-04-09)</option>
+                        <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (gpt-4o-mini-2024-07-18)</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Currently using: <span id="currentModel" class="font-mono">gpt-3.5-turbo-0125</span></p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end gap-3 p-6 border-t bg-gray-50 rounded-b-lg">
+                <button type="button" id="closeModal" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                <button type="button" id="saveSettings" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Settings</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
