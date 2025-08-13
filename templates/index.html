@@ -136,6 +136,10 @@
                     <input type="checkbox" name="run_robustness" {% if form_data.run_robustness %}checked{% endif %} class="accent-blue-500">
                     <span class="text-gray-800">Robustness Analysis</span>
                 </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="run_consistency" {% if form_data.run_consistency %}checked{% endif %} class="accent-blue-500">
+                    <span class="text-gray-800">Consistency Testing</span>
+                </label>
                 <label class="flex items-center space-x-2 text-gray-400">
                     <input type="checkbox" disabled class="accent-gray-400">
                     <span>Transparency (coming soon)</span>
@@ -174,6 +178,12 @@
                         🛡️ View Robustness Analysis Report
                     </a>
                 </div>
+                <div id="consistencyReportButton" class="hidden">
+                    <a href="/consistency_report"
+                        class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-md shadow inline-block">
+                        🔄 View Consistency Testing Report
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -193,8 +203,9 @@
             Promise.all([
                 fetch('/report').then(response => response.ok),
                 fetch('/accuracy_report').then(response => response.ok),
-                fetch('/robustness_report').then(response => response.ok)
-            ]).then(([biasExists, accuracyExists, robustnessExists]) => {
+                fetch('/robustness_report').then(response => response.ok),
+                fetch('/consistency_report').then(response => response.ok)
+            ]).then(([biasExists, accuracyExists, robustnessExists, consistencyExists]) => {
                 if (biasExists) {
                     showPreviousReport('bias');
                 }
@@ -203,6 +214,9 @@
                 }
                 if (robustnessExists) {
                     showPreviousReport('robustness');
+                }
+                if (consistencyExists) {
+                    showPreviousReport('consistency');
                 }
             }).catch(error => {
                 console.log('No previous reports found');
@@ -223,6 +237,9 @@
             if (document.querySelector('input[name="run_robustness"]').checked) {
                 currentAnalyses.push('robustness');
             }
+            if (document.querySelector('input[name="run_consistency"]').checked) {
+                currentAnalyses.push('consistency');
+            }
             
             // Show loading indicator
             const loadingIndicator = document.getElementById('loadingIndicator');
@@ -238,6 +255,7 @@
             document.getElementById('biasReportButton').classList.add('hidden');
             document.getElementById('accuracyReportButton').classList.add('hidden');
             document.getElementById('robustnessReportButton').classList.add('hidden');
+            document.getElementById('consistencyReportButton').classList.add('hidden');
             
             // Submit form data via AJAX
             const formData = new FormData(this);
@@ -357,6 +375,13 @@
                                 showCurrentReport('robustness');
                             }
                         }).catch(() => {});
+                    } else if (analysis === 'consistency') {
+                        // Verify the report actually exists before showing
+                        fetch('/consistency_report').then(response => {
+                            if (response.ok) {
+                                showCurrentReport('consistency');
+                            }
+                        }).catch(() => {});
                     }
                 });
             }, 2000);
@@ -442,6 +467,9 @@
             } else if (type === 'robustness') {
                 buttonId = 'robustnessReportButton';
                 linkText = '🛡️ View Previous Robustness Report <span class="text-xs opacity-75">(from last run)</span>';
+            } else if (type === 'consistency') {
+                buttonId = 'consistencyReportButton';
+                linkText = '🔄 View Previous Consistency Report <span class="text-xs opacity-75">(from last run)</span>';
             }
             
             const button = document.getElementById(buttonId);
@@ -469,6 +497,10 @@
                 buttonId = 'robustnessReportButton';
                 linkText = '🛡️ View Robustness Analysis Report <span class="text-xs opacity-75">(✨ just generated)</span>';
                 bgColor = 'bg-purple-500 hover:bg-purple-600';
+            } else if (type === 'consistency') {
+                buttonId = 'consistencyReportButton';
+                linkText = '🔄 View Consistency Testing Report <span class="text-xs opacity-75">(✨ just generated)</span>';
+                bgColor = 'bg-indigo-500 hover:bg-indigo-600';
             }
             
             const button = document.getElementById(buttonId);
