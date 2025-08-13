@@ -132,9 +132,9 @@
                     <input type="checkbox" name="run_accuracy" {% if form_data.run_accuracy %}checked{% endif %} class="accent-blue-500">
                     <span class="text-gray-800">Accuracy Analysis</span>
                 </label>
-                <label class="flex items-center space-x-2 text-gray-400">
-                    <input type="checkbox" disabled class="accent-gray-400">
-                    <span>Robustness (coming soon)</span>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="run_robustness" {% if form_data.run_robustness %}checked{% endif %} class="accent-blue-500">
+                    <span class="text-gray-800">Robustness Analysis</span>
                 </label>
                 <label class="flex items-center space-x-2 text-gray-400">
                     <input type="checkbox" disabled class="accent-gray-400">
@@ -168,6 +168,12 @@
                         🎯 View Accuracy Analysis Report
                     </a>
                 </div>
+                <div id="robustnessReportButton" class="hidden">
+                    <a href="/robustness_report"
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-md shadow inline-block">
+                        🛡️ View Robustness Analysis Report
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -186,13 +192,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             Promise.all([
                 fetch('/report').then(response => response.ok),
-                fetch('/accuracy_report').then(response => response.ok)
-            ]).then(([biasExists, accuracyExists]) => {
+                fetch('/accuracy_report').then(response => response.ok),
+                fetch('/robustness_report').then(response => response.ok)
+            ]).then(([biasExists, accuracyExists, robustnessExists]) => {
                 if (biasExists) {
                     showPreviousReport('bias');
                 }
                 if (accuracyExists) {
                     showPreviousReport('accuracy');
+                }
+                if (robustnessExists) {
+                    showPreviousReport('robustness');
                 }
             }).catch(error => {
                 console.log('No previous reports found');
@@ -210,6 +220,9 @@
             if (document.querySelector('input[name="run_accuracy"]').checked) {
                 currentAnalyses.push('accuracy');
             }
+            if (document.querySelector('input[name="run_robustness"]').checked) {
+                currentAnalyses.push('robustness');
+            }
             
             // Show loading indicator
             const loadingIndicator = document.getElementById('loadingIndicator');
@@ -224,6 +237,7 @@
             document.getElementById('reportButtons').classList.add('hidden');
             document.getElementById('biasReportButton').classList.add('hidden');
             document.getElementById('accuracyReportButton').classList.add('hidden');
+            document.getElementById('robustnessReportButton').classList.add('hidden');
             
             // Submit form data via AJAX
             const formData = new FormData(this);
@@ -336,6 +350,13 @@
                                 showCurrentReport('accuracy');
                             }
                         }).catch(() => {});
+                    } else if (analysis === 'robustness') {
+                        // Verify the report actually exists before showing
+                        fetch('/robustness_report').then(response => {
+                            if (response.ok) {
+                                showCurrentReport('robustness');
+                            }
+                        }).catch(() => {});
                     }
                 });
             }, 2000);
@@ -410,18 +431,23 @@
         // Functions to handle previous vs current reports
         function showPreviousReport(type) {
             const reportButtons = document.getElementById('reportButtons');
-            const buttonId = type === 'bias' ? 'biasReportButton' : 'accuracyReportButton';
-            const button = document.getElementById(buttonId);
+            let buttonId, linkText, iconColor;
             
-            // Update button text to indicate it's a previous report
-            const link = button.querySelector('a');
             if (type === 'bias') {
-                link.innerHTML = '📄 View Previous Bias Report <span class="text-xs opacity-75">(from last run)</span>';
-                link.className = 'bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md shadow inline-block';
-            } else {
-                link.innerHTML = '🎯 View Previous Accuracy Report <span class="text-xs opacity-75">(from last run)</span>';
-                link.className = 'bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md shadow inline-block';
+                buttonId = 'biasReportButton';
+                linkText = '📄 View Previous Bias Report <span class="text-xs opacity-75">(from last run)</span>';
+            } else if (type === 'accuracy') {
+                buttonId = 'accuracyReportButton';
+                linkText = '🎯 View Previous Accuracy Report <span class="text-xs opacity-75">(from last run)</span>';
+            } else if (type === 'robustness') {
+                buttonId = 'robustnessReportButton';
+                linkText = '🛡️ View Previous Robustness Report <span class="text-xs opacity-75">(from last run)</span>';
             }
+            
+            const button = document.getElementById(buttonId);
+            const link = button.querySelector('a');
+            link.innerHTML = linkText;
+            link.className = 'bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md shadow inline-block';
             
             button.classList.remove('hidden');
             reportButtons.classList.remove('hidden');
@@ -429,18 +455,26 @@
 
         function showCurrentReport(type) {
             const reportButtons = document.getElementById('reportButtons');
-            const buttonId = type === 'bias' ? 'biasReportButton' : 'accuracyReportButton';
-            const button = document.getElementById(buttonId);
+            let buttonId, linkText, bgColor;
             
-            // Update button text to indicate it's a fresh report - both green
-            const link = button.querySelector('a');
             if (type === 'bias') {
-                link.innerHTML = '📄 View Bias & Fairness Report <span class="text-xs opacity-75">(✨ just generated)</span>';
-                link.className = 'bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md shadow inline-block';
-            } else {
-                link.innerHTML = '🎯 View Accuracy Analysis Report <span class="text-xs opacity-75">(✨ just generated)</span>';
-                link.className = 'bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md shadow inline-block';
+                buttonId = 'biasReportButton';
+                linkText = '📄 View Bias & Fairness Report <span class="text-xs opacity-75">(✨ just generated)</span>';
+                bgColor = 'bg-green-500 hover:bg-green-600';
+            } else if (type === 'accuracy') {
+                buttonId = 'accuracyReportButton';
+                linkText = '🎯 View Accuracy Analysis Report <span class="text-xs opacity-75">(✨ just generated)</span>';
+                bgColor = 'bg-blue-500 hover:bg-blue-600';
+            } else if (type === 'robustness') {
+                buttonId = 'robustnessReportButton';
+                linkText = '🛡️ View Robustness Analysis Report <span class="text-xs opacity-75">(✨ just generated)</span>';
+                bgColor = 'bg-purple-500 hover:bg-purple-600';
             }
+            
+            const button = document.getElementById(buttonId);
+            const link = button.querySelector('a');
+            link.innerHTML = linkText;
+            link.className = `${bgColor} text-white px-6 py-2 rounded-md shadow inline-block`;
             
             button.classList.remove('hidden');
             reportButtons.classList.remove('hidden');

@@ -11,14 +11,21 @@ Built for rigorous testing of AI decision systems in regulated financial context
 * 🌐 **Modern Web UI**: Real-time progress tracking with dynamic status updates
 * ⚡ **Asynchronous Processing**: Background analysis prevents browser timeouts
 * 📊 **Advanced Bias Analysis**: Dual methodology combining observational and counterfactual fairness
+* 🛡️ **Robustness Testing**: Comprehensive adversarial testing for model stability and reliability
 * 🎯 **Realistic Test Data**: German-specific demographics with proper distributions
-* � **Professional Reports**: Auto-generated HTML reports with visualizations
+* 📈 **Professional Reports**: Auto-generated HTML reports with visualizations
 * 🔒 **Secure API Integration**: Basic Auth support with enhanced error handling
 * 📂 **Comprehensive Logging**: Detailed API call tracking and error diagnostics
 
 ---
 
 ## 🆕 Latest Enhancements
+
+### **Robustness Analysis System** 🛡️
+- **Adversarial Testing**: 5 types of input perturbations (noise, typos, missing values, etc.)
+- **Stability Metrics**: Decision consistency and confidence stability analysis
+- **Failure Case Detection**: Identifies specific scenarios where models fail
+- **Professional Reporting**: Interactive visualizations and actionable insights
 
 ### **Asynchronous Analysis System**
 - Background processing with real-time progress updates

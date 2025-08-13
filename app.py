@@ -7,7 +7,8 @@ import time
 import json
 from analysis.bias_fairness import run_bias_analysis
 from analysis.accuracy import run_accuracy_analysis
-from reports.report_builder import build_bias_fairness_report, build_accuracy_report
+from analysis.robustness import run_robustness_analysis
+from reports.report_builder import build_bias_fairness_report, build_accuracy_report, build_robustness_report
 import config
 
 app = Flask(__name__)
@@ -39,13 +40,13 @@ def run_analysis_background(form_data):
         config.MODEL = form_data.get("model", "gpt-3.5-turbo-0125")
         
         results = {}
-        total_analyses = sum([form_data["run_bias"], form_data["run_accuracy"]])
+        total_analyses = sum([form_data["run_bias"], form_data["run_accuracy"], form_data["run_robustness"]])
         current_analysis = 0
         
         # Run bias analysis if selected
         if form_data["run_bias"]:
             current_analysis += 1
-            analysis_status["progress"] = 10 + (current_analysis - 1) * 40
+            analysis_status["progress"] = 10 + (current_analysis - 1) * 30
             analysis_status["message"] = f"Running bias analysis ({current_analysis}/{total_analyses})..."
             
             # Pass status reference to bias analysis
@@ -61,7 +62,7 @@ def run_analysis_background(form_data):
         # Run accuracy analysis if selected
         if form_data["run_accuracy"]:
             current_analysis += 1
-            analysis_status["progress"] = 10 + (current_analysis - 1) * 40
+            analysis_status["progress"] = 10 + (current_analysis - 1) * 30
             analysis_status["message"] = f"Running accuracy analysis ({current_analysis}/{total_analyses})..."
             
             # Pass status reference to accuracy analysis
@@ -73,6 +74,22 @@ def run_analysis_background(form_data):
             
             # Build accuracy report
             build_accuracy_report(accuracy_results)
+        
+        # Run robustness analysis if selected
+        if form_data["run_robustness"]:
+            current_analysis += 1
+            analysis_status["progress"] = 10 + (current_analysis - 1) * 30
+            analysis_status["message"] = f"Running robustness analysis ({current_analysis}/{total_analyses})..."
+            
+            # Pass status reference to robustness analysis
+            from analysis.robustness import set_status_reference
+            set_status_reference(analysis_status)
+            
+            robustness_results = run_robustness_analysis()
+            results["robustness"] = robustness_results
+            
+            # Build robustness report
+            build_robustness_report(robustness_results)
         
         analysis_status["progress"] = 95
         analysis_status["message"] = "Analysis complete, finalizing reports..."
@@ -100,6 +117,7 @@ def index():
         "password": "",
         "run_bias": False,
         "run_accuracy": False,
+        "run_robustness": False,
         "model": "gpt-3.5-turbo-0125"
     }
     return render_template("index.html", form_data=form_data)
@@ -119,19 +137,20 @@ def start_analysis():
         "password": request.form.get("password", ""),
         "run_bias": request.form.get("run_bias") == "on",
         "run_accuracy": request.form.get("run_accuracy") == "on",
+        "run_robustness": request.form.get("run_robustness") == "on",
         "model": request.form.get("model", "gpt-3.5-turbo-0125")
     }
     
     # Validate that at least one analysis is selected
-    if not (form_data["run_bias"] or form_data["run_accuracy"]):
+    if not (form_data["run_bias"] or form_data["run_accuracy"] or form_data["run_robustness"]):
         return jsonify({"error": "Please select at least one analysis to run."}), 400
     
     # Validate required fields for analyses that need API calls
-    if (form_data["run_bias"]) and not all([form_data["api_url"], form_data["username"], form_data["password"]]):
-        return jsonify({"error": "Please fill in all API configuration fields for bias analysis."}), 400
+    if (form_data["run_bias"] or form_data["run_robustness"]) and not all([form_data["api_url"], form_data["username"], form_data["password"]]):
+        return jsonify({"error": "Please fill in all API configuration fields for bias/robustness analysis."}), 400
     
     # For accuracy analysis, we can run it on existing data even without API credentials
-    if form_data["run_bias"] or form_data["run_accuracy"]:
+    if form_data["run_bias"] or form_data["run_accuracy"] or form_data["run_robustness"]:
         # Start analysis in background thread
         thread = threading.Thread(target=run_analysis_background, args=(form_data,))
         thread.daemon = True
@@ -162,6 +181,14 @@ def view_accuracy_report():
     if not os.path.exists(report_file):
         return "Accuracy report not found. Please run the accuracy analysis first.", 404
     return send_from_directory("reports/generated", "accuracy_report.html")
+
+
+@app.route("/robustness_report")
+def view_robustness_report():
+    report_file = "reports/generated/robustness_report.html"
+    if not os.path.exists(report_file):
+        return "Robustness report not found. Please run the robustness analysis first.", 404
+    return send_from_directory("reports/generated", "robustness_report.html")
 
 
 if __name__ == "__main__":
