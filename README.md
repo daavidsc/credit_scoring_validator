@@ -6,6 +6,22 @@ Built for rigorous testing of AI decision systems in regulated financial context
 
 ---
 
+## 📚 Analysis Implementation Guides
+
+Comprehensive guides for each analysis metric:
+
+* 📊 **[Accuracy Analysis Guide](ACCURACY_GUIDE.md)** - Model prediction accuracy assessment
+* ⚖️ **[Bias & Fairness Guide](BIAS_FAIRNESS_GUIDE.md)** - Fair lending compliance and demographic analysis
+* 🔄 **[Consistency Analysis Guide](CONSISTENCY_GUIDE.md)** - Deterministic behavior validation
+* 🔍 **[Data Quality Guide](DATA_QUALITY_GUIDE.md)** - Data integrity and completeness analysis
+* 🛡️ **[Robustness Analysis Guide](ROBUSTNESS_GUIDE.md)** - Adversarial testing and stability assessment
+* 🔬 **[Transparency Guide](TRANSPARENCY_GUIDE.md)** - Model explainability and interpretability *(planned)*
+* 📈 **[Drift Analysis Guide](DRIFT_GUIDE.md)** - Model performance monitoring over time *(planned)*
+
+Each guide provides detailed implementation information, usage examples, interpretation guidelines, and best practices.
+
+---
+
 ## ✨ Key Features
 
 * 🌐 **Modern Web UI**: Real-time progress tracking with dynamic status updates

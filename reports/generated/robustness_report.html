@@ -46,15 +46,15 @@
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Executive Summary</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="text-center">
-                    <div class="text-3xl font-bold {{ score_class }}">{{ "%.1f" | format(robustness_score * 100) }}%</div>
+                    <div class="text-3xl font-bold score-excellent">100.0%</div>
                     <div class="text-sm text-gray-600">Overall Robustness Score</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-blue-600">{{ "%.1f" | format(decision_consistency_rate * 100) }}%</div>
+                    <div class="text-3xl font-bold text-blue-600">100.0%</div>
                     <div class="text-sm text-gray-600">Decision Consistency</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-green-600">{{ total_examples }}</div>
+                    <div class="text-3xl font-bold text-green-600">10</div>
                     <div class="text-sm text-gray-600">Test Cases</div>
                 </div>
             </div>
@@ -70,10 +70,10 @@
                         How consistently the model makes the same decision when input is perturbed.
                     </p>
                     <div class="bg-gray-200 rounded-full h-4 mb-2">
-                        <div class="bg-blue-600 h-4 rounded-full" style="width: {{ "%.1f" | format(decision_consistency_rate * 100) }}%"></div>
+                        <div class="bg-blue-600 h-4 rounded-full" style="width: 100.0%"></div>
                     </div>
                     <div class="text-sm text-gray-600">
-                        {{ consistent_decisions }} / {{ total_examples }} consistent decisions
+                        10 / 10 consistent decisions
                     </div>
                 </div>
                 
@@ -82,15 +82,13 @@
                     <p class="text-sm text-gray-600 mb-2">
                         How stable the model's confidence levels are under perturbations.
                     </p>
-                    {% if confidence_stats %}
+                    
                     <div class="text-sm">
-                        <div>Mean difference: {{ "%.3f" | format(confidence_stats.mean_difference) }}</div>
-                        <div>Max difference: {{ "%.3f" | format(confidence_stats.max_difference) }}</div>
-                        <div>Std deviation: {{ "%.3f" | format(confidence_stats.std_difference) }}</div>
+                        <div>Mean difference: 0.000</div>
+                        <div>Max difference: 0.000</div>
+                        <div>Std deviation: 0.000</div>
                     </div>
-                    {% else %}
-                    <div class="text-sm text-gray-500">No confidence data available</div>
-                    {% endif %}
+                    
                 </div>
             </div>
         </div>
@@ -99,28 +97,112 @@
         <div class="metric-card">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Analysis by Perturbation Type</h2>
             <div class="space-y-3">
-                {% for perturbation_type, stats in perturbation_analysis.items() %}
+                
                 <div class="perturbation-card">
                     <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-medium text-gray-700">{{ perturbation_type.replace('_', ' ').title() }}</h3>
-                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ stats.total_examples }} tests</span>
+                        <h3 class="font-medium text-gray-700">Noise Numerical</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">2 tests</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
                             <span class="text-gray-600">Consistency Rate:</span>
-                            <span class="font-medium ml-2">{{ "%.1f" | format(stats.consistency_rate * 100) }}%</span>
+                            <span class="font-medium ml-2">100.0%</span>
                         </div>
                         <div>
                             <span class="text-gray-600">Avg Confidence Drop:</span>
-                            <span class="font-medium ml-2">{{ "%.3f" | format(stats.average_confidence_drop) }}</span>
+                            <span class="font-medium ml-2">0.000</span>
                         </div>
                         <div>
                             <span class="text-gray-600">Max Confidence Drop:</span>
-                            <span class="font-medium ml-2">{{ "%.3f" | format(stats.max_confidence_drop) }}</span>
+                            <span class="font-medium ml-2">0.000</span>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Typos Text</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">2 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">100.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Case Change</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">2 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">100.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Missing Values</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">2 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">100.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Extreme Values</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">2 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">100.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
         
@@ -131,68 +213,18 @@
         </div>
         
         <!-- Failure Cases -->
-        {% if failure_cases %}
-        <div class="metric-card">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Failure Cases</h2>
-            <p class="text-sm text-gray-600 mb-4">
-                Cases where the model showed significant inconsistency or confidence drops.
-            </p>
-            <div class="space-y-3 max-h-96 overflow-y-auto">
-                {% for case in failure_cases[:10] %}
-                <div class="failure-case">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">{{ case.perturbation_type.replace('_', ' ').title() }}</span>
-                        <span class="text-sm text-gray-600">
-                            {{ case.original_decision or 'Unknown' }} → {{ case.perturbed_decision or 'Unknown' }}
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">{{ case.original_response }}</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">{{ case.perturbed_response }}</div>
-                        </div>
-                    </div>
-                    {% if case.original_confidence and case.perturbed_confidence %}
-                    <div class="text-sm text-gray-600 mt-2">
-                        Confidence: {{ "%.2f" | format(case.original_confidence) }} → {{ "%.2f" | format(case.perturbed_confidence) }}
-                        (Δ {{ "%.2f" | format((case.perturbed_confidence - case.original_confidence)|abs) }})
-                    </div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-                {% if failure_cases|length > 10 %}
-                <div class="text-sm text-gray-600 text-center">
-                    ... and {{ failure_cases|length - 10 }} more failure cases
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
+        
         
         <!-- Recommendations -->
         <div class="metric-card">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Recommendations</h2>
             <div class="space-y-2 text-sm text-gray-700">
-                {% if robustness_score >= 0.8 %}
+                
                 <div class="flex items-start space-x-2">
                     <span class="text-green-500 mt-1">✓</span>
                     <span>Excellent robustness! The model shows strong consistency across perturbations.</span>
                 </div>
-                {% elif robustness_score >= 0.6 %}
-                <div class="flex items-start space-x-2">
-                    <span class="text-yellow-500 mt-1">⚠</span>
-                    <span>Good robustness, but consider improving consistency for certain perturbation types.</span>
-                </div>
-                {% else %}
-                <div class="flex items-start space-x-2">
-                    <span class="text-red-500 mt-1">✗</span>
-                    <span>Poor robustness detected. Significant improvements needed in model stability.</span>
-                </div>
-                {% endif %}
+                
                 
                 <div class="flex items-start space-x-2">
                     <span class="text-blue-500 mt-1">i</span>
@@ -213,20 +245,20 @@
         
         <!-- Footer -->
         <div class="text-center text-sm text-gray-500 mt-8">
-            Generated on {{ timestamp }}
+            Generated on 2025-08-13 12:34:15
         </div>
     </div>
     
     <script>
         // Create perturbation impact chart
         const perturbationData = {
-            x: [{% for ptype, stats in perturbation_analysis.items() %}'{{ ptype.replace("_", " ").title() }}'{% if not loop.last %},{% endif %}{% endfor %}],
-            y: [{% for ptype, stats in perturbation_analysis.items() %}{{ stats.consistency_rate }}{% if not loop.last %},{% endif %}{% endfor %}],
+            x: ['Noise Numerical','Typos Text','Case Change','Missing Values','Extreme Values'],
+            y: [1.0,1.0,1.0,1.0,1.0],
             type: 'bar',
             marker: {
-                color: [{% for ptype, stats in perturbation_analysis.items() %}{% if stats.consistency_rate >= 0.8 %}'#059669'{% elif stats.consistency_rate >= 0.6 %}'#0891b2'{% elif stats.consistency_rate >= 0.4 %}'#d97706'{% else %}'#dc2626'{% endif %}{% if not loop.last %},{% endif %}{% endfor %}]
+                color: ['#059669','#059669','#059669','#059669','#059669']
             },
-            text: [{% for ptype, stats in perturbation_analysis.items() %}'{{ "%.1f" | format(stats.consistency_rate * 100) }}%'{% if not loop.last %},{% endif %}{% endfor %}],
+            text: ['100.0%','100.0%','100.0%','100.0%','100.0%'],
             textposition: 'auto'
         };
         

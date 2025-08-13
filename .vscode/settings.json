@@ -1,11 +1,4 @@
 {
     "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python-envs.pythonProjects": [],
-    "files.associations": {
-        "reports/templates/*.html": "jinja-html",
-        "templates/*.html": "jinja-html"
-    },
-    "emmet.includeLanguages": {
-        "jinja-html": "html"
-    }
+    "python-envs.pythonProjects": []
 }

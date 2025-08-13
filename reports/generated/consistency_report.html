@@ -64,19 +64,19 @@
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Executive Summary</h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="text-center">
-                    <div class="text-3xl font-bold {{ score_class }}">{{ "%.1f" | format(overall_consistency_score * 100) }}%</div>
+                    <div class="text-3xl font-bold score-excellent">100.0%</div>
                     <div class="text-sm text-gray-600">Overall Consistency Score</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-green-600">{{ "%.1f" | format(decision_consistency * 100) }}%</div>
+                    <div class="text-3xl font-bold text-green-600">100.0%</div>
                     <div class="text-sm text-gray-600">Decision Consistency</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-blue-600">{{ "%.1f" | format(confidence_consistency * 100) }}%</div>
+                    <div class="text-3xl font-bold text-blue-600">100.0%</div>
                     <div class="text-sm text-gray-600">Confidence Consistency</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-purple-600">{{ total_inputs }}</div>
+                    <div class="text-3xl font-bold text-purple-600">2</div>
                     <div class="text-sm text-gray-600">Test Cases</div>
                 </div>
             </div>
@@ -92,10 +92,10 @@
                         Identical responses for the same input data.
                     </p>
                     <div class="bg-gray-200 rounded-full h-4 mb-2">
-                        <div class="bg-green-600 h-4 rounded-full" style="width: {{ '%.1f' | format(perfect_consistency * 100) }}%"></div>
+                        <div class="bg-green-600 h-4 rounded-full" style="width: 100.0%"></div>
                     </div>
                     <div class="text-sm text-gray-600">
-                        {{ "%.1f" | format(perfect_consistency * 100) }}% of inputs had identical responses
+                        100.0% of inputs had identical responses
                     </div>
                 </div>
                 
@@ -105,10 +105,10 @@
                         Same approve/deny decision across repeated calls.
                     </p>
                     <div class="bg-gray-200 rounded-full h-4 mb-2">
-                        <div class="bg-blue-600 h-4 rounded-full" style="width: {{ '%.1f' | format(decision_consistency * 100) }}%"></div>
+                        <div class="bg-blue-600 h-4 rounded-full" style="width: 100.0%"></div>
                     </div>
                     <div class="text-sm text-gray-600">
-                        {{ "%.1f" | format(decision_consistency * 100) }}% had consistent decisions
+                        100.0% had consistent decisions
                     </div>
                 </div>
                 
@@ -118,10 +118,10 @@
                         Confidence scores within 5% tolerance.
                     </p>
                     <div class="bg-gray-200 rounded-full h-4 mb-2">
-                        <div class="bg-purple-600 h-4 rounded-full" style="width: {{ '%.1f' | format(confidence_consistency * 100) }}%"></div>
+                        <div class="bg-purple-600 h-4 rounded-full" style="width: 100.0%"></div>
                     </div>
                     <div class="text-sm text-gray-600">
-                        {{ "%.1f" | format(confidence_consistency * 100) }}% had stable confidence
+                        100.0% had stable confidence
                     </div>
                 </div>
             </div>
@@ -136,19 +136,19 @@
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Mean Similarity:</span>
-                            <span class="font-medium">{{ "%.3f" | format(statistics.mean_text_similarity) }}</span>
+                            <span class="font-medium">1.000</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Standard Deviation:</span>
-                            <span class="font-medium">{{ "%.3f" | format(statistics.std_text_similarity) }}</span>
+                            <span class="font-medium">0.000</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Minimum Similarity:</span>
-                            <span class="font-medium">{{ "%.3f" | format(statistics.min_text_similarity) }}</span>
+                            <span class="font-medium">1.000</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Maximum Similarity:</span>
-                            <span class="font-medium">{{ "%.3f" | format(statistics.max_text_similarity) }}</span>
+                            <span class="font-medium">1.000</span>
                         </div>
                     </div>
                 </div>
@@ -158,19 +158,19 @@
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Total API Calls:</span>
-                            <span class="font-medium">{{ total_responses }}</span>
+                            <span class="font-medium">6</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Unique Inputs Tested:</span>
-                            <span class="font-medium">{{ total_inputs }}</span>
+                            <span class="font-medium">2</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Avg Calls per Input:</span>
-                            <span class="font-medium">{{ "%.1f" | format(total_responses / total_inputs) if total_inputs > 0 else 0 }}</span>
+                            <span class="font-medium">3.0</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Inconsistent Cases:</span>
-                            <span class="font-medium text-red-600">{{ inconsistent_cases | length }}</span>
+                            <span class="font-medium text-red-600">0</span>
                         </div>
                     </div>
                 </div>
@@ -187,138 +187,107 @@
         <div class="metric-card">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Per-Input Analysis</h2>
             <div class="space-y-3 max-h-96 overflow-y-auto">
-                {% for input_analysis in consistency_by_input %}
-                <div class="{% if input_analysis.perfect_consistent %}consistent-case{% else %}inconsistent-case{% endif %}">
+                
+                <div class="consistent-case">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium">Input {{ loop.index }}</span>
+                        <span class="font-medium">Input 1</span>
                         <div class="flex space-x-2">
-                            {% if input_analysis.perfect_consistent %}
+                            
                                 <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Perfect</span>
-                            {% else %}
-                                {% if input_analysis.decision_consistent %}
-                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Decision OK</span>
-                                {% else %}
-                                    <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Decision ❌</span>
-                                {% endif %}
-                                {% if input_analysis.confidence_consistent %}
-                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Confidence OK</span>
-                                {% else %}
-                                    <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Confidence ❌</span>
-                                {% endif %}
-                            {% endif %}
+                            
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
                             <span class="text-gray-600">Responses:</span>
-                            <span class="font-medium">{{ input_analysis.num_responses }}</span>
+                            <span class="font-medium">3</span>
                         </div>
                         <div>
                             <span class="text-gray-600">Unique Responses:</span>
-                            <span class="font-medium">{{ input_analysis.unique_responses }}</span>
+                            <span class="font-medium">1</span>
                         </div>
                         <div>
                             <span class="text-gray-600">Text Similarity:</span>
-                            <span class="font-medium">{{ "%.3f" | format(input_analysis.avg_text_similarity) }}</span>
+                            <span class="font-medium">1.000</span>
                         </div>
                     </div>
                     
-                    {% if input_analysis.response_texts and input_analysis.response_texts|length > 1 %}
+                    
                     <div class="mt-3">
                         <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
-                        {% for response in input_analysis.response_texts[:2] %}
+                        
                         <div class="response-comparison">
-                            <strong>Response {{ loop.index }}:</strong> {{ response[:100] }}{% if response|length > 100 %}...{% endif %}
+                            <strong>Response 1:</strong> Approve with 80% confidence
                         </div>
-                        {% endfor %}
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> Approve with 80% confidence
+                        </div>
+                        
                     </div>
-                    {% endif %}
+                    
                 </div>
-                {% endfor %}
+                
+                <div class="consistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 2</span>
+                        <div class="flex space-x-2">
+                            
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Perfect</span>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">1</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">1.000</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> Approve with 80% confidence
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> Approve with 80% confidence
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
             </div>
         </div>
         
         <!-- Inconsistent Cases -->
-        {% if inconsistent_cases %}
-        <div class="metric-card">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Detailed Inconsistency Analysis</h2>
-            <p class="text-sm text-gray-600 mb-4">
-                Cases where the model produced different responses for identical inputs.
-            </p>
-            <div class="space-y-4 max-h-96 overflow-y-auto">
-                {% for case in inconsistent_cases[:5] %}
-                <div class="inconsistent-case">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="font-medium text-red-700">Inconsistent Case {{ loop.index }}</span>
-                        <div class="flex space-x-1">
-                            {% for issue in case.issues %}
-                                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">{{ issue.replace('_', ' ').title() }}</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    
-                    {% if case.decisions %}
-                    <div class="mb-2">
-                        <span class="text-sm font-medium text-gray-700">Decisions:</span>
-                        <span class="text-sm">{{ case.decisions | join(', ') }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    {% if case.confidences %}
-                    <div class="mb-3">
-                        <span class="text-sm font-medium text-gray-700">Confidences:</span>
-                        <span class="text-sm">{{ case.confidences | join(', ') }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="space-y-2">
-                        <div class="text-sm font-medium text-gray-700">All Responses:</div>
-                        {% for response in case.responses %}
-                        <div class="response-comparison">
-                            <strong>Response {{ loop.index }}:</strong> {{ response[:150] }}{% if response|length > 150 %}...{% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-                
-                {% if inconsistent_cases|length > 5 %}
-                <div class="text-sm text-gray-600 text-center">
-                    ... and {{ inconsistent_cases|length - 5 }} more inconsistent cases
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
+        
         
         <!-- Recommendations -->
         <div class="metric-card">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Recommendations</h2>
             <div class="space-y-2 text-sm text-gray-700">
-                {% if overall_consistency_score >= 0.9 %}
+                
                 <div class="flex items-start space-x-2">
                     <span class="text-green-500 mt-1">✓</span>
                     <span>Excellent consistency! The model produces highly reliable responses.</span>
                 </div>
-                {% elif overall_consistency_score >= 0.7 %}
-                <div class="flex items-start space-x-2">
-                    <span class="text-yellow-500 mt-1">⚠</span>
-                    <span>Good consistency, but some responses vary. Consider investigating inconsistent cases.</span>
-                </div>
-                {% else %}
-                <div class="flex items-start space-x-2">
-                    <span class="text-red-500 mt-1">✗</span>
-                    <span>Poor consistency detected. Model responses are unreliable and need attention.</span>
-                </div>
-                {% endif %}
                 
-                {% if decision_consistency < 0.95 %}
-                <div class="flex items-start space-x-2">
-                    <span class="text-red-500 mt-1">!</span>
-                    <span>Decision inconsistency is a critical issue - same inputs should always yield same decisions.</span>
-                </div>
-                {% endif %}
+                
+                
                 
                 <div class="flex items-start space-x-2">
                     <span class="text-blue-500 mt-1">i</span>
@@ -339,18 +308,13 @@
         
         <!-- Footer -->
         <div class="text-center text-sm text-gray-500 mt-8">
-            Generated on {{ timestamp }}
+            Generated on 2025-08-13 12:34:15
         </div>
     </div>
     
     <script>
         // Create consistency score distribution chart
-        const consistencyScores = [
-            {%- for input_analysis in consistency_by_input -%}
-                {{ input_analysis.avg_text_similarity }}
-                {%- if not loop.last -%},{%- endif -%}
-            {%- endfor -%}
-        ];
+        const consistencyScores = [1.0,1.0];
         
         const histogramData = {
             x: consistencyScores,
