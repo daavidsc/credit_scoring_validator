@@ -95,6 +95,22 @@
             color: #3498db;
         }
 
+        .quality-excellent {
+            color: #27ae60 !important;
+        }
+
+        .quality-good {
+            color: #f39c12 !important;
+        }
+
+        .quality-fair {
+            color: #e67e22 !important;
+        }
+
+        .quality-poor {
+            color: #e74c3c !important;
+        }
+
         .metric-label {
             color: #7f8c8d;
             font-size: 0.9em;
@@ -136,9 +152,109 @@
         <ul>
             <li><strong>Observational Analysis:</strong> Compares overall outcomes across demographic groups</li>
             <li><strong>Counterfactual Analysis:</strong> Tests for disparate treatment by changing only protected attributes</li>
+            <li><strong>Data Quality Analysis:</strong> Evaluates API response reliability and error rates</li>
         </ul>
     </div>
 
+    
+    <h2>🔧 Data Quality & System Reliability</h2>
+    
+    <div class="summary-box">
+        <div class="metric-card">
+            <div class="metric-value quality-fair">80.0%</div>
+            <div class="metric-label">Overall Data Quality Score</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value">0.0%</div>
+            <div class="metric-label">Error Rate</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value">10</div>
+            <div class="metric-label">Total Requests</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value">8</div>
+            <div class="metric-label">Valid Scores Received</div>
+        </div>
+
+        
+        
+        <div class="warning">
+            ⚠️ <strong>Fair Data Quality:</strong> Some system reliability concerns noted.
+        </div>
+        
+
+        
+        <h4>Error Breakdown</h4>
+        <table>
+            <tr>
+                <th>Error Type</th>
+                <th>Count</th>
+                <th>Percentage</th>
+                <th>Description</th>
+            </tr>
+            
+            <tr>
+                <td><strong>Parsing Error</strong></td>
+                <td>2</td>
+                <td>20.0%</td>
+                <td>
+                    Response format issues
+                    
+                </td>
+            </tr>
+            
+            <tr>
+                <td><strong>Missing Score</strong></td>
+                <td>2</td>
+                <td>20.0%</td>
+                <td>
+                    API responded but no credit score provided
+                    
+                </td>
+            </tr>
+            
+        </table>
+        
+
+        <h4>Response Completeness Analysis</h4>
+        <div class="metric-card">
+            <div class="metric-value">80.0%</div>
+            <div class="metric-label">Response Completeness Score</div>
+        </div>
+        
+        
+        <table>
+            <tr>
+                <th>Completeness Issue</th>
+                <th>Count</th>
+                <th>Percentage</th>
+            </tr>
+            
+            <tr>
+                <td><strong>Empty Response</strong></td>
+                <td>2</td>
+                <td>20.0%</td>
+            </tr>
+            
+        </table>
+        
+
+        <h4>📋 Recommendations</h4>
+        <ul>
+            
+            <li>Response completeness is below optimal. Review API response format and parsing logic.</li>
+            
+        </ul>
+    </div>
+    
+
+    
+    
+    
     
     <h2>🔍 Protected Attribute: Gender</h2>
 
@@ -212,14 +328,14 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                36.7%
+                10.0%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">11</div>
+            <div class="metric-value">3</div>
             <div class="metric-label">Total Violations</div>
         </div>
 
@@ -235,7 +351,7 @@
         
             
             <div class="alert">
-                🚨 <strong>HIGH BIAS DETECTED:</strong> 36.7% of identical profiles received different outcomes when only gender was changed. This suggests potential discriminatory treatment.
+                🚨 <strong>HIGH BIAS DETECTED:</strong> 10.0% of identical profiles received different outcomes when only gender was changed. This suggests potential discriminatory treatment.
             </div>
             
         
@@ -260,6 +376,8 @@
         </ul>
     </div>
 
+    
+    
     
     <h2>🔍 Protected Attribute: Ethnicity</h2>
 
@@ -333,14 +451,14 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                33.3%
+                30.0%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">10</div>
+            <div class="metric-value">9</div>
             <div class="metric-label">Total Violations</div>
         </div>
 
@@ -356,7 +474,7 @@
         
             
             <div class="alert">
-                🚨 <strong>HIGH BIAS DETECTED:</strong> 33.3% of identical profiles received different outcomes when only ethnicity was changed. This suggests potential discriminatory treatment.
+                🚨 <strong>HIGH BIAS DETECTED:</strong> 30.0% of identical profiles received different outcomes when only ethnicity was changed. This suggests potential discriminatory treatment.
             </div>
             
         
@@ -381,6 +499,8 @@
         </ul>
     </div>
 
+    
+    
     
     <h2>🔍 Protected Attribute: Nationality</h2>
 
@@ -439,14 +559,14 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                32.3%
+                17.3%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">97</div>
+            <div class="metric-value">52</div>
             <div class="metric-label">Total Violations</div>
         </div>
 
@@ -462,7 +582,7 @@
         
             
             <div class="alert">
-                🚨 <strong>HIGH BIAS DETECTED:</strong> 32.3% of identical profiles received different outcomes when only nationality was changed. This suggests potential discriminatory treatment.
+                🚨 <strong>HIGH BIAS DETECTED:</strong> 17.3% of identical profiles received different outcomes when only nationality was changed. This suggests potential discriminatory treatment.
             </div>
             
         
@@ -487,6 +607,8 @@
         </ul>
     </div>
 
+    
+    
     
     <h2>🔍 Protected Attribute: Disability_status</h2>
 
@@ -545,14 +667,14 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                44.8%
+                20.0%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">26</div>
+            <div class="metric-value">12</div>
             <div class="metric-label">Total Violations</div>
         </div>
 
@@ -568,7 +690,7 @@
         
             
             <div class="alert">
-                🚨 <strong>HIGH BIAS DETECTED:</strong> 44.8% of identical profiles received different outcomes when only disability_status was changed. This suggests potential discriminatory treatment.
+                🚨 <strong>HIGH BIAS DETECTED:</strong> 20.0% of identical profiles received different outcomes when only disability_status was changed. This suggests potential discriminatory treatment.
             </div>
             
         
@@ -576,7 +698,7 @@
         
         <p><strong>Analysis Details:</strong></p>
         <ul>
-            <li>Tested 58 counterfactual comparisons across 30 profiles</li>
+            <li>Tested 60 counterfactual comparisons across 30 profiles</li>
             <li>Violations detected when score differed by ≥10 points or classification changed</li>
             <li>Each violation represents a case where changing only disability_status affected the credit decision</li>
         </ul>
@@ -593,6 +715,8 @@
         </ul>
     </div>
 
+    
+    
     
     <h2>🔍 Protected Attribute: Marital_status</h2>
 
@@ -666,14 +790,14 @@
         <div class="metric-card">
             <div class="metric-value">
                 
-                45.6%
+                18.9%
                 
             </div>
             <div class="metric-label">Bias Violation Rate</div>
         </div>
 
         <div class="metric-card">
-            <div class="metric-value">41</div>
+            <div class="metric-value">17</div>
             <div class="metric-label">Total Violations</div>
         </div>
 
@@ -689,7 +813,7 @@
         
             
             <div class="alert">
-                🚨 <strong>HIGH BIAS DETECTED:</strong> 45.6% of identical profiles received different outcomes when only marital_status was changed. This suggests potential discriminatory treatment.
+                🚨 <strong>HIGH BIAS DETECTED:</strong> 18.9% of identical profiles received different outcomes when only marital_status was changed. This suggests potential discriminatory treatment.
             </div>
             
         
@@ -714,6 +838,7 @@
         </ul>
     </div>
 
+    
     
 
     <div class="summary-box">

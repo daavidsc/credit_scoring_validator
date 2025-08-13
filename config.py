@@ -2,7 +2,7 @@
 
 # Will be moved to .env later
 
-API_URL = "https://verbose-space-journey-7x4gr9xx4xwfw4r7-8000.app.github.dev"
+API_URL = "https://stunning-giggle-p6qxgr66w57c6gg5-8000.app.github.dev"
 
 # Basic Auth credentials
 USERNAME = "FS_Group4"

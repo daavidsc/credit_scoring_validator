@@ -95,6 +95,22 @@
             color: #3498db;
         }
 
+        .quality-excellent {
+            color: #27ae60 !important;
+        }
+
+        .quality-good {
+            color: #f39c12 !important;
+        }
+
+        .quality-fair {
+            color: #e67e22 !important;
+        }
+
+        .quality-poor {
+            color: #e74c3c !important;
+        }
+
         .metric-label {
             color: #7f8c8d;
             font-size: 0.9em;
@@ -136,10 +152,107 @@
         <ul>
             <li><strong>Observational Analysis:</strong> Compares overall outcomes across demographic groups</li>
             <li><strong>Counterfactual Analysis:</strong> Tests for disparate treatment by changing only protected attributes</li>
+            <li><strong>Data Quality Analysis:</strong> Evaluates API response reliability and error rates</li>
         </ul>
     </div>
 
+    {% if results.data_quality %}
+    <h2>🔧 Data Quality & System Reliability</h2>
+    
+    <div class="summary-box">
+        <div class="metric-card">
+            <div class="metric-value quality-{{ results.data_quality.overall_quality.level|lower }}">{{ "%.1f"|format(results.data_quality.overall_quality.score) }}%</div>
+            <div class="metric-label">Overall Data Quality Score</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value">{{ "%.1f"|format(results.data_quality.error_metrics.error_rate) }}%</div>
+            <div class="metric-label">Error Rate</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value">{{ results.data_quality.error_metrics.total_requests }}</div>
+            <div class="metric-label">Total Requests</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-value">{{ results.data_quality.error_metrics.valid_scores }}</div>
+            <div class="metric-label">Valid Scores Received</div>
+        </div>
+
+        {% set quality_level = results.data_quality.overall_quality.level %}
+        {% if quality_level == "Poor" %}
+        <div class="alert">
+            ⚠️ <strong>Poor Data Quality Detected:</strong> System reliability issues may impact bias analysis accuracy.
+        </div>
+        {% elif quality_level == "Fair" %}
+        <div class="warning">
+            ⚠️ <strong>Fair Data Quality:</strong> Some system reliability concerns noted.
+        </div>
+        {% endif %}
+
+        {% if results.data_quality.error_metrics.error_breakdown %}
+        <h4>Error Breakdown</h4>
+        <table>
+            <tr>
+                <th>Error Type</th>
+                <th>Count</th>
+                <th>Percentage</th>
+                <th>Description</th>
+            </tr>
+            {% for error_type, error_data in results.data_quality.error_metrics.error_breakdown.items() %}
+            <tr>
+                <td><strong>{{ error_type|replace("_", " ")|title }}</strong></td>
+                <td>{{ error_data.count }}</td>
+                <td>{{ "%.1f"|format(error_data.percentage) }}%</td>
+                <td>
+                    {% if error_type == "http_error" %}HTTP/API errors (500, 401, etc.)
+                    {% elif error_type == "timeout" %}Request timeouts
+                    {% elif error_type == "connection_error" %}Network connectivity issues
+                    {% elif error_type == "missing_score" %}API responded but no credit score provided
+                    {% elif error_type == "parsing_error" %}Response format issues
+                    {% else %}{{ error_type|replace("_", " ")|title }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+
+        <h4>Response Completeness Analysis</h4>
+        <div class="metric-card">
+            <div class="metric-value">{{ "%.1f"|format(results.data_quality.completeness_metrics.completeness_score) }}%</div>
+            <div class="metric-label">Response Completeness Score</div>
+        </div>
+        
+        {% if results.data_quality.completeness_metrics.issues %}
+        <table>
+            <tr>
+                <th>Completeness Issue</th>
+                <th>Count</th>
+                <th>Percentage</th>
+            </tr>
+            {% for issue_type, issue_data in results.data_quality.completeness_metrics.issues.items() %}
+            <tr>
+                <td><strong>{{ issue_type|replace("_", " ")|title }}</strong></td>
+                <td>{{ issue_data.count }}</td>
+                <td>{{ "%.1f"|format(issue_data.percentage) }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+
+        <h4>📋 Recommendations</h4>
+        <ul>
+            {% for recommendation in results.data_quality.recommendations %}
+            <li>{{ recommendation }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
     {% for attr, attr_results in results.items() %}
+    {% if attr != "data_quality" %}
     <h2>🔍 Protected Attribute: {{ attr|title }}</h2>
 
     <div class="summary-box">
@@ -263,6 +376,7 @@
         </ul>
     </div>
 
+    {% endif %}
     {% endfor %}
 
     <div class="summary-box">

@@ -6,6 +6,7 @@ import os
 from api.client import send_request
 from config import RESPONSE_DIR
 from utils.logger import setup_logger
+from analysis.data_quality import generate_data_quality_summary
 
 logger = setup_logger("bias_fairness", "results/logs/bias_fairness.log")
 
@@ -71,7 +72,18 @@ def demographic_parity(responses, protected_attr, positive_class="Good"):
     positive_class can be 'Good', 'Average', 'Poor', or a specific score threshold.
     """
     groups = {}
+    total_processed = 0
+    errors_encountered = 0
+    
     for entry in responses:
+        total_processed += 1
+        
+        # Skip entries with errors - check for error keys in the entry
+        has_error = "error" in entry or "error_type" in entry
+        if has_error or "output" not in entry:
+            errors_encountered += 1
+            continue
+            
         group = entry["input"].get(protected_attr)
         # Look for the parsed response structure
         parsed_output = entry["output"].get("parsed", {})
@@ -79,10 +91,17 @@ def demographic_parity(responses, protected_attr, positive_class="Good"):
         credit_score = parsed_output.get("credit_score")
         
         if group is None or (classification is None and credit_score is None):
+            errors_encountered += 1
             continue
 
         if group not in groups:
-            groups[group] = {"total": 0, "positive": 0, "scores": [], "classifications": {"Poor": 0, "Average": 0, "Good": 0}}
+            groups[group] = {
+                "total": 0, 
+                "positive": 0, 
+                "scores": [], 
+                "classifications": {"Poor": 0, "Average": 0, "Good": 0},
+                "errors": 0
+            }
 
         groups[group]["total"] += 1
         
@@ -92,7 +111,7 @@ def demographic_parity(responses, protected_attr, positive_class="Good"):
                 score_val = float(credit_score)
                 groups[group]["scores"].append(score_val)
             except (ValueError, TypeError):
-                pass
+                groups[group]["errors"] += 1
         
         # Track classification distribution
         if classification and classification in groups[group]["classifications"]:
@@ -109,13 +128,14 @@ def demographic_parity(responses, protected_attr, positive_class="Good"):
                 score_val = float(credit_score)
                 is_positive = score_val >= 70  # Threshold for 0-100 scale
             except (ValueError, TypeError):
-                pass
+                groups[group]["errors"] += 1
         
         if is_positive:
             groups[group]["positive"] += 1
 
     # Calculate and log statistics
-    logger.info(f"Demographic Parity by {protected_attr}")
+    logger.info(f"Demographic Parity by {protected_attr}: "
+                f"Processed {total_processed}, Errors {errors_encountered}")
     for group, values in groups.items():
         rate = values["positive"] / values["total"] if values["total"] > 0 else 0
         avg_score = sum(values["scores"]) / len(values["scores"]) if values["scores"] else 0
@@ -258,13 +278,23 @@ def run_bias_analysis():
 
     if analysis_status:
         analysis_status["progress"] = 82
-        analysis_status["message"] = f"Loaded {len(responses)} API responses, analyzing bias patterns..."
+        analysis_status["message"] = f"Loaded {len(responses)} API responses, analyzing data quality..."
+    
+    # Generate data quality analysis
+    data_quality_summary = generate_data_quality_summary(responses)
+    logger.info(f"Data quality analysis complete: {data_quality_summary['overall_quality']['score']:.1f}% quality score")
 
-    results = {}
+    if analysis_status:
+        analysis_status["progress"] = 85
+        analysis_status["message"] = f"Data quality analyzed, starting bias pattern analysis..."
+
+    results = {
+        "data_quality": data_quality_summary
+    }
 
     for i, attr in enumerate(PROTECTED_ATTRIBUTES):
         if analysis_status:
-            progress = 82 + int((i / total_attributes) * 15)  # 82-97% for bias analysis
+            progress = 85 + int((i / total_attributes) * 12)  # 85-97% for bias analysis
             analysis_status["progress"] = progress
             analysis_status["message"] = f"Analyzing bias patterns for {attr} ({i+1}/{total_attributes})..."
         

@@ -93,12 +93,53 @@ def send_request(row: dict) -> dict:
 
         return {
             "raw_response": data,
-            "parsed": parsed_content
+            "parsed": parsed_content,
+            "status": "success",
+            "status_code": response.status_code
         }
 
-    except requests.RequestException as e:
-        logger.error(f"API error for row {row.get('name')}: {e}")
-        return {
+    except requests.HTTPError as e:
+        error_details = {
+            "error_type": "http_error",
+            "error": str(e),
+            "status_code": getattr(e.response, 'status_code', None),
+            "payload": payload
+        }
+        logger.error(f"HTTP error for row {row.get('name')}: {e} (Status: {error_details['status_code']})")
+        return error_details
+    
+    except requests.Timeout as e:
+        error_details = {
+            "error_type": "timeout",
             "error": str(e),
             "payload": payload
         }
+        logger.error(f"Timeout error for row {row.get('name')}: {e}")
+        return error_details
+    
+    except requests.ConnectionError as e:
+        error_details = {
+            "error_type": "connection_error",
+            "error": str(e),
+            "payload": payload
+        }
+        logger.error(f"Connection error for row {row.get('name')}: {e}")
+        return error_details
+    
+    except requests.RequestException as e:
+        error_details = {
+            "error_type": "request_error",
+            "error": str(e),
+            "payload": payload
+        }
+        logger.error(f"Request error for row {row.get('name')}: {e}")
+        return error_details
+    
+    except Exception as e:
+        error_details = {
+            "error_type": "unknown_error",
+            "error": str(e),
+            "payload": payload
+        }
+        logger.error(f"Unexpected error for row {row.get('name')}: {e}")
+        return error_details
