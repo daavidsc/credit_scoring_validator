@@ -328,7 +328,7 @@
         <div class="header">
             <h1>⚖️ Credit Scoring Bias & Fairness Analysis</h1>
             <p>Comprehensive evaluation of fairness across protected attributes</p>
-            <p class="timestamp">Generated automatically</p>
+            <p class="timestamp">Generated on {{ "now" | date }}</p>
         </div>
 
         <!-- Executive Summary -->
@@ -347,9 +347,6 @@
         <div class="section">
             <h2>📊 Data Quality Overview</h2>
             {% set quality = results.data_quality.overall_quality %}
-            {% set error_metrics = results.data_quality.error_metrics %}
-            {% set completeness = results.data_quality.completeness_metrics %}
-            
             <div class="data-quality-summary {% if quality.score >= 80 %}data-quality-good{% elif quality.score >= 60 %}{% else %}data-quality-poor{% endif %}">
                 <div class="summary-grid">
                     <div class="metric-card">
@@ -357,15 +354,15 @@
                         <div class="metric-label">Overall Quality</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">{{ error_metrics.total_requests }}</div>
-                        <div class="metric-label">Total Requests</div>
+                        <div class="metric-value">{{ results.data_quality.summary.total_responses }}</div>
+                        <div class="metric-label">Total Responses</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">{{ error_metrics.valid_scores }}</div>
-                        <div class="metric-label">Valid Scores</div>
+                        <div class="metric-value">{{ results.data_quality.summary.successful_predictions }}</div>
+                        <div class="metric-label">Successful Predictions</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">{{ error_metrics.success_rate | round(1) }}%</div>
+                        <div class="metric-value">{{ (results.data_quality.summary.success_rate * 100) | round(1) }}%</div>
                         <div class="metric-label">Success Rate</div>
                     </div>
                 </div>
@@ -384,14 +381,36 @@
                 </div>
                 {% endif %}
 
-                {% if results.data_quality.recommendations %}
-                <h3>Recommendations</h3>
-                <ul style="margin: 15px 0; padding-left: 20px;">
-                    {% for recommendation in results.data_quality.recommendations %}
-                    <li style="margin-bottom: 8px; color: #475569;">{{ recommendation }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
+                <h3>Error Breakdown</h3>
+                <table class="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>Error Type</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for error_type, count in results.data_quality.error_breakdown.items() %}
+                        <tr>
+                            <td>{{ error_type | title }}</td>
+                            <td>{{ count }}</td>
+                            <td>{{ (count / results.data_quality.summary.total_responses * 100) | round(1) }}%</td>
+                            <td>
+                                {% set error_rate = count / results.data_quality.summary.total_responses %}
+                                {% if error_rate <= 0.05 %}
+                                <span class="status-indicator status-good"></span><span class="good">Low</span>
+                                {% elif error_rate <= 0.15 %}
+                                <span class="status-indicator status-warning"></span><span class="warning">Moderate</span>
+                                {% else %}
+                                <span class="status-indicator status-poor"></span><span class="poor">High</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
         {% endif %}

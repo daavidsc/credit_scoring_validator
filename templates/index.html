@@ -128,9 +128,9 @@
                     <input type="checkbox" name="run_bias" {% if form_data.run_bias %}checked{% endif %} class="accent-blue-500">
                     <span class="text-gray-800">Bias & Fairness</span>
                 </label>
-                <label class="flex items-center space-x-2 text-gray-400">
-                    <input type="checkbox" disabled class="accent-gray-400">
-                    <span>Accuracy (coming soon)</span>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="run_accuracy" {% if form_data.run_accuracy %}checked{% endif %} class="accent-blue-500">
+                    <span class="text-gray-800">Accuracy Analysis</span>
                 </label>
                 <label class="flex items-center space-x-2 text-gray-400">
                     <input type="checkbox" disabled class="accent-gray-400">
@@ -153,12 +153,22 @@
             <span id="submitText">▶️ Run Selected Analyses</span>
         </button>
 
-        <!-- Report Button (shown when report is available) -->
-        <div id="reportButton" class="mt-6 text-center hidden">
-            <a href="/report"
-                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md shadow">
-                📄 View Bias & Fairness Report
-            </a>
+        <!-- Report Buttons (shown when reports are available) -->
+        <div id="reportButtons" class="mt-6 text-center hidden">
+            <div class="space-y-3">
+                <div id="biasReportButton" class="hidden">
+                    <a href="/report"
+                        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md shadow inline-block">
+                        📄 View Bias & Fairness Report
+                    </a>
+                </div>
+                <div id="accuracyReportButton" class="hidden">
+                    <a href="/accuracy_report"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md shadow inline-block">
+                        🎯 View Accuracy Analysis Report
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Dynamic Result Output -->
@@ -171,17 +181,22 @@
     <script>
         let statusInterval;
 
-        // Check for existing report on page load
+        // Check for existing reports on page load
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('/status')
-            .then(response => response.json())
-            .then(status => {
-                if (status.completed) {
-                    document.getElementById('reportButton').classList.remove('hidden');
+            Promise.all([
+                fetch('/report').then(response => response.ok),
+                fetch('/accuracy_report').then(response => response.ok)
+            ]).then(([biasExists, accuracyExists]) => {
+                if (biasExists) {
+                    document.getElementById('biasReportButton').classList.remove('hidden');
+                    document.getElementById('reportButtons').classList.remove('hidden');
                 }
-            })
-            .catch(error => {
-                console.log('No previous analysis status found');
+                if (accuracyExists) {
+                    document.getElementById('accuracyReportButton').classList.remove('hidden');
+                    document.getElementById('reportButtons').classList.remove('hidden');
+                }
+            }).catch(error => {
+                console.log('No previous reports found');
             });
         });
 
@@ -197,8 +212,10 @@
             submitBtn.disabled = true;
             submitText.textContent = '🔄 Processing...';
             
-            // Hide report button if visible
-            document.getElementById('reportButton').classList.add('hidden');
+            // Hide report buttons if visible
+            document.getElementById('reportButtons').classList.add('hidden');
+            document.getElementById('biasReportButton').classList.add('hidden');
+            document.getElementById('accuracyReportButton').classList.add('hidden');
             
             // Submit form data via AJAX
             const formData = new FormData(this);
@@ -294,7 +311,21 @@
             // Show the report button
             setTimeout(() => {
                 document.getElementById('loadingIndicator').classList.add('hidden');
-                document.getElementById('reportButton').classList.remove('hidden');
+                
+                // Check which reports are available and show appropriate buttons
+                Promise.all([
+                    fetch('/report').then(response => response.ok).catch(() => false),
+                    fetch('/accuracy_report').then(response => response.ok).catch(() => false)
+                ]).then(([biasExists, accuracyExists]) => {
+                    if (biasExists) {
+                        document.getElementById('biasReportButton').classList.remove('hidden');
+                        document.getElementById('reportButtons').classList.remove('hidden');
+                    }
+                    if (accuracyExists) {
+                        document.getElementById('accuracyReportButton').classList.remove('hidden');
+                        document.getElementById('reportButtons').classList.remove('hidden');
+                    }
+                });
             }, 2000);
         }
 

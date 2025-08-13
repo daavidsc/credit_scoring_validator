@@ -6,7 +6,8 @@ import threading
 import time
 import json
 from analysis.bias_fairness import run_bias_analysis
-from reports.report_builder import build_bias_fairness_report
+from analysis.accuracy import run_accuracy_analysis
+from reports.report_builder import build_bias_fairness_report, build_accuracy_report
 import config
 
 app = Flask(__name__)
@@ -28,8 +29,8 @@ def run_analysis_background(form_data):
         analysis_status["running"] = True
         analysis_status["completed"] = False
         analysis_status["error"] = None
-        analysis_status["progress"] = 10
-        analysis_status["message"] = "Starting bias analysis..."
+        analysis_status["progress"] = 5
+        analysis_status["message"] = "Starting analysis..."
         
         # Update config with form values
         config.API_URL = form_data["api_url"]
@@ -37,24 +38,47 @@ def run_analysis_background(form_data):
         config.PASSWORD = form_data["password"]
         config.MODEL = form_data.get("model", "gpt-3.5-turbo-0125")
         
-        analysis_status["progress"] = 20
-        analysis_status["message"] = "Configuration updated, running analysis..."
+        results = {}
+        total_analyses = sum([form_data["run_bias"], form_data["run_accuracy"]])
+        current_analysis = 0
         
-        # Pass status reference to bias analysis
-        from analysis.bias_fairness import set_status_reference
-        set_status_reference(analysis_status)
+        # Run bias analysis if selected
+        if form_data["run_bias"]:
+            current_analysis += 1
+            analysis_status["progress"] = 10 + (current_analysis - 1) * 40
+            analysis_status["message"] = f"Running bias analysis ({current_analysis}/{total_analyses})..."
+            
+            # Pass status reference to bias analysis
+            from analysis.bias_fairness import set_status_reference
+            set_status_reference(analysis_status)
+            
+            bias_results = run_bias_analysis()
+            results["bias_fairness"] = bias_results
+            
+            # Build bias report
+            build_bias_fairness_report(bias_results)
         
-        # Run the actual analysis
-        results = run_bias_analysis()
+        # Run accuracy analysis if selected
+        if form_data["run_accuracy"]:
+            current_analysis += 1
+            analysis_status["progress"] = 10 + (current_analysis - 1) * 40
+            analysis_status["message"] = f"Running accuracy analysis ({current_analysis}/{total_analyses})..."
+            
+            # Pass status reference to accuracy analysis
+            from analysis.accuracy import set_status_reference
+            set_status_reference(analysis_status)
+            
+            accuracy_results = run_accuracy_analysis()
+            results["accuracy"] = accuracy_results
+            
+            # Build accuracy report
+            build_accuracy_report(accuracy_results)
         
-        analysis_status["progress"] = 80
-        analysis_status["message"] = "Analysis complete, generating report..."
-        
-        # Build the report
-        build_bias_fairness_report(results)
+        analysis_status["progress"] = 95
+        analysis_status["message"] = "Analysis complete, finalizing reports..."
         
         analysis_status["progress"] = 100
-        analysis_status["message"] = "Report generated successfully!"
+        analysis_status["message"] = "All analyses completed successfully!"
         analysis_status["completed"] = True
         analysis_status["running"] = False
         
@@ -75,6 +99,7 @@ def index():
         "username": "",
         "password": "",
         "run_bias": False,
+        "run_accuracy": False,
         "model": "gpt-3.5-turbo-0125"
     }
     return render_template("index.html", form_data=form_data)
@@ -93,14 +118,20 @@ def start_analysis():
         "username": request.form.get("username", ""),
         "password": request.form.get("password", ""),
         "run_bias": request.form.get("run_bias") == "on",
+        "run_accuracy": request.form.get("run_accuracy") == "on",
         "model": request.form.get("model", "gpt-3.5-turbo-0125")
     }
     
-    # Validate required fields
-    if form_data["run_bias"] and not all([form_data["api_url"], form_data["username"], form_data["password"]]):
-        return jsonify({"error": "Please fill in all API configuration fields."}), 400
+    # Validate that at least one analysis is selected
+    if not (form_data["run_bias"] or form_data["run_accuracy"]):
+        return jsonify({"error": "Please select at least one analysis to run."}), 400
     
-    if form_data["run_bias"]:
+    # Validate required fields for analyses that need API calls
+    if (form_data["run_bias"]) and not all([form_data["api_url"], form_data["username"], form_data["password"]]):
+        return jsonify({"error": "Please fill in all API configuration fields for bias analysis."}), 400
+    
+    # For accuracy analysis, we can run it on existing data even without API credentials
+    if form_data["run_bias"] or form_data["run_accuracy"]:
         # Start analysis in background thread
         thread = threading.Thread(target=run_analysis_background, args=(form_data,))
         thread.daemon = True
@@ -123,6 +154,14 @@ def view_report():
     if not os.path.exists(report_file):
         return "Report not found. Please run the bias analysis first.", 404
     return send_from_directory("reports/generated", "bias_report.html")
+
+
+@app.route("/accuracy_report")
+def view_accuracy_report():
+    report_file = "reports/generated/accuracy_report.html"
+    if not os.path.exists(report_file):
+        return "Accuracy report not found. Please run the accuracy analysis first.", 404
+    return send_from_directory("reports/generated", "accuracy_report.html")
 
 
 if __name__ == "__main__":

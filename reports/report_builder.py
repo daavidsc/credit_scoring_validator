@@ -23,4 +23,20 @@ def build_bias_fairness_report(data, output_filename="bias_report.html"):
     with open(output_path, "w") as f:
         f.write(rendered)
 
-    print(f"✅ Report saved to {output_path}")
+    print(f"✅ Bias Report saved to {output_path}")
+
+
+def build_accuracy_report(data, output_filename="accuracy_report.html"):
+    """Build accuracy analysis report"""
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+    template = env.get_template("accuracy_template.html")
+
+    rendered = template.render(results=data)
+
+    output_path = os.path.join(OUTPUT_DIR, output_filename)
+    with open(output_path, "w") as f:
+        f.write(rendered)
+
+    print(f"✅ Accuracy Report saved to {output_path}")
