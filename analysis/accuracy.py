@@ -3,10 +3,80 @@
 import pandas as pd
 import json
 import numpy as np
+import os
 from typing import Dict, List, Any, Tuple, Optional
 from utils.logger import setup_logger
 
 logger = setup_logger("accuracy", "results/logs/accuracy.log")
+
+# Import additional functions we'll need
+from api.client import send_request
+
+
+def save_jsonl(data, path):
+    """Save data as JSONL format"""
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        for entry in data:
+            f.write(json.dumps(entry) + "\n")
+
+
+def load_jsonl(path):
+    """Load data from JSONL format"""
+    with open(path, "r") as f:
+        return [json.loads(line) for line in f]
+
+
+def generate_accuracy_test_data() -> List[Dict]:
+    """
+    Generate test data specifically for accuracy analysis and make API calls
+    """
+    logger.info("Generating fresh test data for accuracy analysis...")
+    
+    # Load the base test data
+    test_data_path = "data/testdata.csv"
+    try:
+        df = pd.read_csv(test_data_path)
+        logger.info(f"Loaded {len(df)} test profiles from {test_data_path}")
+    except FileNotFoundError:
+        logger.error(f"Test data file not found: {test_data_path}")
+        return []
+    except Exception as e:
+        logger.error(f"Error loading test data: {str(e)}")
+        return []
+    
+    responses = []
+    total_rows = min(len(df), 20)  # Limit to 20 calls for accuracy analysis to be faster
+    
+    if analysis_status:
+        analysis_status["message"] = f"Making API calls for accuracy analysis ({total_rows} profiles)..."
+    
+    for i, row in df.head(total_rows).iterrows():
+        if analysis_status:
+            progress = 15 + int((i + 1) / total_rows * 15)  # 15-30% for API calls
+            analysis_status["progress"] = progress
+            analysis_status["message"] = f"API call {i + 1}/{total_rows} for accuracy analysis..."
+        
+        input_data = row.to_dict()
+        
+        try:
+            prediction = send_request(input_data)
+            responses.append({
+                "input": input_data,
+                "output": prediction
+            })
+            logger.info(f"Processed accuracy test profile {i + 1}/{total_rows}")
+        except Exception as e:
+            logger.error(f"Error making API call for profile {i + 1}: {str(e)}")
+            # Add error entry to maintain count
+            responses.append({
+                "input": input_data,
+                "error": str(e),
+                "error_type": "request_error"
+            })
+    
+    logger.info(f"Generated {len(responses)} API responses for accuracy analysis")
+    return responses
 
 # Reference to global status for progress updates
 analysis_status = None
@@ -327,13 +397,29 @@ def run_accuracy_analysis(response_path: str = "results/responses/bias_fairness.
         analysis_status["progress"] = 10
         analysis_status["message"] = "Loading API responses for accuracy analysis..."
     
-    # Load responses
+    # Try to load existing responses first
+    responses = []
     try:
         responses = load_jsonl(response_path)
-        logger.info(f"Loaded {len(responses)} API responses")
+        logger.info(f"Loaded {len(responses)} existing API responses")
     except FileNotFoundError:
-        logger.error(f"Response file not found: {response_path}")
-        return {"error": f"Response file not found: {response_path}"}
+        logger.info(f"No existing response file found at {response_path}")
+        
+        if analysis_status:
+            analysis_status["progress"] = 15
+            analysis_status["message"] = "No existing API responses found. Generating test data and making API calls..."
+        
+        # Generate fresh test data and make API calls
+        responses = generate_accuracy_test_data()
+        if not responses:
+            logger.error("Failed to generate test data for accuracy analysis")
+            return {"error": "Failed to generate test data for accuracy analysis"}
+        
+        # Save the responses for potential reuse
+        accuracy_response_path = "results/responses/accuracy_analysis.jsonl"
+        save_jsonl(responses, accuracy_response_path)
+        logger.info(f"Saved {len(responses)} API responses to {accuracy_response_path}")
+        
     except Exception as e:
         logger.error(f"Error loading responses: {str(e)}")
         return {"error": f"Error loading responses: {str(e)}"}

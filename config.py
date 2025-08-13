@@ -9,6 +9,6 @@ USERNAME = "FS_Group4"
 PASSWORD = "ExpLearn123"
 
 # OpenAI Model Selection
-MODEL = "gpt-3.5-turbo-0125"
+MODEL = "gpt-5-nano"
 
 RESPONSE_DIR = "results/responses/"

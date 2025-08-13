@@ -118,7 +118,7 @@
         </div>
 
         <!-- Hidden field for model selection -->
-        <input type="hidden" name="model" id="modelField" value="{{ form_data.model or 'gpt-3.5-turbo-0125' }}">
+        <input type="hidden" name="model" id="modelField" value="{{ form_data.model or 'gpt-5-nano' }}">
 
         <!-- Module Checkboxes -->
         <div>
@@ -180,6 +180,7 @@
 
     <script>
         let statusInterval;
+        let currentAnalyses = []; // Track which analyses are running in this session
 
         // Check for existing reports on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -188,12 +189,10 @@
                 fetch('/accuracy_report').then(response => response.ok)
             ]).then(([biasExists, accuracyExists]) => {
                 if (biasExists) {
-                    document.getElementById('biasReportButton').classList.remove('hidden');
-                    document.getElementById('reportButtons').classList.remove('hidden');
+                    showPreviousReport('bias');
                 }
                 if (accuracyExists) {
-                    document.getElementById('accuracyReportButton').classList.remove('hidden');
-                    document.getElementById('reportButtons').classList.remove('hidden');
+                    showPreviousReport('accuracy');
                 }
             }).catch(error => {
                 console.log('No previous reports found');
@@ -202,6 +201,15 @@
 
         document.getElementById('analysisForm').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent normal form submission
+            
+            // Track which analyses are being run
+            currentAnalyses = [];
+            if (document.querySelector('input[name="run_bias"]').checked) {
+                currentAnalyses.push('bias');
+            }
+            if (document.querySelector('input[name="run_accuracy"]').checked) {
+                currentAnalyses.push('accuracy');
+            }
             
             // Show loading indicator
             const loadingIndicator = document.getElementById('loadingIndicator');
@@ -312,18 +320,22 @@
             setTimeout(() => {
                 document.getElementById('loadingIndicator').classList.add('hidden');
                 
-                // Check which reports are available and show appropriate buttons
-                Promise.all([
-                    fetch('/report').then(response => response.ok).catch(() => false),
-                    fetch('/accuracy_report').then(response => response.ok).catch(() => false)
-                ]).then(([biasExists, accuracyExists]) => {
-                    if (biasExists) {
-                        document.getElementById('biasReportButton').classList.remove('hidden');
-                        document.getElementById('reportButtons').classList.remove('hidden');
-                    }
-                    if (accuracyExists) {
-                        document.getElementById('accuracyReportButton').classList.remove('hidden');
-                        document.getElementById('reportButtons').classList.remove('hidden');
+                // Only show reports for analyses that were run in this session
+                currentAnalyses.forEach(analysis => {
+                    if (analysis === 'bias') {
+                        // Verify the report actually exists before showing
+                        fetch('/report').then(response => {
+                            if (response.ok) {
+                                showCurrentReport('bias');
+                            }
+                        }).catch(() => {});
+                    } else if (analysis === 'accuracy') {
+                        // Verify the report actually exists before showing
+                        fetch('/accuracy_report').then(response => {
+                            if (response.ok) {
+                                showCurrentReport('accuracy');
+                            }
+                        }).catch(() => {});
                     }
                 });
             }, 2000);
@@ -394,6 +406,45 @@
             const currentModel = document.getElementById('modelField').value;
             document.getElementById('currentModel').textContent = currentModel;
         });
+
+        // Functions to handle previous vs current reports
+        function showPreviousReport(type) {
+            const reportButtons = document.getElementById('reportButtons');
+            const buttonId = type === 'bias' ? 'biasReportButton' : 'accuracyReportButton';
+            const button = document.getElementById(buttonId);
+            
+            // Update button text to indicate it's a previous report
+            const link = button.querySelector('a');
+            if (type === 'bias') {
+                link.innerHTML = '📄 View Previous Bias Report <span class="text-xs opacity-75">(from last run)</span>';
+                link.className = 'bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md shadow inline-block';
+            } else {
+                link.innerHTML = '🎯 View Previous Accuracy Report <span class="text-xs opacity-75">(from last run)</span>';
+                link.className = 'bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md shadow inline-block';
+            }
+            
+            button.classList.remove('hidden');
+            reportButtons.classList.remove('hidden');
+        }
+
+        function showCurrentReport(type) {
+            const reportButtons = document.getElementById('reportButtons');
+            const buttonId = type === 'bias' ? 'biasReportButton' : 'accuracyReportButton';
+            const button = document.getElementById(buttonId);
+            
+            // Update button text to indicate it's a fresh report - both green
+            const link = button.querySelector('a');
+            if (type === 'bias') {
+                link.innerHTML = '📄 View Bias & Fairness Report <span class="text-xs opacity-75">(✨ just generated)</span>';
+                link.className = 'bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md shadow inline-block';
+            } else {
+                link.innerHTML = '🎯 View Accuracy Analysis Report <span class="text-xs opacity-75">(✨ just generated)</span>';
+                link.className = 'bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md shadow inline-block';
+            }
+            
+            button.classList.remove('hidden');
+            reportButtons.classList.remove('hidden');
+        }
     </script>
 
     <!-- Settings Modal -->
@@ -415,8 +466,9 @@
                         <option value="gpt-3.5-turbo-0125">GPT-3.5 Turbo (gpt-3.5-turbo-0125)</option>
                         <option value="gpt-4-turbo-2024-04-09">GPT-4 Turbo (gpt-4-turbo-2024-04-09)</option>
                         <option value="gpt-4o-mini-2024-07-18">GPT-4o Mini (gpt-4o-mini-2024-07-18)</option>
+                        <option value="gpt-5-nano">GPT-5 Nano</option>
                     </select>
-                    <p class="text-xs text-gray-500 mt-1">Currently using: <span id="currentModel" class="font-mono">gpt-3.5-turbo-0125</span></p>
+                    <p class="text-xs text-gray-500 mt-1">Currently using: <span id="currentModel" class="font-mono">gpt-5-nano</span></p>
                 </div>
             </div>
             
