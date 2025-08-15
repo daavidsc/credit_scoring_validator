@@ -47,25 +47,107 @@ def hash_input_data(data: dict) -> str:
     data_str = json.dumps(sorted_data, sort_keys=True, default=str)
     return hashlib.md5(data_str.encode()).hexdigest()
 
-def normalize_response_text(response: str) -> str:
+def normalize_response_text(response) -> str:
     """Normalize response text for comparison"""
-    if not response:
+    # Handle different response formats
+    if isinstance(response, dict):
+        # New API response format
+        if "parsed" in response and response["parsed"]:
+            parsed = response["parsed"]
+            if isinstance(parsed, dict):
+                # Create a string representation from parsed fields
+                parts = []
+                if "credit_score" in parsed and parsed["credit_score"] is not None:
+                    parts.append(f"score:{parsed['credit_score']}")
+                if "classification" in parsed and parsed["classification"]:
+                    parts.append(f"class:{parsed['classification']}")
+                if "explanation" in parsed and parsed["explanation"]:
+                    parts.append(f"reason:{parsed['explanation'][:100]}")  # Truncate long explanations
+                response_text = " ".join(parts) if parts else "no_data"
+            else:
+                response_text = str(parsed)
+        elif "raw_response" in response:
+            response_text = str(response["raw_response"])
+        else:
+            response_text = str(response)
+    elif isinstance(response, str):
+        response_text = response
+    else:
+        response_text = str(response) if response else ""
+    
+    if not response_text:
         return ""
     
     # Convert to lowercase and strip whitespace
-    normalized = response.lower().strip()
+    normalized = response_text.lower().strip()
     
     # Remove extra whitespace
     normalized = ' '.join(normalized.split())
     
     return normalized
 
-def extract_decision_and_confidence(response: str) -> Tuple[Optional[str], Optional[float]]:
+def extract_decision_and_confidence(response) -> Tuple[Optional[str], Optional[float]]:
     """Extract decision and confidence from response"""
     if not response:
         return None, None
     
-    text_lower = response.lower()
+    # Handle different response formats
+    if isinstance(response, dict):
+        # New API response format
+        if "parsed" in response and response["parsed"]:
+            parsed = response["parsed"]
+            if isinstance(parsed, dict):
+                # Extract from structured data
+                classification = parsed.get("classification", "").lower()
+                credit_score = parsed.get("credit_score")
+                explanation = parsed.get("explanation", "").lower()
+                
+                # Map classification to decision
+                decision = None
+                if classification in ["good", "approved", "approve"]:
+                    decision = "approve"
+                elif classification in ["poor", "bad", "denied", "deny", "reject"]:
+                    decision = "deny"
+                elif classification in ["average", "moderate"]:
+                    # Use credit score if available
+                    if credit_score is not None:
+                        if credit_score >= 700:
+                            decision = "approve"
+                        elif credit_score < 600:
+                            decision = "deny"
+                        else:
+                            decision = "conditional"  # Average score
+                
+                # Extract confidence from explanation or use credit score as proxy
+                confidence = None
+                if explanation:
+                    import re
+                    confidence_matches = re.findall(r'(\d+(?:\.\d+)?)%', explanation)
+                    if confidence_matches:
+                        confidence = float(confidence_matches[0]) / 100.0
+                    elif "high confidence" in explanation:
+                        confidence = 0.9
+                    elif "medium confidence" in explanation:
+                        confidence = 0.7
+                    elif "low confidence" in explanation:
+                        confidence = 0.5
+                
+                # Use credit score as confidence proxy if no explicit confidence
+                if confidence is None and credit_score is not None:
+                    confidence = min(credit_score / 850.0, 1.0)  # Normalize to 0-1
+                
+                return decision, confidence
+            else:
+                # Parsed content is not a dict, treat as string
+                response_text = str(parsed)
+        else:
+            # No parsed content, use raw response
+            response_text = str(response.get("raw_response", response))
+    else:
+        response_text = str(response)
+    
+    # Fallback to text-based extraction
+    text_lower = response_text.lower()
     
     # Extract decision
     decision = None
@@ -78,7 +160,7 @@ def extract_decision_and_confidence(response: str) -> Tuple[Optional[str], Optio
     confidence = None
     try:
         import re
-        confidence_matches = re.findall(r'(\d+(?:\.\d+)?)%', response)
+        confidence_matches = re.findall(r'(\d+(?:\.\d+)?)%', response_text)
         if confidence_matches:
             confidence = float(confidence_matches[0]) / 100.0
         elif "high confidence" in text_lower:
