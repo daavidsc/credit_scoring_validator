@@ -13,11 +13,15 @@ PROTECTED_ATTRIBUTES = ["gender", "ethnicity", "nationality", "disability_status
 
 # Reference to global status for progress updates
 analysis_status = None
+progress_start = 0  # Will be set by main app
+progress_range = 100  # Will be set by main app
 
-def set_status_reference(status_ref):
-    """Set reference to global analysis status"""
-    global analysis_status
+def set_status_reference(status_ref, start_progress=0, progress_span=100):
+    """Set reference to global analysis status and progress range"""
+    global analysis_status, progress_start, progress_range
     analysis_status = status_ref
+    progress_start = start_progress
+    progress_range = progress_span
 
 
 def save_jsonl(data, path):
@@ -38,14 +42,17 @@ def collect_responses(input_path, output_path):
     total_rows = len(df)
 
     if analysis_status:
-        analysis_status["progress"] = 30
+        start_pct = progress_start + int(0.20 * progress_range)  # 20% into allocated range
+        analysis_status["progress"] = start_pct
         analysis_status["message"] = f"Starting API calls for {total_rows} profiles..."
 
     for i, row in df.iterrows():
         input_data = row.to_dict()
         
         if analysis_status:
-            progress = 30 + int((i + 1) / total_rows * 50)  # 30-80% for API calls
+            # Use 20% to 70% of allocated range for API calls
+            call_progress = 0.20 + (i + 1) / total_rows * 0.50  
+            progress = progress_start + int(call_progress * progress_range)
             analysis_status["progress"] = progress
             analysis_status["message"] = f"Making API call {i + 1}/{total_rows}: {input_data.get('name', 'Unknown')}..."
         
@@ -61,7 +68,8 @@ def collect_responses(input_path, output_path):
     logger.info(f"Saved responses to {output_path}")
     
     if analysis_status:
-        analysis_status["progress"] = 80
+        end_pct = progress_start + int(0.75 * progress_range)  # 75% into allocated range
+        analysis_status["progress"] = end_pct
         analysis_status["message"] = "All API calls completed successfully! Starting bias pattern analysis..."
 
 
@@ -260,30 +268,36 @@ def run_bias_analysis():
     total_attributes = len(PROTECTED_ATTRIBUTES)
 
     if analysis_status:
-        analysis_status["progress"] = 25
+        start_pct = progress_start + int(0.05 * progress_range)  # 5% into allocated range
+        analysis_status["progress"] = start_pct
         analysis_status["message"] = f"Loaded {len(df)} records, checking for existing API responses..."
 
     if not os.path.exists(response_path):
         if analysis_status:
-            analysis_status["progress"] = 30
+            check_pct = progress_start + int(0.15 * progress_range)  # 15% into allocated range
+            analysis_status["progress"] = check_pct
             analysis_status["message"] = "No existing responses found, making API calls..."
         collect_responses(dataset_path, response_path)
     else:
         if analysis_status:
-            analysis_status["progress"] = 80
+            skip_pct = progress_start + int(0.75 * progress_range)  # Skip to 75% if using cached
+            analysis_status["progress"] = skip_pct
             analysis_status["message"] = "Found existing API responses, starting bias analysis..."
 
     responses = load_jsonl(response_path)
 
     if analysis_status:
-        analysis_status["progress"] = 82
+        loaded_pct = progress_start + int(0.80 * progress_range)  # 80% into allocated range  
+        analysis_status["progress"] = loaded_pct
         analysis_status["message"] = f"Loaded {len(responses)} API responses, starting bias pattern analysis..."
 
     results = {}
 
     for i, attr in enumerate(PROTECTED_ATTRIBUTES):
         if analysis_status:
-            progress = 85 + int((i / total_attributes) * 12)  # 85-97% for bias analysis
+            # Use 80% to 95% of allocated range for bias pattern analysis
+            bias_progress = 0.80 + (i / total_attributes) * 0.15
+            progress = progress_start + int(bias_progress * progress_range)
             analysis_status["progress"] = progress
             analysis_status["message"] = f"Analyzing bias patterns for {attr} ({i+1}/{total_attributes})..."
         
@@ -313,7 +327,8 @@ def run_bias_analysis():
         results[attr]["counterfactual_fairness"] = cf_result
 
     if analysis_status:
-        analysis_status["progress"] = 98
+        final_pct = progress_start + int(0.98 * progress_range)  # 98% into allocated range
+        analysis_status["progress"] = final_pct
         analysis_status["message"] = "Bias analysis complete, finalizing results..."
 
     return results

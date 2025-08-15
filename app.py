@@ -47,28 +47,43 @@ def run_analysis_background(form_data):
         
         results = {}
         total_analyses = sum([form_data["run_bias"], form_data["run_accuracy"], form_data["run_robustness"], form_data["run_consistency"]])
+        
+        # Define realistic progress ranges based on actual analysis time
+        # These percentages reflect the relative time each analysis takes
+        progress_ranges = {
+            "bias_fairness": (10, 60),      # 50% of total time (many API calls)
+            "robustness": (60, 80),         # 20% of total time (200+ API calls) 
+            "consistency": (80, 87),        # 7% of total time (~30 API calls)
+            "accuracy": (87, 93),           # 6% of total time (mostly data analysis)
+            "data_quality": (93, 98)        # 5% of total time (analysis only)
+        }
+        
         current_analysis = 0
         
         # Run bias analysis if selected
         if form_data["run_bias"]:
             current_analysis += 1
-            analysis_status["progress"] = 10 + (current_analysis - 1) * 22
+            start_progress, end_progress = progress_ranges["bias_fairness"]
+            analysis_status["progress"] = start_progress
             analysis_status["message"] = f"Running bias analysis ({current_analysis}/{total_analyses})..."
             
-            # Pass status reference to bias analysis
+            # Pass status reference to bias analysis with progress range
             from analysis.bias_fairness import set_status_reference
-            set_status_reference(analysis_status)
+            set_status_reference(analysis_status, start_progress, end_progress - start_progress)
             
             bias_results = run_bias_analysis()
             results["bias_fairness"] = bias_results
             
             # Build bias report
+            analysis_status["progress"] = end_progress - 2
+            analysis_status["message"] = f"Building bias fairness report..."
             build_bias_fairness_report(bias_results)
         
         # Run accuracy analysis if selected
         if form_data["run_accuracy"]:
             current_analysis += 1
-            analysis_status["progress"] = 10 + (current_analysis - 1) * 22
+            start_progress, end_progress = progress_ranges["accuracy"]
+            analysis_status["progress"] = start_progress
             analysis_status["message"] = f"Running accuracy analysis ({current_analysis}/{total_analyses})..."
             
             # Pass status reference to accuracy analysis
@@ -79,12 +94,15 @@ def run_analysis_background(form_data):
             results["accuracy"] = accuracy_results
             
             # Build accuracy report
+            analysis_status["progress"] = end_progress - 1
+            analysis_status["message"] = f"Building accuracy report..."
             build_accuracy_report(accuracy_results)
         
         # Run robustness analysis if selected
         if form_data["run_robustness"]:
             current_analysis += 1
-            analysis_status["progress"] = 10 + (current_analysis - 1) * 22
+            start_progress, end_progress = progress_ranges["robustness"]
+            analysis_status["progress"] = start_progress
             analysis_status["message"] = f"Running robustness analysis ({current_analysis}/{total_analyses})..."
             
             # Pass status reference to robustness analysis
@@ -95,12 +113,15 @@ def run_analysis_background(form_data):
             results["robustness"] = robustness_results
             
             # Build robustness report
+            analysis_status["progress"] = end_progress - 1
+            analysis_status["message"] = f"Building robustness report..."
             build_robustness_report(robustness_results)
         
         # Run consistency analysis if selected
         if form_data["run_consistency"]:
             current_analysis += 1
-            analysis_status["progress"] = 10 + (current_analysis - 1) * 22
+            start_progress, end_progress = progress_ranges["consistency"]
+            analysis_status["progress"] = start_progress
             analysis_status["message"] = f"Running consistency analysis ({current_analysis}/{total_analyses})..."
             
             # Pass status reference to consistency analysis
@@ -111,10 +132,13 @@ def run_analysis_background(form_data):
             results["consistency"] = consistency_results
             
             # Build consistency report
+            analysis_status["progress"] = end_progress - 1
+            analysis_status["message"] = f"Building consistency report..."
             build_consistency_report(consistency_results)
         
         # Run comprehensive data quality analysis on all collected responses
-        analysis_status["progress"] = 95
+        start_progress, end_progress = progress_ranges["data_quality"]
+        analysis_status["progress"] = start_progress
         analysis_status["message"] = "Running comprehensive data quality analysis..."
         
         from analysis.data_quality_analyzer import set_status_reference as set_dq_status_reference
@@ -124,6 +148,8 @@ def run_analysis_background(form_data):
         results["comprehensive_data_quality"] = data_quality_results
         
         # Build comprehensive data quality report
+        analysis_status["progress"] = end_progress - 1
+        analysis_status["message"] = "Building comprehensive data quality report..."
         build_comprehensive_data_quality_report(data_quality_results)
         
         analysis_status["progress"] = 100
