@@ -46,15 +46,15 @@
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Executive Summary</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="text-center">
-                    <div class="text-3xl font-bold score-poor">0.0%</div>
+                    <div class="text-3xl font-bold score-excellent">95.3%</div>
                     <div class="text-sm text-gray-600">Overall Robustness Score</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-blue-600">0.0%</div>
+                    <div class="text-3xl font-bold text-blue-600">93.9%</div>
                     <div class="text-sm text-gray-600">Decision Consistency</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-green-600">0</div>
+                    <div class="text-3xl font-bold text-green-600">99</div>
                     <div class="text-sm text-gray-600">Test Cases</div>
                 </div>
             </div>
@@ -70,10 +70,10 @@
                         How consistently the model makes the same decision when input is perturbed.
                     </p>
                     <div class="bg-gray-200 rounded-full h-4 mb-2">
-                        <div class="bg-blue-600 h-4 rounded-full" style="width: 0.0%"></div>
+                        <div class="bg-blue-600 h-4 rounded-full" style="width: 93.9%"></div>
                     </div>
                     <div class="text-sm text-gray-600">
-                        0 / 0 consistent decisions
+                        93 / 99 consistent decisions
                     </div>
                 </div>
                 
@@ -83,7 +83,11 @@
                         How stable the model's confidence levels are under perturbations.
                     </p>
                     
-                    <div class="text-sm text-gray-500">No confidence data available</div>
+                    <div class="text-sm">
+                        <div>Mean difference: 0.014</div>
+                        <div>Max difference: 0.053</div>
+                        <div>Std deviation: 0.020</div>
+                    </div>
                     
                 </div>
             </div>
@@ -93,6 +97,111 @@
         <div class="metric-card">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Analysis by Perturbation Type</h2>
             <div class="space-y-3">
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Noise Numerical</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">19 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">100.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.001</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.004</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Typos Text</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">20 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">100.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Case Change</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">20 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">100.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Missing Values</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">20 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">100.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="perturbation-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-gray-700">Extreme Values</h3>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">20 tests</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Consistency Rate:</span>
+                            <span class="font-medium ml-2">70.0%</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Avg Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.034</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Max Confidence Drop:</span>
+                            <span class="font-medium ml-2">0.053</span>
+                        </div>
+                    </div>
+                </div>
                 
             </div>
         </div>
@@ -105,6 +214,167 @@
         
         <!-- Failure Cases -->
         
+        <div class="metric-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Failure Cases</h2>
+            <p class="text-sm text-gray-600 mb-4">
+                Cases where the model showed significant inconsistency or confidence drops.
+            </p>
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+                
+                <div class="failure-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="text-sm text-gray-600">
+                            approve → deny
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="font-medium text-gray-700">Original Response:</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is based on the provided data. All plausibility checks hold. The applicant has a high income, stable employment, low credit utilization, no payment defaults...</div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-700">Perturbed Response:</div>
+                            <div class="text-gray-600 mt-1">score:38 class:Poor reason:The credit score is low due to high existing loans, high used credit close to the credit limit, and a significant number of payment defaults. The employment duration is very...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 mt-2">
+                        Confidence: 0.10 → 0.04
+                        (Δ 0.05)
+                    </div>
+                    
+                </div>
+                
+                <div class="failure-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="text-sm text-gray-600">
+                            approve → deny
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="font-medium text-gray-700">Original Response:</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is based on the candidate's stable employment, low credit utilization, clean payment history, and sufficient income. The candidate's credit usage is well be...</div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-700">Perturbed Response:</div>
+                            <div class="text-gray-600 mt-1">score:42 class:Poor reason:The credit score is low due to inconsistencies in the data provided. The employment duration of 88 years is unrealistic, and the high household size of 12 raises concerns ab...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 mt-2">
+                        Confidence: 0.10 → 0.05
+                        (Δ 0.05)
+                    </div>
+                    
+                </div>
+                
+                <div class="failure-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="text-sm text-gray-600">
+                            approve → deny
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="font-medium text-gray-700">Original Response:</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is 82, classified as Good. The candidate has a stable employment history of 23 years with a high income of 89784.0 EUR/month. The used credit is significant...</div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-700">Perturbed Response:</div>
+                            <div class="text-gray-600 mt-1">score:42 class:Poor reason:The credit score is low due to high existing loans, close to the credit limit, and short employment duration. The income provided seems unusually high, which may indicate a ...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 mt-2">
+                        Confidence: 0.10 → 0.05
+                        (Δ 0.05)
+                    </div>
+                    
+                </div>
+                
+                <div class="failure-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="text-sm text-gray-600">
+                            approve → deny
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="font-medium text-gray-700">Original Response:</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is based on the provided data. All plausibility checks hold. The applicant has a stable employment history, low credit utilization, no payment defaults, and...</div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-700">Perturbed Response:</div>
+                            <div class="text-gray-600 mt-1">score:42 class:Poor reason:The credit score is low due to high number of existing loans, significant payment defaults, and a high number of credit inquiries in the last 6 months. The employment durati...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 mt-2">
+                        Confidence: 0.10 → 0.05
+                        (Δ 0.05)
+                    </div>
+                    
+                </div>
+                
+                <div class="failure-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="text-sm text-gray-600">
+                            approve → deny
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="font-medium text-gray-700">Original Response:</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is based on the provided financial information and employment stability. All plausibility checks are met. The applicant demonstrates responsible credit beha...</div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-700">Perturbed Response:</div>
+                            <div class="text-gray-600 mt-1">score:74 class:Average reason:The employment duration is very short, which may indicate instability. While the income is high, the credit limit is low, and there is a small amount of used credit. No p...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 mt-2">
+                        Confidence: 0.10 → 0.09
+                        (Δ 0.01)
+                    </div>
+                    
+                </div>
+                
+                <div class="failure-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="text-sm text-gray-600">
+                            approve → deny
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="font-medium text-gray-700">Original Response:</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is 82, classified as Good. The applicant has a stable employment history of 19 years, a high income of 80726.0 EUR/month, and a good address stability of 22...</div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-700">Perturbed Response:</div>
+                            <div class="text-gray-600 mt-1">score:42 class:Poor reason:The credit score is low due to high number of payment defaults and credit inquiries in the last 6 months. Employment duration of 88 years is implausible and suggests data in...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 mt-2">
+                        Confidence: 0.10 → 0.05
+                        (Δ 0.05)
+                    </div>
+                    
+                </div>
+                
+                
+            </div>
+        </div>
+        
         
         <!-- Recommendations -->
         <div class="metric-card">
@@ -112,8 +382,8 @@
             <div class="space-y-2 text-sm text-gray-700">
                 
                 <div class="flex items-start space-x-2">
-                    <span class="text-red-500 mt-1">✗</span>
-                    <span>Poor robustness detected. Significant improvements needed in model stability.</span>
+                    <span class="text-green-500 mt-1">✓</span>
+                    <span>Excellent robustness! The model shows strong consistency across perturbations.</span>
                 </div>
                 
                 
@@ -136,20 +406,20 @@
         
         <!-- Footer -->
         <div class="text-center text-sm text-gray-500 mt-8">
-            Generated on 2025-08-15 10:17:02
+            Generated on 2025-08-15 13:24:36
         </div>
     </div>
     
     <script>
         // Create perturbation impact chart
         const perturbationData = {
-            x: [],
-            y: [],
+            x: ['Noise Numerical','Typos Text','Case Change','Missing Values','Extreme Values'],
+            y: [1.0,1.0,1.0,1.0,0.7],
             type: 'bar',
             marker: {
-                color: []
+                color: ['#059669','#059669','#059669','#059669','#0891b2']
             },
-            text: [],
+            text: ['100.0%','100.0%','100.0%','100.0%','70.0%'],
             textposition: 'auto'
         };
         
