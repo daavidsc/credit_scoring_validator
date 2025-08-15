@@ -123,3 +123,28 @@ def build_consistency_report(data, output_filename="consistency_report.html"):
         f.write(rendered)
 
     print(f"✅ Consistency Report saved to {output_path}")
+
+def build_comprehensive_data_quality_report(data, output_filename="comprehensive_data_quality_report.html"):
+    """Build comprehensive data quality report from analysis results"""
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    
+    env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+    template = env.get_template("comprehensive_data_quality_template.html")
+    
+    # Prepare template variables
+    template_vars = {
+        "data_quality": data.get("data_quality", {}),
+        "total_responses_analyzed": data.get("total_responses_analyzed", 0),
+        "module_breakdown": data.get("module_breakdown", {}),
+        "comprehensive_data_file": data.get("comprehensive_data_file"),
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    
+    rendered = template.render(**template_vars)
+    
+    output_path = os.path.join(OUTPUT_DIR, output_filename)
+    with open(output_path, "w") as f:
+        f.write(rendered)
+    
+    print(f"✅ Comprehensive Data Quality Report saved to {output_path}")
+    return output_path

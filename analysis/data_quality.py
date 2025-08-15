@@ -4,6 +4,7 @@ import pandas as pd
 import json
 from typing import Dict, List, Any
 from utils.logger import setup_logger
+from utils.response_collector import get_collector
 
 logger = setup_logger("data_quality", "results/logs/data_quality.log")
 
@@ -171,11 +172,46 @@ def calculate_response_time_metrics(responses: List[Dict[str, Any]]) -> Dict[str
         "timeout_count": sum(1 for r in responses if r.get("error_type") == "timeout")
     }
 
-def generate_data_quality_summary(responses: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Generate a comprehensive data quality summary"""
+def generate_data_quality_summary(responses: List[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Generate a comprehensive data quality summary
+    
+    Args:
+        responses: Optional list of responses. If None, uses all collected responses from global collector.
+    """
+    if responses is None:
+        # Use global response collector to get ALL API responses from all modules
+        collector = get_collector()
+        all_responses = collector.get_all_responses()
+        
+        # Convert to the format expected by the analysis functions
+        responses = []
+        for response in all_responses:
+            # Convert collector format to analysis format
+            converted_response = {
+                "input": response.get("input", {}),
+                "output": response.get("output", {}),
+                "module": response.get("module", "unknown")
+            }
+            
+            # Handle error responses - copy error fields to top level for compatibility
+            output = response.get("output", {})
+            if "error_type" in output:
+                converted_response["error_type"] = output["error_type"]
+                converted_response["error"] = output.get("error")
+            
+            responses.append(converted_response)
+        
+        logger.info(f"Using {len(responses)} total responses from all modules for comprehensive data quality analysis")
+        
+        # Log breakdown by module
+        module_counts = collector.get_module_counts()
+        for module, count in module_counts.items():
+            logger.info(f"  {module}: {count} responses")
+    
     error_metrics = calculate_error_rates(responses)
     completeness_metrics = analyze_response_completeness(responses)
     response_time_metrics = calculate_response_time_metrics(responses)
+    module_breakdown = analyze_module_breakdown(responses)
     
     # Determine overall quality level
     quality_score = error_metrics["data_quality_score"]
@@ -201,8 +237,53 @@ def generate_data_quality_summary(responses: List[Dict[str, Any]]) -> Dict[str, 
         "error_metrics": error_metrics,
         "completeness_metrics": completeness_metrics,
         "response_time_metrics": response_time_metrics,
+        "module_breakdown": module_breakdown,
         "recommendations": generate_quality_recommendations(error_metrics, completeness_metrics)
     }
+
+def analyze_module_breakdown(responses: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Analyze data quality metrics broken down by analysis module"""
+    module_stats = {}
+    
+    for response in responses:
+        module = response.get("module", "unknown")
+        
+        if module not in module_stats:
+            module_stats[module] = {
+                "total_requests": 0,
+                "successful_requests": 0,
+                "error_count": 0,
+                "valid_scores": 0
+            }
+        
+        module_stats[module]["total_requests"] += 1
+        
+        # Check if this was a successful response
+        has_error = "error" in response or "error_type" in response
+        
+        if not has_error and "output" in response:
+            module_stats[module]["successful_requests"] += 1
+            
+            # Check if we got a valid parsed response
+            parsed = response["output"].get("parsed", {})
+            if parsed and parsed.get("credit_score") is not None:
+                module_stats[module]["valid_scores"] += 1
+        else:
+            module_stats[module]["error_count"] += 1
+    
+    # Calculate rates for each module
+    for module, stats in module_stats.items():
+        total = stats["total_requests"]
+        if total > 0:
+            stats["success_rate"] = (stats["successful_requests"] / total) * 100
+            stats["error_rate"] = (stats["error_count"] / total) * 100
+            stats["valid_score_rate"] = (stats["valid_scores"] / total) * 100
+        else:
+            stats["success_rate"] = 0.0
+            stats["error_rate"] = 0.0
+            stats["valid_score_rate"] = 0.0
+    
+    return module_stats
 
 def generate_quality_recommendations(error_metrics: Dict, completeness_metrics: Dict) -> List[str]:
     """Generate recommendations based on quality metrics"""

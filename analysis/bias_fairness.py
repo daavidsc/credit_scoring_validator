@@ -6,7 +6,6 @@ import os
 from api.client import send_request
 from config import RESPONSE_DIR
 from utils.logger import setup_logger
-from analysis.data_quality import generate_data_quality_summary
 
 logger = setup_logger("bias_fairness", "results/logs/bias_fairness.log")
 
@@ -278,19 +277,9 @@ def run_bias_analysis():
 
     if analysis_status:
         analysis_status["progress"] = 82
-        analysis_status["message"] = f"Loaded {len(responses)} API responses, analyzing data quality..."
-    
-    # Generate data quality analysis
-    data_quality_summary = generate_data_quality_summary(responses)
-    logger.info(f"Data quality analysis complete: {data_quality_summary['overall_quality']['score']:.1f}% quality score")
+        analysis_status["message"] = f"Loaded {len(responses)} API responses, starting bias pattern analysis..."
 
-    if analysis_status:
-        analysis_status["progress"] = 85
-        analysis_status["message"] = f"Data quality analyzed, starting bias pattern analysis..."
-
-    results = {
-        "data_quality": data_quality_summary
-    }
+    results = {}
 
     for i, attr in enumerate(PROTECTED_ATTRIBUTES):
         if analysis_status:

@@ -5,6 +5,7 @@ from requests.auth import HTTPBasicAuth
 from config import API_URL, USERNAME, PASSWORD
 from utils.logger import setup_logger
 import json
+import inspect
 
 logger = setup_logger("api_client", "results/logs/api_client.log")
 
@@ -55,6 +56,27 @@ def construct_payload(row: dict) -> dict:
 def send_request(row: dict) -> dict:
     payload = construct_payload(row)
     logger.info(f"🔍 Sending request for row: {row.get('name')} with payload: {payload}")
+    
+    # Try to identify which module called this function for response collection
+    calling_module = "unknown"
+    try:
+        frame = inspect.currentframe()
+        if frame and frame.f_back and frame.f_back.f_back:
+            calling_frame = frame.f_back.f_back
+            calling_file = calling_frame.f_code.co_filename
+            if "bias_fairness" in calling_file:
+                calling_module = "bias_fairness"
+            elif "robustness" in calling_file:
+                calling_module = "robustness"
+            elif "accuracy" in calling_file:
+                calling_module = "accuracy"
+            elif "consistency" in calling_file:
+                calling_module = "consistency"
+            elif "data_quality" in calling_file:
+                calling_module = "data_quality"
+    except:
+        pass
+    
     try:
         # Import config each time to get updated values from Flask app
         from config import API_URL, USERNAME, PASSWORD
@@ -91,12 +113,22 @@ def send_request(row: dict) -> dict:
                     f"Class: {parsed_content.get('classification')} | "
                     f"Reason: {parsed_content.get('explanation')}")
 
-        return {
+        result = {
             "raw_response": data,
             "parsed": parsed_content,
             "status": "success",
             "status_code": response.status_code
         }
+        
+        # Add to global response collector
+        try:
+            from utils.response_collector import get_collector
+            collector = get_collector()
+            collector.add_response(calling_module, payload, result)
+        except Exception as e:
+            logger.warning(f"Failed to add response to collector: {e}")
+        
+        return result
 
     except requests.HTTPError as e:
         error_details = {
@@ -106,6 +138,15 @@ def send_request(row: dict) -> dict:
             "payload": payload
         }
         logger.error(f"HTTP error for row {row.get('name')}: {e} (Status: {error_details['status_code']})")
+        
+        # Add error to global response collector
+        try:
+            from utils.response_collector import get_collector
+            collector = get_collector()
+            collector.add_response(calling_module, payload, error_details)
+        except Exception as e:
+            logger.warning(f"Failed to add error response to collector: {e}")
+        
         return error_details
     
     except requests.Timeout as e:
@@ -115,6 +156,15 @@ def send_request(row: dict) -> dict:
             "payload": payload
         }
         logger.error(f"Timeout error for row {row.get('name')}: {e}")
+        
+        # Add error to global response collector
+        try:
+            from utils.response_collector import get_collector
+            collector = get_collector()
+            collector.add_response(calling_module, payload, error_details)
+        except Exception as e:
+            logger.warning(f"Failed to add timeout error to collector: {e}")
+        
         return error_details
     
     except requests.ConnectionError as e:
@@ -124,6 +174,15 @@ def send_request(row: dict) -> dict:
             "payload": payload
         }
         logger.error(f"Connection error for row {row.get('name')}: {e}")
+        
+        # Add error to global response collector
+        try:
+            from utils.response_collector import get_collector
+            collector = get_collector()
+            collector.add_response(calling_module, payload, error_details)
+        except Exception as e:
+            logger.warning(f"Failed to add connection error to collector: {e}")
+        
         return error_details
     
     except requests.RequestException as e:
@@ -133,6 +192,15 @@ def send_request(row: dict) -> dict:
             "payload": payload
         }
         logger.error(f"Request error for row {row.get('name')}: {e}")
+        
+        # Add error to global response collector
+        try:
+            from utils.response_collector import get_collector
+            collector = get_collector()
+            collector.add_response(calling_module, payload, error_details)
+        except Exception as e:
+            logger.warning(f"Failed to add request error to collector: {e}")
+        
         return error_details
     
     except Exception as e:
@@ -142,4 +210,13 @@ def send_request(row: dict) -> dict:
             "payload": payload
         }
         logger.error(f"Unexpected error for row {row.get('name')}: {e}")
+        
+        # Add error to global response collector
+        try:
+            from utils.response_collector import get_collector
+            collector = get_collector()
+            collector.add_response(calling_module, payload, error_details)
+        except Exception as e:
+            logger.warning(f"Failed to add unknown error to collector: {e}")
+        
         return error_details

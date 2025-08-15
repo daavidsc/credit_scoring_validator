@@ -9,7 +9,9 @@ from analysis.bias_fairness import run_bias_analysis
 from analysis.accuracy import run_accuracy_analysis
 from analysis.robustness import run_robustness_analysis
 from analysis.consistency import run_consistency_analysis
-from reports.report_builder import build_bias_fairness_report, build_accuracy_report, build_robustness_report, build_consistency_report
+from analysis.data_quality_analyzer import run_comprehensive_data_quality_analysis
+from reports.report_builder import build_bias_fairness_report, build_accuracy_report, build_robustness_report, build_consistency_report, build_comprehensive_data_quality_report
+from utils.response_collector import reset_collector
 import config
 
 app = Flask(__name__)
@@ -28,6 +30,9 @@ def run_analysis_background(form_data):
     global analysis_status
     
     try:
+        # Reset response collector at the start of new analysis session
+        reset_collector()
+        
         analysis_status["running"] = True
         analysis_status["completed"] = False
         analysis_status["error"] = None
@@ -108,11 +113,21 @@ def run_analysis_background(form_data):
             # Build consistency report
             build_consistency_report(consistency_results)
         
+        # Run comprehensive data quality analysis on all collected responses
         analysis_status["progress"] = 95
-        analysis_status["message"] = "Analysis complete, finalizing reports..."
+        analysis_status["message"] = "Running comprehensive data quality analysis..."
+        
+        from analysis.data_quality_analyzer import set_status_reference as set_dq_status_reference
+        set_dq_status_reference(analysis_status)
+        
+        data_quality_results = run_comprehensive_data_quality_analysis()
+        results["comprehensive_data_quality"] = data_quality_results
+        
+        # Build comprehensive data quality report
+        build_comprehensive_data_quality_report(data_quality_results)
         
         analysis_status["progress"] = 100
-        analysis_status["message"] = "All analyses completed successfully!"
+        analysis_status["message"] = f"All analyses completed! Processed {data_quality_results['total_responses_analyzed']} total API responses."
         analysis_status["completed"] = True
         analysis_status["running"] = False
         
