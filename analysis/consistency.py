@@ -301,13 +301,13 @@ def analyze_consistency_results(consistency_data: List[Dict]) -> Dict[str, Any]:
             continue  # Need at least 2 responses to check consistency
         
         # Extract responses for analysis
-        response_texts = [r["response"] for r in responses]
-        normalized_responses = [normalize_response_text(r) for r in response_texts]
+        response_texts = [normalize_response_text(r["response"]) for r in responses]
+        normalized_responses = response_texts
         decisions = []
         confidences = []
         
-        for response_text in response_texts:
-            decision, confidence = extract_decision_and_confidence(response_text)
+        for r in responses:
+            decision, confidence = extract_decision_and_confidence(r["response"])
             decisions.append(decision)
             confidences.append(confidence)
         

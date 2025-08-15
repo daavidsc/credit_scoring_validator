@@ -16,7 +16,7 @@ def construct_payload(row: dict) -> dict:
     
     scoring_parameters = {
         "model": MODEL,
-        "temperature": 1,
+        "temperature": 0.1, # Should be close to 0
         "top_p": 1,
         "max_tokens": 512,
         "presence_penalty": 0,
