@@ -1,6 +1,15 @@
 # 🤖 Credit Scoring LLM Validator
 
-A comprehensive web application for **evaluating and auditing LLM-based credit scoring systems** with advanced bias detection, robustness testing, accuracy analysis, and professional reporting capabilities.
+A comprehensive we## 🆕 Latest Enhancements
+
+### **Enhanced Sample Sizes & Statistical Validity** 📊
+- **Accuracy Analysis**: Now processes all available test data (removed 20-record limit)
+- **Consistency Testing**: Increased from 10 → 50 samples for better statistical reliability
+- **Robustness Analysis**: Increased from 20 → 50 adversarial examples for comprehensive testing
+- **Configurable Parameters**: All analysis modules now support custom sample sizes
+- **Statistical Rigor**: Larger sample sizes provide more reliable analysis results
+
+### **Multi-Metric Analysis System** 🔬pplication for **evaluating and auditing LLM-based credit scoring systems** with advanced bias detection, robustness testing, accuracy analysis, and professional reporting capabilities.
 
 Built for rigorous testing of AI decision systems in regulated financial contexts with **asynchronous processing** to handle long-running analyses without browser timeouts.
 
@@ -247,13 +256,14 @@ The API should return structured JSON with credit information:
 ## 🧪 Analysis Modules
 
 ### ✅ **Accuracy Analysis** 📊
-**Model prediction quality assessment with statistical validation**
+**Model prediction quality assessment with comprehensive statistical validation**
 
+- **Full Dataset Processing**: Uses all available test data for comprehensive accuracy assessment
 - **Ground Truth Calculation**: Financial profile-based expected credit scores
 - **Regression Metrics**: MAE, RMSE, MAPE, R² coefficient for score accuracy
 - **Classification Metrics**: Accuracy, precision, recall for approval decisions
 - **Score Distribution**: Statistical analysis of prediction patterns
-- **Performance Validation**: Model reliability assessment
+- **Performance Validation**: Model reliability assessment across entire dataset
 
 ### ✅ **Bias & Fairness Analysis** ⚖️
 **Comprehensive fairness testing across demographic groups**
@@ -265,13 +275,15 @@ The API should return structured JSON with credit information:
 - **Compliance Documentation**: Regulatory audit trail generation
 
 ### ✅ **Consistency Analysis** 🔄
-**Deterministic behavior and repeatability validation**
+**Deterministic behavior and repeatability validation with enhanced statistical power**
 
+- **Expanded Sample Size**: Tests 50 samples by default (increased from 10) for better reliability
 - **Exact Match Testing**: Identical inputs produce identical outputs
 - **Temporal Consistency**: Stability across different time periods
 - **Hash-based Tracking**: Precise duplicate input identification
 - **Variance Analysis**: Statistical measurement of response variations
 - **System Reliability**: Infrastructure stability assessment
+- **Configurable Testing**: Customizable sample sizes and repeat counts
 
 ### ✅ **Data Quality Analysis** �
 **API response integrity and completeness monitoring**
@@ -283,8 +295,9 @@ The API should return structured JSON with credit information:
 - **Quality Scoring**: Overall data integrity assessment
 
 ### ✅ **Robustness Analysis** 🛡️
-**Adversarial testing and model stability assessment**
+**Adversarial testing and model stability assessment with comprehensive coverage**
 
+- **Enhanced Testing Scale**: 50 adversarial examples by default (increased from 20)
 - **5 Perturbation Types**: 
   - Numerical noise injection
   - Text typo introduction
@@ -294,6 +307,7 @@ The API should return structured JSON with credit information:
 - **Decision Consistency**: Model stability under input variations
 - **Confidence Analysis**: Prediction confidence stability
 - **Failure Case Detection**: Identifies problematic scenarios
+- **Comprehensive Coverage**: More test cases for better reliability assessment
 
 ### 🔮 **Planned Features**
 - **Transparency Analysis**: Model explainability and interpretability assessment
@@ -374,6 +388,11 @@ Each analysis generates a professional HTML report with:
 - **Memory Management**: Streaming data processing
 - **Logging Optimization**: Structured logging with rotation
 - **Resource Cleanup**: Proper thread and connection management
+- **Enhanced Sample Sizes**: Increased default sample sizes for better statistical validity
+  - Accuracy: All available data (no artificial limits)
+  - Consistency: 50 samples (up from 10)
+  - Robustness: 50 adversarial examples (up from 20)
+  - Configurable: All sample sizes can be customized via function parameters
 
 ### **Web Interface**
 - **Modern UI**: TailwindCSS with animated components

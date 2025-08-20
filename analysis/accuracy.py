@@ -27,9 +27,12 @@ def load_jsonl(path):
         return [json.loads(line) for line in f]
 
 
-def generate_accuracy_test_data() -> List[Dict]:
+def generate_accuracy_test_data(sample_size: Optional[int] = None) -> List[Dict]:
     """
     Generate test data specifically for accuracy analysis and make API calls
+    
+    Args:
+        sample_size: Optional maximum number of samples to process. If None, uses all available data.
     """
     logger.info("Generating fresh test data for accuracy analysis...")
     
@@ -46,7 +49,8 @@ def generate_accuracy_test_data() -> List[Dict]:
         return []
     
     responses = []
-    total_rows = min(len(df), 20)  # Limit to 20 calls for accuracy analysis to be faster
+    # Use configurable sample size or all available data for comprehensive accuracy assessment
+    total_rows = len(df) if sample_size is None else min(sample_size, len(df))
     
     if analysis_status:
         analysis_status["message"] = f"Making API calls for accuracy analysis ({total_rows} profiles)..."

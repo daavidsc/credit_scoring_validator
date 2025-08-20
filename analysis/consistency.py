@@ -174,9 +174,14 @@ def extract_decision_and_confidence(response) -> Tuple[Optional[str], Optional[f
     
     return decision, confidence
 
-def collect_consistency_responses(num_repeats: int = 3, delay_seconds: float = 1.0):
+def collect_consistency_responses(num_repeats: int = 3, delay_seconds: float = 1.0, sample_size: Optional[int] = 50):
     """
     Collect multiple responses for the same inputs to test consistency
+    
+    Args:
+        num_repeats: Number of times to repeat each request
+        delay_seconds: Delay between repeat requests
+        sample_size: Maximum number of samples to test (default: 50)
     """
     logger.info("Starting consistency analysis...")
     
@@ -196,8 +201,8 @@ def collect_consistency_responses(num_repeats: int = 3, delay_seconds: float = 1
         logger.error(f"Error loading test data: {str(e)}")
         return []
     
-    # Select a subset for consistency testing (to avoid too many API calls)
-    num_samples = min(10, len(df))  # Test with 10 samples
+    # Select samples for consistency testing - use configurable sample size for better statistical validity
+    num_samples = min(sample_size, len(df)) if sample_size else len(df)
     sample_df = df.sample(n=num_samples, random_state=42)
     
     if analysis_status:
@@ -428,9 +433,14 @@ def analyze_consistency_results(consistency_data: List[Dict]) -> Dict[str, Any]:
     logger.info(f"Consistency analysis complete. Overall score: {results['overall_consistency_score']:.3f}")
     return results
 
-def run_consistency_analysis(num_repeats: int = 3, delay_seconds: float = 1.0):
+def run_consistency_analysis(num_repeats: int = 3, delay_seconds: float = 1.0, sample_size: Optional[int] = 50):
     """
     Main function to run consistency analysis
+    
+    Args:
+        num_repeats: Number of times to repeat each request (default: 3)
+        delay_seconds: Delay between repeat requests (default: 1.0)
+        sample_size: Maximum number of samples to test (default: 50, None for all data)
     """
     logger.info("=== Starting Consistency Analysis ===")
     
@@ -446,7 +456,7 @@ def run_consistency_analysis(num_repeats: int = 3, delay_seconds: float = 1.0):
                 analysis_status["message"] = "Analyzing existing consistency data..."
         else:
             # Collect new consistency data
-            consistency_data = collect_consistency_responses(num_repeats, delay_seconds)
+            consistency_data = collect_consistency_responses(num_repeats, delay_seconds, sample_size)
         
         if not consistency_data:
             logger.error("No consistency data collected")

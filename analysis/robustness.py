@@ -147,8 +147,8 @@ def collect_robustness_responses():
         logger.error(f"Error loading test data: {str(e)}")
         return []
     
-    # Generate adversarial examples
-    adversarial_examples = generate_adversarial_examples(df, num_examples=20)
+    # Generate adversarial examples - increased from 20 to 50 for better robustness testing
+    adversarial_examples = generate_adversarial_examples(df, num_examples=50)
     logger.info(f"Generated {len(adversarial_examples)} adversarial examples")
     
     if analysis_status:
