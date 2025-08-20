@@ -13,6 +13,173 @@ Accuracy analysis measures how close the model's predictions are to expected or 
 - **Business Impact**: Inaccurate scoring can lead to poor lending decisions and financial losses
 - **Regulatory Compliance**: Financial institutions must demonstrate model accuracy for regulatory approval
 
+## Ground Truth: The Foundation of Accuracy Testing
+
+### What is Ground Truth?
+
+Ground truth refers to the "correct" or "expected" credit scores that we compare against the model's predictions. In this project, **ground truth is synthetically generated using a deterministic rule-based algorithm** rather than using historical data or expert judgments.
+
+### Why Synthetic Ground Truth?
+
+1. **Consistency**: Every test produces the same ground truth for identical inputs
+2. **Transparency**: The scoring logic is fully observable and auditable
+3. **Controllability**: We can create test cases targeting specific scenarios
+4. **No Data Dependencies**: Works without requiring historical credit data
+5. **Regulatory Safety**: No real customer data is used in testing
+
+### How Ground Truth is Generated
+
+The ground truth calculation happens in the `calculate_ground_truth()` function in `analysis/accuracy.py`. Here's the detailed process:
+
+#### 1. Base Score Foundation
+```python
+score = 50  # Every profile starts with a base score of 50/100
+```
+
+#### 2. Income Assessment (0-20 points)
+```python
+income = input_data.get("income", 0)
+if income > 100000:      score += 20  # Excellent income
+elif income > 70000:     score += 15  # Very good income  
+elif income > 50000:     score += 10  # Good income
+elif income > 30000:     score += 5   # Moderate income
+# Below $30k gets no bonus points
+```
+
+#### 3. Employment Stability (0-15 points)
+```python
+emp_duration = input_data.get("employment_duration_years", 0)
+if emp_duration > 10:    score += 15  # Very stable employment
+elif emp_duration > 5:   score += 10  # Stable employment
+elif emp_duration > 2:   score += 5   # Moderate stability
+# Less than 2 years gets no bonus
+```
+
+#### 4. Payment Defaults (Heavy Penalty)
+```python
+defaults = input_data.get("payment_defaults", 0)
+score -= defaults * 15  # Each default costs 15 points
+```
+
+#### 5. Credit Utilization (±10 points)
+```python
+credit_limit = input_data.get("credit_limit", 1)
+used_credit = input_data.get("used_credit", 0)
+utilization = used_credit / max(credit_limit, 1)
+
+if utilization < 0.3:    score += 10  # Excellent utilization
+elif utilization < 0.7:  score += 5   # Good utilization  
+else:                    score -= 10  # Poor utilization (>70%)
+```
+
+#### 6. Credit Inquiries Impact
+```python
+inquiries = input_data.get("credit_inquiries_last_6_months", 0)
+score -= inquiries * 2  # Each inquiry costs 2 points
+```
+
+#### 7. Housing Stability Bonus
+```python
+if input_data.get("housing_status") == "owner":
+    score += 5  # Homeownership adds stability
+```
+
+#### 8. Address Stability
+```python
+address_years = input_data.get("address_stability_years", 0)
+if address_years > 10:   score += 5   # Long-term residence
+elif address_years > 5:  score += 3   # Moderate residence stability
+```
+
+#### 9. Loan Portfolio Impact
+```python
+existing_loans = input_data.get("existing_loans", 0)
+if existing_loans > 3:   score -= 5   # Too many existing loans
+```
+
+#### 10. Final Normalization and Classification
+```python
+# Ensure score stays within valid range
+score = max(0, min(100, score))
+
+# Determine risk classification
+if score >= 70:         classification = "Good"
+elif score >= 50:       classification = "Average"  
+else:                   classification = "Poor"
+
+return float(score), classification
+```
+
+### Ground Truth Examples
+
+**High-Quality Profile:**
+- Income: $120,000 → +20 points
+- Employment: 12 years → +15 points
+- No defaults → +0 points
+- 25% credit utilization → +10 points
+- Homeowner → +5 points
+- **Total: 50 + 20 + 15 + 0 + 10 + 5 = 100 points → "Good"**
+
+**Poor-Quality Profile:**
+- Income: $25,000 → +0 points
+- Employment: 6 months → +0 points
+- 2 defaults → -30 points
+- 85% credit utilization → -10 points
+- Renter → +0 points
+- **Total: 50 + 0 + 0 - 30 - 10 + 0 = 10 points → "Poor"**
+
+### Validation and Testing
+
+The ground truth algorithm is extensively tested:
+
+```python
+# From tests/test_accuracy.py
+def test_calculate_ground_truth_high_score(self):
+    input_data = {
+        "income": 120000,
+        "employment_duration_years": 12,
+        "payment_defaults": 0,
+        "credit_limit": 10000,
+        "used_credit": 2500,  # 25% utilization
+        "housing_status": "owner"
+    }
+    score, classification = calculate_ground_truth(input_data)
+    assert score >= 85, f"Expected high score, got {score}"
+    assert classification == "Good"
+```
+
+### Integration with the Analysis Workflow
+
+1. **Data Loading**: Test profiles are loaded from `data/testdata.csv`
+2. **API Prediction**: Each profile is sent to the LLM for credit scoring
+3. **Ground Truth Calculation**: The same profile data generates ground truth scores
+4. **Comparison**: Predicted vs. ground truth scores are compared using statistical metrics
+5. **Report Generation**: Results are compiled into comprehensive accuracy reports
+
+### Advantages of This Approach
+
+**Pros:**
+- ✅ Consistent and reproducible results
+- ✅ No dependency on external data sources
+- ✅ Transparent and auditable scoring logic
+- ✅ Can test edge cases and specific scenarios
+- ✅ No privacy concerns with real customer data
+
+**Limitations:**
+- ⚠️ May not reflect real-world credit scoring complexity
+- ⚠️ Rule-based approach may miss nuanced relationships
+- ⚠️ Ground truth is only as good as the algorithm design
+- ⚠️ May not capture industry-specific scoring practices
+
+### Future Enhancements
+
+**Potential Improvements:**
+1. **Weighted Scoring**: Different weights for different demographics
+2. **Industry Benchmarks**: Incorporate external scoring standards
+3. **Machine Learning Ground Truth**: Train on historical data for more realistic scores
+4. **Regional Variations**: Adjust scoring based on geographic factors
+5. **Time-based Factors**: Include economic conditions and trends
+
 ## How It Works
 
 ### 1. Ground Truth Calculation
