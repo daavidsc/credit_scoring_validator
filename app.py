@@ -312,5 +312,81 @@ def view_consistency_report():
     return send_from_directory("reports/generated", "consistency_report.html")
 
 
+@app.route("/generate_test_data", methods=["POST"])
+def generate_test_data():
+    """Generate test data and save to CSV"""
+    try:
+        # Get the record count from the request
+        data = request.get_json() if request.is_json else {}
+        num_records = data.get('record_count', 30)  # Default to 30 if not specified
+        
+        # Validate the record count
+        if not isinstance(num_records, int) or num_records < 1 or num_records > 10000:
+            return jsonify({
+                'success': False,
+                'error': 'Record count must be an integer between 1 and 10,000'
+            }), 400
+        
+        # Import the test data generator functions
+        from generator.testdata_generator import generate_test_data as gen_test_data
+        import pandas as pd
+        
+        # Define nationality distribution (copied from the generator file)
+        nationality_distribution = {
+            'DE': 0.7,  # 70% German
+            # EU countries (15%)
+            'TR': 0.04, # Turkey (largest immigrant group in Germany)
+            'PL': 0.03, # Poland
+            'IT': 0.02, # Italy
+            'RO': 0.02, # Romania
+            'GR': 0.01, # Greece
+            'HR': 0.01, # Croatia
+            'BG': 0.01, # Bulgaria
+            'ES': 0.01, # Spain
+            'FR': 0.01, # France
+            # Non-EU countries (15%)
+            'SY': 0.03, # Syria (large refugee population)
+            'RU': 0.02, # Russia
+            'UA': 0.02, # Ukraine
+            'US': 0.01, # United States
+            'CN': 0.01, # China
+            'IN': 0.01, # India
+            'VN': 0.01, # Vietnam
+            'IR': 0.01, # Iran
+            'AF': 0.01, # Afghanistan
+            'NG': 0.01, # Nigeria
+        }
+        
+        # Generate test data with the specified number of records
+        test_data = gen_test_data(
+            num_records=num_records, 
+            locales=['de_DE'], 
+            nationality_distribution=nationality_distribution
+        )
+        
+        # Create DataFrame and save to CSV
+        df = pd.DataFrame(test_data)
+        output_path = 'data/testdata.csv'
+        
+        # Ensure the data directory exists
+        os.makedirs('data', exist_ok=True)
+        
+        # Save the DataFrame
+        df.to_csv(output_path, index=False)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Test data generated successfully',
+            'records_count': len(test_data),
+            'file_path': output_path
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)

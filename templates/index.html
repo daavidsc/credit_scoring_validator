@@ -62,8 +62,13 @@
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center px-4">
     <form method="POST" id="analysisForm" class="bg-white shadow-lg rounded-xl p-8 max-w-xl w-full space-y-6 relative">
-        <!-- Settings Icon -->
-        <div class="absolute top-4 right-4">
+        <!-- Settings Icon and Test Data Generator -->
+        <div class="absolute top-4 right-4 flex space-x-2">
+            <button type="button" id="generateTestDataBtn" class="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-full transition-colors" title="Generate Test Data">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+            </button>
             <button type="button" id="settingsBtn" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -462,6 +467,10 @@
             document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
             document.getElementById('closeModal').addEventListener('click', closeSettingsModal);
             document.getElementById('saveSettings').addEventListener('click', saveSettings);
+            document.getElementById('generateTestDataBtn').addEventListener('click', openTestDataModal);
+            document.getElementById('closeTestDataModal').addEventListener('click', closeTestDataModal);
+            document.getElementById('cancelTestData').addEventListener('click', closeTestDataModal);
+            document.getElementById('confirmTestDataGeneration').addEventListener('click', confirmTestDataGeneration);
             
             // Close modal when clicking outside
             document.getElementById('settingsModal').addEventListener('click', function(e) {
@@ -470,10 +479,112 @@
                 }
             });
             
+            // Close test data modal when clicking outside
+            document.getElementById('testDataModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeTestDataModal();
+                }
+            });
+            
             // Set initial model display
             const currentModel = document.getElementById('modelField').value;
             document.getElementById('currentModel').textContent = currentModel;
         });
+
+        // Test Data Modal Functions
+        function openTestDataModal() {
+            document.getElementById('testDataModal').classList.add('show');
+        }
+
+        function closeTestDataModal() {
+            document.getElementById('testDataModal').classList.remove('show');
+        }
+
+        // Function to confirm and generate test data with custom count
+        function confirmTestDataGeneration() {
+            const recordCount = parseInt(document.getElementById('recordCountInput').value);
+            
+            if (isNaN(recordCount) || recordCount < 1 || recordCount > 10000) {
+                alert('Please enter a valid number between 1 and 10,000');
+                return;
+            }
+            
+            closeTestDataModal();
+            generateTestData(recordCount);
+        }
+
+        // Updated function to generate test data with custom count
+        function generateTestData(recordCount = 30) {
+            const generateBtn = document.getElementById('generateTestDataBtn');
+            const originalColor = generateBtn.className;
+            
+            // Show loading state
+            generateBtn.disabled = true;
+            generateBtn.className = generateBtn.className.replace('text-green-600', 'text-orange-500');
+            generateBtn.innerHTML = `
+                <svg class="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+            `;
+            
+            // Make the request
+            fetch('/generate_test_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    record_count: recordCount
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success state
+                    generateBtn.className = generateBtn.className.replace('text-orange-500', 'text-green-500');
+                    generateBtn.innerHTML = `
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    `;
+                    
+                    // Show notification
+                    alert(`Test data generated successfully! Generated ${data.records_count} records in ${data.file_path}`);
+                } else {
+                    // Show error state
+                    generateBtn.className = generateBtn.className.replace('text-orange-500', 'text-red-500');
+                    generateBtn.innerHTML = `
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    `;
+                    
+                    alert(`Error generating test data: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                generateBtn.className = generateBtn.className.replace('text-orange-500', 'text-red-500');
+                generateBtn.innerHTML = `
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                `;
+                alert('Error generating test data. Please check the console for details.');
+            })
+            .finally(() => {
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    generateBtn.disabled = false;
+                    generateBtn.className = originalColor;
+                    generateBtn.innerHTML = `
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    `;
+                }, 2000);
+            });
+        }
 
         // Functions to handle previous vs current reports
         function showPreviousReport(type) {
@@ -563,6 +674,50 @@
             <div class="flex justify-end gap-3 p-6 border-t bg-gray-50 rounded-b-lg">
                 <button type="button" id="closeModal" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
                 <button type="button" id="saveSettings" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Data Generation Modal -->
+    <div id="testDataModal" class="modal">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">Generate Test Data</h3>
+                <button type="button" id="closeTestDataModal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Number of Records</label>
+                    <input type="number" id="recordCountInput" value="30" min="1" max="10000" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none">
+                    <p class="text-xs text-gray-500 mt-1">Generate between 1 and 10,000 test records</p>
+                </div>
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="flex items-start space-x-2">
+                        <svg class="w-5 h-5 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="text-sm text-green-700">
+                            <p class="font-medium">Test data includes:</p>
+                            <ul class="mt-1 text-xs space-y-1">
+                                <li>• Name, gender, nationality, ethnicity</li>
+                                <li>• Age, income, employment status</li>
+                                <li>• Existing loans and loan amounts</li>
+                                <li>• Realistic German demographics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end gap-3 p-6 border-t bg-gray-50 rounded-b-lg">
+                <button type="button" id="cancelTestData" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                <button type="button" id="confirmTestDataGeneration" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Generate Data</button>
             </div>
         </div>
     </div>
