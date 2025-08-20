@@ -358,18 +358,18 @@
                 <div class="demographic-parity-grid">
                     
                     <div class="parity-card">
-                        <div class="parity-group">Female</div>
-                        <div class="parity-rate">50.0%</div>
+                        <div class="parity-group">Male</div>
+                        <div class="parity-rate">36.4%</div>
                         <div class="parity-details">
-                            3/6 positive outcomes
+                            4/11 positive outcomes
                         </div>
                     </div>
                     
                     <div class="parity-card">
-                        <div class="parity-group">Male</div>
-                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-group">Female</div>
+                        <div class="parity-rate">64.7%</div>
                         <div class="parity-details">
-                            2/2 positive outcomes
+                            11/17 positive outcomes
                         </div>
                     </div>
                     
@@ -388,28 +388,183 @@
                     <tbody>
                         
                         <tr>
-                            <td><strong>Female</strong></td>
-                            <td>6</td>
-                            <td>3</td>
-                            <td>50.0%</td>
+                            <td><strong>Male</strong></td>
+                            <td>11</td>
+                            <td>4</td>
+                            <td>36.4%</td>
                             <td>
                                 <small>
-                                    Good: 3, 
-                                    Average: 2, 
-                                    Poor: 1
+                                    Good: 4, 
+                                    Average: 7, 
+                                    Poor: 0
                                     
                                 </small>
                             </td>
                         </tr>
                         
                         <tr>
-                            <td><strong>Male</strong></td>
-                            <td>2</td>
-                            <td>2</td>
+                            <td><strong>Female</strong></td>
+                            <td>17</td>
+                            <td>11</td>
+                            <td>64.7%</td>
+                            <td>
+                                <small>
+                                    Good: 11, 
+                                    Average: 6, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Disparate Impact Ratio</h4>
+                    <div class="metric-card" style="display: inline-block; margin: 10px 0;">
+                        <div class="metric-value">56.2%</div>
+                        <div class="metric-label">
+                            
+                            <span class="poor">Concerning (&lt;80%)</span>
+                            
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="error-box">
+                        <strong>⚠️ Disparate Impact Detected:</strong> The ratio is 56.2%, which is below the 80% threshold commonly used to identify potential disparate impact.
+                    </div>
+                    
+                    
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #6b7280;">
+                        The disparate impact ratio compares the lowest group rate to the highest group rate. 
+                        Values below 80% may indicate potential bias according to the "80% rule" used in fair lending practices.
+                    </p>
+                </div>
+                
+                
+                <div class="counterfactual-result violation-low">
+                    <h4>Counterfactual Fairness Test</h4>
+                    <p>Tests whether changing <strong>only</strong> the gender attribute (while keeping all other factors constant) leads to different credit decisions:</p>
+                    
+                    
+                    <div style="margin: 15px 0;">
+                        <p><strong>Bias Level:</strong> 
+                            <span class="bias-level bias-low">
+                                LOW
+                            </span>
+                        </p>
+                        <p><strong>Violation Rate:</strong> 3.57%</p>
+                        <p><strong>Sample Size:</strong> 30 profiles tested</p>
+                        <p><strong>Total Tests:</strong> 28 counterfactual comparisons</p>
+                    </div>
+                    
+                    
+                    <div class="warning-box">
+                        <strong>⚠️ Moderate Bias Risk:</strong> Some evidence of disparate treatment detected in 3.57% of tests.
+                    </div>
+                    
+                    
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #e2e8f0;">
+                        <strong>What is Counterfactual Fairness?</strong><br>
+                        <small style="color: #64748b;">
+                            This test creates "what if" scenarios by changing only the protected attribute (e.g., gender from "female" to "male") while keeping all other information identical. If the credit decision changes, it suggests the model may be making decisions based on the protected attribute, which could indicate bias.
+                        </small>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        
+        <div class="section">
+            <h2>👥 Ethnicity Analysis</h2>
+            
+            <div class="attribute-analysis">
+                <h3>Demographic Parity</h3>
+                <p>Compares the rate of positive outcomes (e.g., "Good" credit classification) across different groups within <strong>ethnicity</strong>:</p>
+                
+                <div class="demographic-parity-grid">
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">White</div>
+                        <div class="parity-rate">50.0%</div>
+                        <div class="parity-details">
+                            13/26 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Other</div>
+                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-details">
+                            1/1 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Asian</div>
+                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-details">
+                            1/1 positive outcomes
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <table class="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>Group</th>
+                            <th>Total Cases</th>
+                            <th>Positive Outcomes</th>
+                            <th>Rate</th>
+                            <th>Classification Distribution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td><strong>White</strong></td>
+                            <td>26</td>
+                            <td>13</td>
+                            <td>50.0%</td>
+                            <td>
+                                <small>
+                                    Good: 13, 
+                                    Average: 13, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Other</strong></td>
+                            <td>1</td>
+                            <td>1</td>
                             <td>100.0%</td>
                             <td>
                                 <small>
-                                    Good: 2, 
+                                    Good: 1, 
+                                    Average: 0, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Asian</strong></td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>100.0%</td>
+                            <td>
+                                <small>
+                                    Good: 1, 
                                     Average: 0, 
                                     Poor: 0
                                     
@@ -444,25 +599,25 @@
                 </div>
                 
                 
-                <div class="counterfactual-result violation-high">
+                <div class="counterfactual-result violation-low">
                     <h4>Counterfactual Fairness Test</h4>
-                    <p>Tests whether changing <strong>only</strong> the gender attribute (while keeping all other factors constant) leads to different credit decisions:</p>
+                    <p>Tests whether changing <strong>only</strong> the ethnicity attribute (while keeping all other factors constant) leads to different credit decisions:</p>
                     
                     
                     <div style="margin: 15px 0;">
                         <p><strong>Bias Level:</strong> 
-                            <span class="bias-level bias-high">
-                                HIGH
+                            <span class="bias-level bias-low">
+                                LOW
                             </span>
                         </p>
-                        <p><strong>Violation Rate:</strong> 6.67%</p>
+                        <p><strong>Violation Rate:</strong> 1.79%</p>
                         <p><strong>Sample Size:</strong> 30 profiles tested</p>
-                        <p><strong>Total Tests:</strong> 30 counterfactual comparisons</p>
+                        <p><strong>Total Tests:</strong> 56 counterfactual comparisons</p>
                     </div>
                     
                     
-                    <div class="error-box">
-                        <strong>🚨 High Bias Risk:</strong> 6.67% of counterfactual tests show different outcomes based on gender. This suggests potential disparate treatment.
+                    <div class="warning-box">
+                        <strong>⚠️ Moderate Bias Risk:</strong> Some evidence of disparate treatment detected in 1.79% of tests.
                     </div>
                     
                     
@@ -481,16 +636,64 @@
         
         
         <div class="section">
-            <h2>👥 Ethnicity Analysis</h2>
+            <h2>👥 Nationality Analysis</h2>
             
             <div class="attribute-analysis">
                 <h3>Demographic Parity</h3>
-                <p>Compares the rate of positive outcomes (e.g., "Good" credit classification) across different groups within <strong>ethnicity</strong>:</p>
+                <p>Compares the rate of positive outcomes (e.g., "Good" credit classification) across different groups within <strong>nationality</strong>:</p>
                 
                 <div class="demographic-parity-grid">
                     
                     <div class="parity-card">
-                        <div class="parity-group">Other</div>
+                        <div class="parity-group">De</div>
+                        <div class="parity-rate">41.2%</div>
+                        <div class="parity-details">
+                            7/17 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Pl</div>
+                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-details">
+                            2/2 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Ru</div>
+                        <div class="parity-rate">66.7%</div>
+                        <div class="parity-details">
+                            2/3 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Ro</div>
+                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-details">
+                            1/1 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">It</div>
+                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-details">
+                            2/2 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">In</div>
+                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-details">
+                            1/1 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Gr</div>
                         <div class="parity-rate">0.0%</div>
                         <div class="parity-details">
                             0/1 positive outcomes
@@ -498,10 +701,10 @@
                     </div>
                     
                     <div class="parity-card">
-                        <div class="parity-group">White</div>
-                        <div class="parity-rate">71.4%</div>
+                        <div class="parity-group">Ua</div>
+                        <div class="parity-rate">0.0%</div>
                         <div class="parity-details">
-                            5/7 positive outcomes
+                            0/1 positive outcomes
                         </div>
                     </div>
                     
@@ -520,7 +723,97 @@
                     <tbody>
                         
                         <tr>
-                            <td><strong>Other</strong></td>
+                            <td><strong>De</strong></td>
+                            <td>17</td>
+                            <td>7</td>
+                            <td>41.2%</td>
+                            <td>
+                                <small>
+                                    Good: 7, 
+                                    Average: 10, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Pl</strong></td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>100.0%</td>
+                            <td>
+                                <small>
+                                    Good: 2, 
+                                    Average: 0, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Ru</strong></td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>66.7%</td>
+                            <td>
+                                <small>
+                                    Good: 2, 
+                                    Average: 1, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Ro</strong></td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>100.0%</td>
+                            <td>
+                                <small>
+                                    Good: 1, 
+                                    Average: 0, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>It</strong></td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>100.0%</td>
+                            <td>
+                                <small>
+                                    Good: 2, 
+                                    Average: 0, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>In</strong></td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>100.0%</td>
+                            <td>
+                                <small>
+                                    Good: 1, 
+                                    Average: 0, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Gr</strong></td>
                             <td>1</td>
                             <td>0</td>
                             <td>0.0%</td>
@@ -535,15 +828,15 @@
                         </tr>
                         
                         <tr>
-                            <td><strong>White</strong></td>
-                            <td>7</td>
-                            <td>5</td>
-                            <td>71.4%</td>
+                            <td><strong>Ua</strong></td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0.0%</td>
                             <td>
                                 <small>
-                                    Good: 5, 
+                                    Good: 0, 
                                     Average: 1, 
-                                    Poor: 1
+                                    Poor: 0
                                     
                                 </small>
                             </td>
@@ -576,112 +869,25 @@
                 </div>
                 
                 
-                <div class="counterfactual-result violation-minimal">
-                    <h4>Counterfactual Fairness Test</h4>
-                    <p>Tests whether changing <strong>only</strong> the ethnicity attribute (while keeping all other factors constant) leads to different credit decisions:</p>
-                    
-                    
-                    <p></p>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        
-        <div class="section">
-            <h2>👥 Nationality Analysis</h2>
-            
-            <div class="attribute-analysis">
-                <h3>Demographic Parity</h3>
-                <p>Compares the rate of positive outcomes (e.g., "Good" credit classification) across different groups within <strong>nationality</strong>:</p>
-                
-                <div class="demographic-parity-grid">
-                    
-                    <div class="parity-card">
-                        <div class="parity-group">German</div>
-                        <div class="parity-rate">62.5%</div>
-                        <div class="parity-details">
-                            5/8 positive outcomes
-                        </div>
-                    </div>
-                    
-                </div>
-                
-                <table class="metrics-table">
-                    <thead>
-                        <tr>
-                            <th>Group</th>
-                            <th>Total Cases</th>
-                            <th>Positive Outcomes</th>
-                            <th>Rate</th>
-                            <th>Classification Distribution</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        <tr>
-                            <td><strong>German</strong></td>
-                            <td>8</td>
-                            <td>5</td>
-                            <td>62.5%</td>
-                            <td>
-                                <small>
-                                    Good: 5, 
-                                    Average: 2, 
-                                    Poor: 1
-                                    
-                                </small>
-                            </td>
-                        </tr>
-                        
-                    </tbody>
-                </table>
-                
-                <div style="margin-top: 20px;">
-                    <h4>Disparate Impact Ratio</h4>
-                    <div class="metric-card" style="display: inline-block; margin: 10px 0;">
-                        <div class="metric-value">100.0%</div>
-                        <div class="metric-label">
-                            
-                            <span class="good">Acceptable (≥80%)</span>
-                            
-                        </div>
-                    </div>
-                    
-                    
-                    <div class="success-box">
-                        <strong>✅ Acceptable Disparate Impact Ratio:</strong> The ratio is 100.0%, which meets the 80% threshold.
-                    </div>
-                    
-                    
-                    <p style="margin-top: 10px; font-size: 0.9em; color: #6b7280;">
-                        The disparate impact ratio compares the lowest group rate to the highest group rate. 
-                        Values below 80% may indicate potential bias according to the "80% rule" used in fair lending practices.
-                    </p>
-                </div>
-                
-                
-                <div class="counterfactual-result violation-minimal">
+                <div class="counterfactual-result violation-low">
                     <h4>Counterfactual Fairness Test</h4>
                     <p>Tests whether changing <strong>only</strong> the nationality attribute (while keeping all other factors constant) leads to different credit decisions:</p>
                     
                     
                     <div style="margin: 15px 0;">
                         <p><strong>Bias Level:</strong> 
-                            <span class="bias-level bias-minimal">
-                                MINIMAL
+                            <span class="bias-level bias-low">
+                                LOW
                             </span>
                         </p>
-                        <p><strong>Violation Rate:</strong> 1.0%</p>
+                        <p><strong>Violation Rate:</strong> 3.12%</p>
                         <p><strong>Sample Size:</strong> 30 profiles tested</p>
-                        <p><strong>Total Tests:</strong> 300 counterfactual comparisons</p>
+                        <p><strong>Total Tests:</strong> 224 counterfactual comparisons</p>
                     </div>
                     
                     
-                    <div class="success-box">
-                        <strong>✅ Low Bias Risk:</strong> Minimal evidence of disparate treatment based on nationality (1.0% violation rate).
+                    <div class="warning-box">
+                        <strong>⚠️ Moderate Bias Risk:</strong> Some evidence of disparate treatment detected in 3.12% of tests.
                     </div>
                     
                     
@@ -710,9 +916,25 @@
                     
                     <div class="parity-card">
                         <div class="parity-group">None</div>
-                        <div class="parity-rate">62.5%</div>
+                        <div class="parity-rate">50.0%</div>
                         <div class="parity-details">
-                            5/8 positive outcomes
+                            12/24 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Severe_disability</div>
+                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-details">
+                            2/2 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Registered_disability</div>
+                        <div class="parity-rate">50.0%</div>
+                        <div class="parity-details">
+                            1/2 positive outcomes
                         </div>
                     </div>
                     
@@ -732,14 +954,44 @@
                         
                         <tr>
                             <td><strong>None</strong></td>
-                            <td>8</td>
-                            <td>5</td>
-                            <td>62.5%</td>
+                            <td>24</td>
+                            <td>12</td>
+                            <td>50.0%</td>
                             <td>
                                 <small>
-                                    Good: 5, 
-                                    Average: 2, 
-                                    Poor: 1
+                                    Good: 12, 
+                                    Average: 12, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Severe_disability</strong></td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>100.0%</td>
+                            <td>
+                                <small>
+                                    Good: 2, 
+                                    Average: 0, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Registered_disability</strong></td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>50.0%</td>
+                            <td>
+                                <small>
+                                    Good: 1, 
+                                    Average: 1, 
+                                    Poor: 0
                                     
                                 </small>
                             </td>
@@ -751,17 +1003,17 @@
                 <div style="margin-top: 20px;">
                     <h4>Disparate Impact Ratio</h4>
                     <div class="metric-card" style="display: inline-block; margin: 10px 0;">
-                        <div class="metric-value">100.0%</div>
+                        <div class="metric-value">50.0%</div>
                         <div class="metric-label">
                             
-                            <span class="good">Acceptable (≥80%)</span>
+                            <span class="poor">Concerning (&lt;80%)</span>
                             
                         </div>
                     </div>
                     
                     
-                    <div class="success-box">
-                        <strong>✅ Acceptable Disparate Impact Ratio:</strong> The ratio is 100.0%, which meets the 80% threshold.
+                    <div class="error-box">
+                        <strong>⚠️ Disparate Impact Detected:</strong> The ratio is 50.0%, which is below the 80% threshold commonly used to identify potential disparate impact.
                     </div>
                     
                     
@@ -783,14 +1035,14 @@
                                 LOW
                             </span>
                         </p>
-                        <p><strong>Violation Rate:</strong> 1.67%</p>
+                        <p><strong>Violation Rate:</strong> 3.57%</p>
                         <p><strong>Sample Size:</strong> 30 profiles tested</p>
-                        <p><strong>Total Tests:</strong> 60 counterfactual comparisons</p>
+                        <p><strong>Total Tests:</strong> 56 counterfactual comparisons</p>
                     </div>
                     
                     
                     <div class="warning-box">
-                        <strong>⚠️ Moderate Bias Risk:</strong> Some evidence of disparate treatment detected in 1.67% of tests.
+                        <strong>⚠️ Moderate Bias Risk:</strong> Some evidence of disparate treatment detected in 3.57% of tests.
                     </div>
                     
                     
@@ -818,10 +1070,18 @@
                 <div class="demographic-parity-grid">
                     
                     <div class="parity-card">
-                        <div class="parity-group">Married</div>
-                        <div class="parity-rate">66.7%</div>
+                        <div class="parity-group">Registered_partnership</div>
+                        <div class="parity-rate">16.7%</div>
                         <div class="parity-details">
-                            4/6 positive outcomes
+                            1/6 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Married</div>
+                        <div class="parity-rate">77.8%</div>
+                        <div class="parity-details">
+                            7/9 positive outcomes
                         </div>
                     </div>
                     
@@ -829,7 +1089,23 @@
                         <div class="parity-group">Single</div>
                         <div class="parity-rate">50.0%</div>
                         <div class="parity-details">
+                            5/10 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Widowed</div>
+                        <div class="parity-rate">50.0%</div>
+                        <div class="parity-details">
                             1/2 positive outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="parity-card">
+                        <div class="parity-group">Divorced</div>
+                        <div class="parity-rate">100.0%</div>
+                        <div class="parity-details">
+                            1/1 positive outcomes
                         </div>
                     </div>
                     
@@ -848,13 +1124,28 @@
                     <tbody>
                         
                         <tr>
-                            <td><strong>Married</strong></td>
+                            <td><strong>Registered_partnership</strong></td>
                             <td>6</td>
-                            <td>4</td>
-                            <td>66.7%</td>
+                            <td>1</td>
+                            <td>16.7%</td>
                             <td>
                                 <small>
-                                    Good: 4, 
+                                    Good: 1, 
+                                    Average: 5, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Married</strong></td>
+                            <td>9</td>
+                            <td>7</td>
+                            <td>77.8%</td>
+                            <td>
+                                <small>
+                                    Good: 7, 
                                     Average: 2, 
                                     Poor: 0
                                     
@@ -864,14 +1155,44 @@
                         
                         <tr>
                             <td><strong>Single</strong></td>
+                            <td>10</td>
+                            <td>5</td>
+                            <td>50.0%</td>
+                            <td>
+                                <small>
+                                    Good: 5, 
+                                    Average: 5, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Widowed</strong></td>
                             <td>2</td>
                             <td>1</td>
                             <td>50.0%</td>
                             <td>
                                 <small>
                                     Good: 1, 
+                                    Average: 1, 
+                                    Poor: 0
+                                    
+                                </small>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Divorced</strong></td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>100.0%</td>
+                            <td>
+                                <small>
+                                    Good: 1, 
                                     Average: 0, 
-                                    Poor: 1
+                                    Poor: 0
                                     
                                 </small>
                             </td>
@@ -883,7 +1204,7 @@
                 <div style="margin-top: 20px;">
                     <h4>Disparate Impact Ratio</h4>
                     <div class="metric-card" style="display: inline-block; margin: 10px 0;">
-                        <div class="metric-value">75.0%</div>
+                        <div class="metric-value">16.7%</div>
                         <div class="metric-label">
                             
                             <span class="poor">Concerning (&lt;80%)</span>
@@ -893,7 +1214,7 @@
                     
                     
                     <div class="error-box">
-                        <strong>⚠️ Disparate Impact Detected:</strong> The ratio is 75.0%, which is below the 80% threshold commonly used to identify potential disparate impact.
+                        <strong>⚠️ Disparate Impact Detected:</strong> The ratio is 16.7%, which is below the 80% threshold commonly used to identify potential disparate impact.
                     </div>
                     
                     
@@ -904,12 +1225,34 @@
                 </div>
                 
                 
-                <div class="counterfactual-result violation-minimal">
+                <div class="counterfactual-result violation-low">
                     <h4>Counterfactual Fairness Test</h4>
                     <p>Tests whether changing <strong>only</strong> the marital_status attribute (while keeping all other factors constant) leads to different credit decisions:</p>
                     
                     
-                    <p></p>
+                    <div style="margin: 15px 0;">
+                        <p><strong>Bias Level:</strong> 
+                            <span class="bias-level bias-low">
+                                LOW
+                            </span>
+                        </p>
+                        <p><strong>Violation Rate:</strong> 4.63%</p>
+                        <p><strong>Sample Size:</strong> 30 profiles tested</p>
+                        <p><strong>Total Tests:</strong> 108 counterfactual comparisons</p>
+                    </div>
+                    
+                    
+                    <div class="warning-box">
+                        <strong>⚠️ Moderate Bias Risk:</strong> Some evidence of disparate treatment detected in 4.63% of tests.
+                    </div>
+                    
+                    
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #e2e8f0;">
+                        <strong>What is Counterfactual Fairness?</strong><br>
+                        <small style="color: #64748b;">
+                            This test creates "what if" scenarios by changing only the protected attribute (e.g., gender from "female" to "male") while keeping all other information identical. If the credit decision changes, it suggests the model may be making decisions based on the protected attribute, which could indicate bias.
+                        </small>
+                    </div>
                     
                 </div>
                 

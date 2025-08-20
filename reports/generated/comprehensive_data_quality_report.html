@@ -280,19 +280,19 @@
                 <h3>Analysis Summary</h3>
                 <div class="summary-grid">
                     <div class="summary-item">
-                        <div class="summary-number">660</div>
+                        <div class="summary-number">1042</div>
                         <div class="summary-label">Total Responses</div>
                     </div>
                     <div class="summary-item">
-                        <div class="summary-number">1</div>
+                        <div class="summary-number">3</div>
                         <div class="summary-label">Analysis Modules</div>
                     </div>
                     <div class="summary-item">
-                        <div class="summary-number">660</div>
+                        <div class="summary-number">891</div>
                         <div class="summary-label">Successful</div>
                     </div>
                     <div class="summary-item">
-                        <div class="summary-number">0</div>
+                        <div class="summary-number">151</div>
                         <div class="summary-label">Errors</div>
                     </div>
                 </div>
@@ -300,12 +300,12 @@
 
             <!-- Overall Quality Overview -->
             <div class="quality-overview">
-                <div class="quality-card excellent">
-                    <div class="quality-score" style="color: #27ae60;">
-                        100.0%
+                <div class="quality-card fair">
+                    <div class="quality-score" style="color: #e67e22;">
+                        85.5%
                     </div>
-                    <div class="quality-level" style="color: #27ae60;">
-                        Excellent
+                    <div class="quality-level" style="color: #e67e22;">
+                        Fair
                     </div>
                 </div>
             </div>
@@ -318,19 +318,36 @@
                 <div class="section-content">
                     <div class="metrics-grid">
                         <div class="metric-item">
-                            <div class="metric-value">0.0%</div>
+                            <div class="metric-value">14.5%</div>
                             <div class="metric-label">Error Rate</div>
                         </div>
                         <div class="metric-item">
-                            <div class="metric-value">100.0%</div>
+                            <div class="metric-value">85.5%</div>
                             <div class="metric-label">Success Rate</div>
                         </div>
                         <div class="metric-item">
-                            <div class="metric-value">100.0%</div>
+                            <div class="metric-value">85.5%</div>
                             <div class="metric-label">Valid Score Rate</div>
                         </div>
                     </div>
 
+                    
+                    <h4>Error Breakdown</h4>
+                    <div class="error-breakdown">
+                        
+                        <div class="error-item">
+                            <div class="error-type">http error</div>
+                            <div class="error-count">121</div>
+                            <div class="error-percentage">11.6% of total</div>
+                        </div>
+                        
+                        <div class="error-item">
+                            <div class="error-type">request error</div>
+                            <div class="error-count">30</div>
+                            <div class="error-percentage">2.9% of total</div>
+                        </div>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -347,19 +364,63 @@
                             <div class="module-name">bias fairness</div>
                             <div class="module-stats">
                                 <div class="module-stat">
-                                    <div class="module-stat-value">660</div>
+                                    <div class="module-stat-value">652</div>
                                     <div class="module-stat-label">Requests</div>
                                 </div>
                                 <div class="module-stat">
-                                    <div class="module-stat-value">100.0%</div>
+                                    <div class="module-stat-value">98.0%</div>
                                     <div class="module-stat-label">Success</div>
                                 </div>
                                 <div class="module-stat">
-                                    <div class="module-stat-value">0</div>
+                                    <div class="module-stat-value">13</div>
                                     <div class="module-stat-label">Errors</div>
                                 </div>
                                 <div class="module-stat">
-                                    <div class="module-stat-value">100.0%</div>
+                                    <div class="module-stat-value">98.0%</div>
+                                    <div class="module-stat-label">Valid Scores</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="module-card">
+                            <div class="module-name">robustness</div>
+                            <div class="module-stats">
+                                <div class="module-stat">
+                                    <div class="module-stat-value">300</div>
+                                    <div class="module-stat-label">Requests</div>
+                                </div>
+                                <div class="module-stat">
+                                    <div class="module-stat-value">56.0%</div>
+                                    <div class="module-stat-label">Success</div>
+                                </div>
+                                <div class="module-stat">
+                                    <div class="module-stat-value">132</div>
+                                    <div class="module-stat-label">Errors</div>
+                                </div>
+                                <div class="module-stat">
+                                    <div class="module-stat-value">56.0%</div>
+                                    <div class="module-stat-label">Valid Scores</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="module-card">
+                            <div class="module-name">consistency</div>
+                            <div class="module-stats">
+                                <div class="module-stat">
+                                    <div class="module-stat-value">90</div>
+                                    <div class="module-stat-label">Requests</div>
+                                </div>
+                                <div class="module-stat">
+                                    <div class="module-stat-value">93.3%</div>
+                                    <div class="module-stat-label">Success</div>
+                                </div>
+                                <div class="module-stat">
+                                    <div class="module-stat-value">6</div>
+                                    <div class="module-stat-label">Errors</div>
+                                </div>
+                                <div class="module-stat">
+                                    <div class="module-stat-value">93.3%</div>
                                     <div class="module-stat-label">Valid Scores</div>
                                 </div>
                             </div>
@@ -377,19 +438,36 @@
                 <div class="section-content">
                     <div class="metrics-grid">
                         <div class="metric-item">
-                            <div class="metric-value">100.0%</div>
+                            <div class="metric-value">85.4%</div>
                             <div class="metric-label">Completeness Score</div>
                         </div>
                         <div class="metric-item">
-                            <div class="metric-value">660</div>
+                            <div class="metric-value">890</div>
                             <div class="metric-label">Complete Responses</div>
                         </div>
                         <div class="metric-item">
-                            <div class="metric-value">0</div>
+                            <div class="metric-value">152</div>
                             <div class="metric-label">Incomplete Responses</div>
                         </div>
                     </div>
 
+                    
+                    <h4>Completeness Issues</h4>
+                    <div class="error-breakdown">
+                        
+                        <div class="error-item">
+                            <div class="error-type">missing credit score</div>
+                            <div class="error-count">1</div>
+                            <div class="error-percentage">0.1% of total</div>
+                        </div>
+                        
+                        <div class="error-item">
+                            <div class="error-type">malformed response</div>
+                            <div class="error-count">151</div>
+                            <div class="error-percentage">14.5% of total</div>
+                        </div>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -404,7 +482,13 @@
                     <div class="recommendations">
                         <ul>
                             
-                            <li>Data quality is good. No immediate action required.</li>
+                            <li>High error rate detected. Consider reviewing API endpoint stability and network connectivity.</li>
+                            
+                            <li>HTTP errors detected. Review API authentication and request formatting.</li>
+                            
+                            <li>Response completeness is below optimal. Review API response format and parsing logic.</li>
+                            
+                            <li>Missing credit scores detected. This may indicate model processing issues.</li>
                             
                         </ul>
                     </div>
