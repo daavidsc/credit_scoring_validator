@@ -14,38 +14,450 @@ Data quality analysis assesses various dimensions of data integrity and reliabil
 - **Model Performance**: Clean, accurate data is fundamental to model effectiveness
 - **Customer Experience**: Data errors can result in unfair treatment of applicants
 
+## Data Quality Analysis: Technical Deep Dive
+
+### Data Quality Dimensions Framework
+
+The system evaluates six critical dimensions of data quality:
+
+**1. Completeness**: Percentage of missing or null values
+**2. Accuracy**: Correctness of data values and formats
+**3. Consistency**: Uniformity of data representation and encoding
+**4. Validity**: Adherence to expected data types and ranges
+**5. Timeliness**: Freshness and relevance of data
+**6. Uniqueness**: Absence of duplicate records
+
+### Error Rate Analysis Algorithm
+
+```python
+def calculate_error_rates(responses: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Calculate comprehensive error rates and quality metrics"""
+    total_requests = len(responses)
+    
+    if total_requests == 0:
+        return {"total_requests": 0, "error_rate": 0.0, "data_quality_score": 0.0}
+    
+    # Define error taxonomy
+    error_counts = {
+        "http_error": 0,      # HTTP 4xx/5xx status codes
+        "timeout": 0,         # Request timeout errors
+        "connection_error": 0, # Network connectivity issues
+        "request_error": 0,   # Malformed request errors
+        "unknown_error": 0,   # Unclassified errors
+        "parsing_error": 0,   # Response parsing failures
+        "missing_score": 0    # Missing credit score in response
+    }
+    
+    successful_requests = 0
+    valid_scores = 0
+    
+    for response in responses:
+        # Classify response type
+        has_error = "error" in response or "error_type" in response
+        
+        if not has_error and "output" in response:
+            successful_requests += 1
+            
+            # Validate parsed response structure
+            parsed = response["output"].get("parsed", {})
+            if parsed and parsed.get("credit_score") is not None:
+                valid_scores += 1
+            else:
+                error_counts["missing_score"] += 1
+            
+            # Check for parsing completeness
+            if not parsed:
+                error_counts["parsing_error"] += 1
+                
+        else:
+            # Categorize error type
+            error_type = response.get("error_type", "unknown_error")
+            if error_type in error_counts:
+                error_counts[error_type] += 1
+            else:
+                error_counts["unknown_error"] += 1
+    
+    # Calculate quality metrics
+    error_rate = ((total_requests - successful_requests) / total_requests) * 100
+    success_rate = (successful_requests / total_requests) * 100
+    valid_score_rate = (valid_scores / total_requests) * 100
+    data_quality_score = (valid_scores / total_requests) * 100
+    
+    return {
+        "total_requests": total_requests,
+        "successful_requests": successful_requests,
+        "valid_scores": valid_scores,
+        "error_rate": error_rate,
+        "success_rate": success_rate,
+        "valid_score_rate": valid_score_rate,
+        "data_quality_score": data_quality_score,
+        "error_breakdown": {
+            error_type: {"count": count, "percentage": (count / total_requests) * 100}
+            for error_type, count in error_counts.items() if count > 0
+        }
+    }
+```
+
+### Response Completeness Analysis
+
+```python
+def analyze_response_completeness(responses: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Analyze structural completeness of API responses"""
+    total_responses = len(responses)
+    
+    if total_responses == 0:
+        return {"completeness_score": 0.0, "issues": {}}
+    
+    # Define completeness criteria
+    completeness_issues = {
+        "missing_credit_score": 0,    # No credit score in response
+        "missing_classification": 0,  # No classification (approve/deny)
+        "missing_explanation": 0,     # No reasoning/explanation
+        "empty_response": 0,          # Completely empty parsed response
+        "malformed_response": 0       # Structurally invalid response
+    }
+    
+    complete_responses = 0
+    
+    for response in responses:
+        has_error = "error" in response or "error_type" in response
+        
+        if not has_error and "output" in response:
+            parsed = response["output"].get("parsed", {})
+            
+            if not parsed:
+                completeness_issues["empty_response"] += 1
+                continue
+            
+            # Check each required field
+            issues_found = False
+            
+            if not parsed.get("credit_score"):
+                completeness_issues["missing_credit_score"] += 1
+                issues_found = True
+                
+            if not parsed.get("classification"):
+                completeness_issues["missing_classification"] += 1
+                issues_found = True
+                
+            if not parsed.get("explanation"):
+                completeness_issues["missing_explanation"] += 1
+                issues_found = True
+            
+            # Count as complete only if no issues found
+            if not issues_found:
+                complete_responses += 1
+        else:
+            completeness_issues["malformed_response"] += 1
+    
+    completeness_score = (complete_responses / total_responses) * 100
+    
+    # Create issues summary with percentages
+    issues_summary = {
+        issue_type: {
+            "count": count,
+            "percentage": (count / total_responses) * 100
+        }
+        for issue_type, count in completeness_issues.items() if count > 0
+    }
+    
+    return {
+        "completeness_score": completeness_score,
+        "complete_responses": complete_responses,
+        "total_responses": total_responses,
+        "issues": issues_summary
+    }
+```
+
+### Multi-Module Quality Assessment
+
+```python
+def analyze_module_breakdown(responses: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Analyze quality metrics by analysis module for targeted improvements"""
+    module_stats = {}
+    
+    for response in responses:
+        module = response.get("module", "unknown")
+        
+        # Initialize module statistics
+        if module not in module_stats:
+            module_stats[module] = {
+                "total_requests": 0,
+                "successful_requests": 0,
+                "error_count": 0,
+                "valid_scores": 0
+            }
+        
+        module_stats[module]["total_requests"] += 1
+        
+        # Classify response outcome
+        has_error = "error" in response or "error_type" in response
+        
+        if not has_error and "output" in response:
+            module_stats[module]["successful_requests"] += 1
+            
+            # Validate response data quality
+            parsed = response["output"].get("parsed", {})
+            if parsed and parsed.get("credit_score") is not None:
+                module_stats[module]["valid_scores"] += 1
+        else:
+            module_stats[module]["error_count"] += 1
+    
+    # Calculate quality rates per module
+    for module, stats in module_stats.items():
+        total = stats["total_requests"]
+        if total > 0:
+            stats["success_rate"] = (stats["successful_requests"] / total) * 100
+            stats["error_rate"] = (stats["error_count"] / total) * 100
+            stats["valid_score_rate"] = (stats["valid_scores"] / total) * 100
+            stats["quality_score"] = stats["valid_score_rate"]  # Alias for consistency
+        else:
+            stats.update({
+                "success_rate": 0.0, "error_rate": 0.0, 
+                "valid_score_rate": 0.0, "quality_score": 0.0
+            })
+    
+    return module_stats
+```
+
+### Comprehensive Quality Summary Generation
+
+```python
+def generate_data_quality_summary(responses: List[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Generate comprehensive quality assessment across all system components"""
+    
+    if responses is None:
+        # Aggregate responses from global collector
+        from utils.response_collector import get_collector
+        collector = get_collector()
+        all_responses = collector.get_all_responses()
+        
+        # Convert collector format to analysis format
+        responses = []
+        for response in all_responses:
+            converted_response = {
+                "input": response.get("input", {}),
+                "output": response.get("output", {}),
+                "module": response.get("module", "unknown")
+            }
+            
+            # Preserve error information for compatibility
+            output = response.get("output", {})
+            if "error_type" in output:
+                converted_response["error_type"] = output["error_type"]
+                converted_response["error"] = output.get("error")
+            
+            responses.append(converted_response)
+    
+    # Calculate all quality metrics
+    error_metrics = calculate_error_rates(responses)
+    completeness_metrics = analyze_response_completeness(responses)
+    response_time_metrics = calculate_response_time_metrics(responses)
+    module_breakdown = analyze_module_breakdown(responses)
+    
+    # Determine overall quality classification
+    quality_score = error_metrics["data_quality_score"]
+    quality_level, quality_color = classify_quality_level(quality_score)
+    
+    return {
+        "overall_quality": {
+            "score": quality_score,
+            "level": quality_level,
+            "color": quality_color
+        },
+        "error_metrics": error_metrics,
+        "completeness_metrics": completeness_metrics,
+        "response_time_metrics": response_time_metrics,
+        "module_breakdown": module_breakdown,
+        "recommendations": generate_quality_recommendations(error_metrics, completeness_metrics)
+    }
+
+def classify_quality_level(quality_score: float) -> Tuple[str, str]:
+    """Classify quality score into level and display color"""
+    if quality_score >= 95:
+        return "Excellent", "#27ae60"  # Green
+    elif quality_score >= 90:
+        return "Good", "#f39c12"       # Orange
+    elif quality_score >= 80:
+        return "Fair", "#e67e22"       # Dark Orange
+    else:
+        return "Poor", "#e74c3c"       # Red
+```
+
+### Intelligent Quality Recommendations
+
+```python
+def generate_quality_recommendations(error_metrics: Dict, completeness_metrics: Dict) -> List[str]:
+    """Generate actionable recommendations based on quality analysis"""
+    recommendations = []
+    
+    # Error rate analysis
+    if error_metrics["error_rate"] > 10:
+        recommendations.append(
+            "High error rate detected (>10%). Review API endpoint stability, "
+            "network connectivity, and authentication mechanisms."
+        )
+    
+    # Timeout analysis
+    timeout_errors = error_metrics["error_breakdown"].get("timeout", {}).get("count", 0)
+    if timeout_errors > 0:
+        recommendations.append(
+            f"Timeout errors detected ({timeout_errors} instances). "
+            "Consider increasing request timeout or optimizing API response time."
+        )
+    
+    # HTTP error analysis
+    http_errors = error_metrics["error_breakdown"].get("http_error", {}).get("count", 0)
+    if http_errors > 0:
+        recommendations.append(
+            f"HTTP errors detected ({http_errors} instances). "
+            "Review API authentication, request formatting, and endpoint availability."
+        )
+    
+    # Completeness analysis
+    if completeness_metrics["completeness_score"] < 90:
+        recommendations.append(
+            f"Response completeness below optimal ({completeness_metrics['completeness_score']:.1f}%). "
+            "Review API response format and parsing logic for consistency."
+        )
+    
+    # Missing score analysis
+    issues = completeness_metrics.get("issues", {})
+    missing_scores = issues.get("missing_credit_score", {}).get("count", 0)
+    if missing_scores > 0:
+        recommendations.append(
+            f"Missing credit scores detected ({missing_scores} instances). "
+            "This may indicate model processing issues or incomplete API responses."
+        )
+    
+    # Success case
+    if len(recommendations) == 0:
+        recommendations.append(
+            "Data quality is excellent. No immediate action required. "
+            "Continue monitoring for quality degradation."
+        )
+    
+    return recommendations
+```
+
+### Real-World Quality Analysis Example
+
+**Sample Data Quality Report**:
+
+```json
+{
+  "overall_quality": {
+    "score": 87.5,
+    "level": "Good",
+    "color": "#f39c12"
+  },
+  "error_metrics": {
+    "total_requests": 200,
+    "successful_requests": 185,
+    "valid_scores": 175,
+    "error_rate": 7.5,
+    "success_rate": 92.5,
+    "data_quality_score": 87.5,
+    "error_breakdown": {
+      "timeout": {"count": 8, "percentage": 4.0},
+      "http_error": {"count": 5, "percentage": 2.5},
+      "missing_score": {"count": 10, "percentage": 5.0}
+    }
+  },
+  "completeness_metrics": {
+    "completeness_score": 94.6,
+    "complete_responses": 175,
+    "total_responses": 185,
+    "issues": {
+      "missing_explanation": {"count": 8, "percentage": 4.3},
+      "missing_classification": {"count": 2, "percentage": 1.1}
+    }
+  },
+  "module_breakdown": {
+    "accuracy": {
+      "total_requests": 50,
+      "success_rate": 96.0,
+      "quality_score": 94.0
+    },
+    "bias_fairness": {
+      "total_requests": 75,
+      "success_rate": 89.3,
+      "quality_score": 85.3
+    },
+    "consistency": {
+      "total_requests": 45,
+      "success_rate": 95.6,
+      "quality_score": 91.1
+    },
+    "robustness": {
+      "total_requests": 30,
+      "success_rate": 90.0,
+      "quality_score": 83.3
+    }
+  },
+  "recommendations": [
+    "Timeout errors detected (8 instances). Consider increasing request timeout or optimizing API response time.",
+    "HTTP errors detected (5 instances). Review API authentication and request formatting.",
+    "Missing explanations in 4.3% of responses. Review explanation generation logic."
+  ]
+}
+```
+
+### Quality Monitoring Integration
+
+```python
+def calculate_response_time_metrics(responses: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Calculate response time and performance metrics"""
+    # Extract timing information if available
+    response_times = []
+    timeout_count = 0
+    
+    for response in responses:
+        # Check for timeout errors
+        if response.get("error_type") == "timeout":
+            timeout_count += 1
+        
+        # Extract response time if tracked
+        if "response_time" in response:
+            response_times.append(response["response_time"])
+    
+    if response_times:
+        import numpy as np
+        return {
+            "average_response_time": np.mean(response_times),
+            "min_response_time": np.min(response_times),
+            "max_response_time": np.max(response_times),
+            "median_response_time": np.median(response_times),
+            "p95_response_time": np.percentile(response_times, 95),
+            "timeout_count": timeout_count,
+            "response_time_samples": len(response_times)
+        }
+    else:
+        return {
+            "average_response_time": None,
+            "min_response_time": None,
+            "max_response_time": None,
+            "timeout_count": timeout_count,
+            "message": "Response timing data not available"
+        }
+```
+
+### Data Quality Thresholds and Alerts
+
+**Quality Score Interpretation**:
+
+- **Excellent (95-100%)**: Production ready, no immediate concerns
+- **Good (90-95%)**: Acceptable quality, minor monitoring recommended  
+- **Fair (80-90%)**: Moderate quality issues, investigation recommended
+- **Poor (<80%)**: Significant quality problems, immediate action required
+
+**Alert Thresholds**:
+- Error rate > 15%: Critical alert
+- Completeness score < 85%: Warning alert
+- Missing scores > 10%: Investigation alert
+- Timeout rate > 5%: Performance alert
+
 ## How It Works
-
-### 1. Data Quality Dimensions
-
-The system evaluates multiple aspects of data quality:
-
-- **Completeness**: Percentage of missing or null values
-- **Accuracy**: Correctness of data values and formats
-- **Consistency**: Uniformity of data representation and encoding
-- **Validity**: Adherence to expected data types and ranges
-- **Timeliness**: Freshness and relevance of data
-- **Uniqueness**: Absence of duplicate records
-
-### 2. Quality Metrics Calculation
-
-For each API response and dataset, the system computes:
-
-- **Error Rates**: HTTP errors, timeouts, connection failures
-- **Response Completeness**: Missing fields in API responses
-- **Data Parsing Success**: Successful extraction of structured data
-- **Score Validity**: Credit scores within expected ranges
-- **Field Population Rates**: Percentage of populated vs. empty fields
-
-### 3. Quality Issue Detection
-
-The analysis identifies various data quality problems:
-
-- **Missing Critical Data**: Empty values for essential fields
-- **Invalid Data Formats**: Incorrect data types or structures
-- **Inconsistent Encodings**: Mixed representations of the same information
-- **Outlier Detection**: Values outside expected statistical ranges
-- **System Errors**: API failures and technical issues
 
 ## Files Overview
 

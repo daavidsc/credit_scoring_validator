@@ -14,6 +14,393 @@ Consistency analysis tests whether a machine learning model produces repeatable,
 - **System Reliability**: Identifies technical issues like caching problems or race conditions
 - **Fair Treatment**: Ensures applicants are evaluated consistently regardless of timing
 
+## Consistency Testing: Technical Deep Dive
+
+### Core Testing Methodology
+
+The system performs consistency testing through a rigorous process:
+
+**1. Input Preparation and Hashing**
+```python
+def hash_input_data(data: dict) -> str:
+    """Create consistent hash for duplicate detection"""
+    # Sort keys to ensure consistent hashing regardless of input order
+    sorted_data = {k: data[k] for k in sorted(data.keys())}
+    data_str = json.dumps(sorted_data, sort_keys=True, default=str)
+    return hashlib.md5(data_str.encode()).hexdigest()
+```
+
+**2. Multiple Request Strategy**
+```python
+def collect_consistency_responses(num_repeats=3, delay_seconds=1.0, sample_size=50):
+    responses = []
+    
+    for profile in test_profiles:
+        input_hash = hash_input_data(profile)
+        
+        # Make multiple identical requests with delays
+        for repeat_num in range(num_repeats):
+            timestamp = time.time()
+            response = send_request(profile)
+            
+            responses.append({
+                "input": profile,
+                "input_hash": input_hash,
+                "repeat_number": repeat_num,
+                "timestamp": timestamp,
+                "output": response
+            })
+            
+            if repeat_num < num_repeats - 1:
+                time.sleep(delay_seconds)  # Prevent rate limiting
+```
+
+**3. Response Normalization for Comparison**
+```python
+def normalize_response_text(response) -> str:
+    """Normalize responses for accurate comparison"""
+    if isinstance(response, dict) and "parsed" in response:
+        parsed = response["parsed"]
+        
+        # Extract structured data
+        parts = []
+        if "credit_score" in parsed and parsed["credit_score"] is not None:
+            parts.append(f"score:{parsed['credit_score']}")
+        if "classification" in parsed:
+            parts.append(f"class:{parsed['classification']}")
+        if "explanation" in parsed:
+            # Truncate explanations to first 100 chars for comparison
+            parts.append(f"reason:{parsed['explanation'][:100]}")
+        
+        response_text = " ".join(parts)
+    else:
+        response_text = str(response)
+    
+    # Normalize whitespace and case
+    normalized = response_text.lower().strip()
+    normalized = ' '.join(normalized.split())
+    
+    return normalized
+```
+
+### Consistency Metrics Calculation
+
+**1. Exact Match Rate**
+```python
+def calculate_exact_match_rate(responses):
+    """Calculate percentage of perfectly identical responses"""
+    grouped_by_input = {}
+    
+    for response in responses:
+        input_hash = response["input_hash"]
+        if input_hash not in grouped_by_input:
+            grouped_by_input[input_hash] = []
+        grouped_by_input[input_hash].append(response)
+    
+    exact_matches = 0
+    total_groups = 0
+    
+    for input_hash, group_responses in grouped_by_input.items():
+        if len(group_responses) < 2:
+            continue
+            
+        total_groups += 1
+        
+        # Normalize all responses in the group
+        normalized_responses = [
+            normalize_response_text(r["output"]) 
+            for r in group_responses
+        ]
+        
+        # Check if all responses are identical
+        if len(set(normalized_responses)) == 1:
+            exact_matches += 1
+    
+    return exact_matches / total_groups if total_groups > 0 else 0
+```
+
+**2. Score Variance Analysis**
+```python
+def calculate_score_variance(responses):
+    """Analyze variance in credit scores for identical inputs"""
+    grouped_by_input = {}
+    variance_stats = []
+    
+    for response in responses:
+        input_hash = response["input_hash"]
+        
+        # Extract credit score
+        score = None
+        if "output" in response and "parsed" in response["output"]:
+            score = response["output"]["parsed"].get("credit_score")
+        
+        if score is not None:
+            try:
+                score = float(score)
+                if input_hash not in grouped_by_input:
+                    grouped_by_input[input_hash] = []
+                grouped_by_input[input_hash].append(score)
+            except (ValueError, TypeError):
+                continue
+    
+    for input_hash, scores in grouped_by_input.items():
+        if len(scores) >= 2:
+            variance = np.var(scores)
+            std_dev = np.std(scores)
+            mean_score = np.mean(scores)
+            cv = std_dev / mean_score if mean_score > 0 else 0
+            
+            variance_stats.append({
+                "input_hash": input_hash,
+                "scores": scores,
+                "variance": variance,
+                "std_dev": std_dev,
+                "mean": mean_score,
+                "coefficient_of_variation": cv,
+                "min_score": min(scores),
+                "max_score": max(scores),
+                "range": max(scores) - min(scores)
+            })
+    
+    return variance_stats
+```
+
+**3. Decision Consistency Rate**
+```python
+def calculate_decision_consistency(responses):
+    """Analyze consistency of approve/deny decisions"""
+    grouped_by_input = {}
+    
+    for response in responses:
+        input_hash = response["input_hash"]
+        decision, confidence = extract_decision_and_confidence(response["output"])
+        
+        if decision:
+            if input_hash not in grouped_by_input:
+                grouped_by_input[input_hash] = []
+            grouped_by_input[input_hash].append({
+                "decision": decision,
+                "confidence": confidence
+            })
+    
+    consistent_decisions = 0
+    total_groups = 0
+    
+    for input_hash, decisions in grouped_by_input.items():
+        if len(decisions) < 2:
+            continue
+            
+        total_groups += 1
+        decision_set = set(d["decision"] for d in decisions)
+        
+        if len(decision_set) == 1:  # All decisions identical
+            consistent_decisions += 1
+    
+    return consistent_decisions / total_groups if total_groups > 0 else 0
+```
+
+### Decision and Confidence Extraction
+
+```python
+def extract_decision_and_confidence(response) -> Tuple[Optional[str], Optional[float]]:
+    """Extract decision and confidence from various response formats"""
+    if not response:
+        return None, None
+    
+    if isinstance(response, dict) and "parsed" in response:
+        parsed = response["parsed"]
+        
+        # Extract classification and score
+        classification = parsed.get("classification", "").lower()
+        credit_score = parsed.get("credit_score")
+        explanation = parsed.get("explanation", "").lower()
+        
+        # Map classification to standardized decision
+        decision = None
+        if classification in ["good", "approved", "approve"]:
+            decision = "approve"
+        elif classification in ["poor", "bad", "denied", "deny", "reject"]:
+            decision = "deny"
+        elif classification in ["average", "moderate"]:
+            # Use credit score threshold for average cases
+            if credit_score is not None:
+                if credit_score >= 700:
+                    decision = "approve"
+                elif credit_score < 600:
+                    decision = "deny"
+                else:
+                    decision = "conditional"
+        
+        # Extract confidence from explanation or use score as proxy
+        confidence = None
+        if explanation:
+            import re
+            # Look for percentage confidence in explanation
+            confidence_matches = re.findall(r'(\d+(?:\.\d+)?)%', explanation)
+            if confidence_matches:
+                confidence = float(confidence_matches[0]) / 100.0
+            elif "high confidence" in explanation:
+                confidence = 0.9
+            elif "medium confidence" in explanation:
+                confidence = 0.7
+            elif "low confidence" in explanation:
+                confidence = 0.5
+        
+        # Use credit score as confidence proxy if no explicit confidence
+        if confidence is None and credit_score is not None:
+            confidence = min(credit_score / 850.0, 1.0)  # Normalize to 0-1
+        
+        return decision, confidence
+    
+    # Fallback to text-based extraction
+    text = str(response).lower()
+    decision = None
+    if "approve" in text:
+        decision = "approve"
+    elif "deny" in text or "reject" in text:
+        decision = "deny"
+    
+    return decision, None
+```
+
+### Real-World Consistency Testing Example
+
+**Test Profile**:
+```json
+{
+  "name": "John Smith",
+  "income": 65000,
+  "employment_status": "employed",
+  "age": 32,
+  "gender": "Male"
+}
+```
+
+**Multiple API Calls (3 repeats)**:
+1. **Call 1** → Score: 72, Classification: "Good"
+2. **Call 2** → Score: 72, Classification: "Good"  
+3. **Call 3** → Score: 74, Classification: "Good"
+
+**Analysis Results**:
+```json
+{
+  "exact_match_rate": 0.67,  // 2 out of 3 identical
+  "score_variance": {
+    "mean": 72.67,
+    "std_dev": 1.15,
+    "variance": 1.33,
+    "range": 2,
+    "coefficient_of_variation": 0.016
+  },
+  "decision_consistency": 1.0,  // All "Good" classifications
+  "consistency_level": "HIGH"   // Low variance, consistent decisions
+}
+```
+
+### Temporal Consistency Analysis
+
+```python
+def analyze_temporal_consistency(responses):
+    """Analyze consistency over time periods"""
+    # Group responses by time windows (e.g., 1-hour windows)
+    time_windows = {}
+    
+    for response in responses:
+        timestamp = response["timestamp"]
+        hour_window = int(timestamp // 3600) * 3600  # Round to hour
+        
+        if hour_window not in time_windows:
+            time_windows[hour_window] = []
+        time_windows[hour_window].append(response)
+    
+    # Calculate consistency metrics for each time window
+    window_consistency = {}
+    for window, window_responses in time_windows.items():
+        window_consistency[window] = {
+            "exact_match_rate": calculate_exact_match_rate(window_responses),
+            "score_variance": calculate_score_variance(window_responses),
+            "response_count": len(window_responses)
+        }
+    
+    return window_consistency
+```
+
+### Inconsistency Pattern Detection
+
+```python
+def detect_inconsistency_patterns(responses):
+    """Identify specific patterns of inconsistency"""
+    patterns = {
+        "high_variance_inputs": [],
+        "decision_flips": [],
+        "temporal_inconsistencies": [],
+        "systematic_bias": []
+    }
+    
+    # Detect high variance inputs
+    variance_stats = calculate_score_variance(responses)
+    for stat in variance_stats:
+        if stat["std_dev"] > 5:  # High variance threshold
+            patterns["high_variance_inputs"].append({
+                "input_hash": stat["input_hash"],
+                "std_dev": stat["std_dev"],
+                "range": stat["range"],
+                "scores": stat["scores"]
+            })
+    
+    # Detect decision flips (same input, different decisions)
+    grouped_by_input = {}
+    for response in responses:
+        input_hash = response["input_hash"]
+        decision, _ = extract_decision_and_confidence(response["output"])
+        
+        if decision and input_hash not in grouped_by_input:
+            grouped_by_input[input_hash] = []
+        if decision:
+            grouped_by_input[input_hash].append(decision)
+    
+    for input_hash, decisions in grouped_by_input.items():
+        unique_decisions = set(decisions)
+        if len(unique_decisions) > 1:
+            patterns["decision_flips"].append({
+                "input_hash": input_hash,
+                "decisions": decisions,
+                "unique_count": len(unique_decisions)
+            })
+    
+    return patterns
+```
+
+### Integration Workflow
+
+1. **Test Data Preparation**: Load profiles and create input hashes
+2. **Multiple API Calls**: Send 3+ identical requests per profile with delays
+3. **Response Collection**: Store all responses with timestamps
+4. **Normalization**: Standardize response formats for comparison
+5. **Metric Calculation**: Compute exact match rates, variance, and decision consistency
+6. **Pattern Detection**: Identify specific inconsistency patterns
+7. **Report Generation**: Compile comprehensive consistency analysis
+
+### Consistency Thresholds and Interpretation
+
+**Excellent Consistency (95-100%)**:
+- Exact match rate > 95%
+- Score standard deviation < 1.0
+- Decision consistency = 100%
+- **Status**: Production ready
+
+**Good Consistency (85-95%)**:
+- Exact match rate 85-95%
+- Score standard deviation 1.0-3.0
+- Decision consistency > 95%
+- **Status**: Acceptable for most use cases
+
+**Poor Consistency (<85%)**:
+- Exact match rate < 85%
+- Score standard deviation > 5.0
+- Decision consistency < 90%
+- **Status**: Requires immediate investigation
+
 ## How It Works
 
 ### 1. Duplicate Input Testing
