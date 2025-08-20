@@ -1,14 +1,16 @@
 # config.py
 
-# Will be moved to .env later
+# Configuration defaults - these will be overridden by user input
 
-API_URL = "https://stunning-giggle-p6qxgr66w57c6gg5-8000.app.github.dev"
+# API Configuration (empty by default - user must provide)
+API_URL = ""
 
-# Basic Auth credentials
-USERNAME = "FS_Group4"
-PASSWORD = "ExpLearn123"
+# Basic Auth credentials (empty by default - user must provide)
+USERNAME = ""
+PASSWORD = ""
 
-# OpenAI Model Selection
-MODEL = "gpt-5-nano"
+# OpenAI Model Selection (default model)
+MODEL = "gpt-3.5-turbo-0125"
 
+# Response directory for cached data
 RESPONSE_DIR = "results/responses/"
