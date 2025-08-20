@@ -9,6 +9,13 @@ A comprehensive we## 🆕 Latest Enhancements
 - **Configurable Parameters**: All analysis modules now support custom sample sizes
 - **Statistical Rigor**: Larger sample sizes provide more reliable analysis results
 
+### **Cache Management System** 🗂️
+- **Smart Caching**: API responses cached to reduce redundant calls and costs
+- **Selective Clearing**: Clear specific analysis caches or all at once
+- **Web Interface**: Cache management integrated into settings panel
+- **Fresh Data Control**: Force regeneration with updated sample sizes
+- **Cost Optimization**: Balance between performance and API usage
+
 ### **Multi-Metric Analysis System** 🔬pplication for **evaluating and auditing LLM-based credit scoring systems** with advanced bias detection, robustness testing, accuracy analysis, and professional reporting capabilities.
 
 Built for rigorous testing of AI decision systems in regulated financial contexts with **asynchronous processing** to handle long-running analyses without browser timeouts.
@@ -45,6 +52,7 @@ Each guide provides detailed implementation information, usage examples, interpr
 * Professional HTML reports with interactive visualizations
 * Asynchronous processing prevents browser timeouts
 * Mobile-responsive design with modern UI components
+* **Integrated Cache Management**: Clear cached data directly from the web interface
 
 ### 🎯 **Realistic Test Data Generation**
 * German-specific demographic distributions
@@ -178,9 +186,14 @@ The web interface runs on `http://localhost:5000`
    - ✅ Data Quality Analysis
    - ✅ Robustness Analysis
 
-3. **Monitor Progress**: Real-time status updates with progress bars
+3. **Manage Cache (Optional)**:
+   - Clear specific analysis caches to force fresh data
+   - Use "Clear ALL caches" after sample size updates
+   - Balance between speed (cached) and freshness (cleared)
 
-4. **Review Reports**: Professional HTML reports with visualizations
+4. **Monitor Progress**: Real-time status updates with progress bars
+
+5. **Review Reports**: Professional HTML reports with visualizations
 
 ### 5. **Access Generated Reports**
 
@@ -388,11 +401,13 @@ Each analysis generates a professional HTML report with:
 - **Memory Management**: Streaming data processing
 - **Logging Optimization**: Structured logging with rotation
 - **Resource Cleanup**: Proper thread and connection management
+- **Smart Caching System**: API response caching with selective clearing
 - **Enhanced Sample Sizes**: Increased default sample sizes for better statistical validity
   - Accuracy: All available data (no artificial limits)
   - Consistency: 50 samples (up from 10)
   - Robustness: 50 adversarial examples (up from 20)
   - Configurable: All sample sizes can be customized via function parameters
+- **Cache Management**: Web interface for clearing stale cached data
 
 ### **Web Interface**
 - **Modern UI**: TailwindCSS with animated components

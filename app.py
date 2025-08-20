@@ -25,6 +25,43 @@ analysis_status = {
     "message": "Ready to start analysis"
 }
 
+def clear_analysis_cache(cache_options):
+    """Clear cached response files based on user selections"""
+    import os
+    import glob
+    
+    cache_files = {
+        "clear_bias_cache": "results/responses/bias_fairness.jsonl",
+        "clear_consistency_cache": "results/responses/consistency.jsonl", 
+        "clear_robustness_cache": "results/responses/robustness.jsonl"
+    }
+    
+    cleared_files = []
+    
+    # Clear all cache if requested
+    if cache_options.get("clear_all_cache", False):
+        cache_dir = "results/responses"
+        if os.path.exists(cache_dir):
+            jsonl_files = glob.glob(os.path.join(cache_dir, "*.jsonl"))
+            for file in jsonl_files:
+                try:
+                    os.remove(file)
+                    cleared_files.append(os.path.basename(file))
+                except OSError:
+                    pass
+        return cleared_files
+    
+    # Clear specific caches
+    for option, file_path in cache_files.items():
+        if cache_options.get(option, False) and os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                cleared_files.append(os.path.basename(file_path))
+            except OSError:
+                pass
+    
+    return cleared_files
+
 def run_analysis_background(form_data):
     """Run the analysis in the background and update status"""
     global analysis_status
@@ -32,6 +69,12 @@ def run_analysis_background(form_data):
     try:
         # Reset response collector at the start of new analysis session
         reset_collector()
+        
+        # Clear cached data if requested
+        cleared_files = clear_analysis_cache(form_data)
+        if cleared_files:
+            analysis_status["message"] = f"Cleared cache files: {', '.join(cleared_files)}"
+            time.sleep(1)  # Brief pause to show the message
         
         analysis_status["running"] = True
         analysis_status["completed"] = False
@@ -177,7 +220,12 @@ def index():
         "run_accuracy": False,
         "run_robustness": False,
         "run_consistency": False,
-        "model": "gpt-3.5-turbo-0125"
+        "model": "gpt-3.5-turbo-0125",
+        # Cache management defaults
+        "clear_bias_cache": False,
+        "clear_consistency_cache": False,
+        "clear_robustness_cache": False,
+        "clear_all_cache": False
     }
     return render_template("index.html", form_data=form_data)
 
@@ -198,7 +246,12 @@ def start_analysis():
         "run_accuracy": request.form.get("run_accuracy") == "on",
         "run_robustness": request.form.get("run_robustness") == "on",
         "run_consistency": request.form.get("run_consistency") == "on",
-        "model": request.form.get("model", "gpt-3.5-turbo-0125")
+        "model": request.form.get("model", "gpt-3.5-turbo-0125"),
+        # Cache management options
+        "clear_bias_cache": request.form.get("clear_bias_cache") == "on",
+        "clear_consistency_cache": request.form.get("clear_consistency_cache") == "on",
+        "clear_robustness_cache": request.form.get("clear_robustness_cache") == "on",
+        "clear_all_cache": request.form.get("clear_all_cache") == "on"
     }
     
     # Validate that at least one analysis is selected
