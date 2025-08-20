@@ -100,7 +100,7 @@ def analyze_response_completeness(responses: List[Dict[str, Any]]) -> Dict[str, 
     total_responses = len(responses)
     
     if total_responses == 0:
-        return {"completeness_score": 0.0, "issues": []}
+        return {"completeness_score": 0.0, "issues": {}}
     
     completeness_issues = {
         "missing_credit_score": 0,
@@ -301,7 +301,9 @@ def generate_quality_recommendations(error_metrics: Dict, completeness_metrics: 
     if completeness_metrics["completeness_score"] < 90:
         recommendations.append("Response completeness is below optimal. Review API response format and parsing logic.")
     
-    if completeness_metrics["issues"].get("missing_credit_score", {}).get("count", 0) > 0:
+    # Safely check for missing credit scores - handle both dict and list cases
+    issues = completeness_metrics.get("issues", {})
+    if isinstance(issues, dict) and issues.get("missing_credit_score", {}).get("count", 0) > 0:
         recommendations.append("Missing credit scores detected. This may indicate model processing issues.")
     
     if len(recommendations) == 0:
