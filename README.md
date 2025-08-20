@@ -181,24 +181,19 @@ The web interface runs on `http://localhost:5000`
 
 ### 4. **Run Analysis**
 
-1. **Generate Test Data (If Needed)**:
-   - Click **"Generate Test Data"** button in the web interface
-   - Enter desired number of records (recommended: 100-500 for comprehensive testing)
-   - Wait for generation to complete with real-time progress updates
-
-2. **Configure API Settings**:
+1. **Configure API Settings**:
    - Enter your credit scoring API URL
    - Provide authentication credentials
    - Test connection before analysis
 
-3. **Select Analysis Types**:
+2. **Select Analysis Types**:
    - ✅ Accuracy Analysis
    - ✅ Bias & Fairness Analysis  
    - ✅ Consistency Analysis
    - ✅ Data Quality Analysis
    - ✅ Robustness Analysis
 
-4. **Manage Cache (Optional)**:
+3. **Manage Cache (Optional)**:
    - Clear specific analysis caches to force fresh data
    - Use "Clear ALL caches" after sample size updates
    - Balance between speed (cached) and freshness (cleared)
@@ -224,7 +219,7 @@ Reports are saved to `reports/generated/`:
 Your credit scoring API should support:
 
 #### **Endpoint Requirements**
-- **URL**: POST endpoint (e.g., `/predict`, `/score`, `/evaluate`)
+- **URL**: POST endpoint (e.g. `/score`)
 - **Authentication**: Basic Auth (username/password)
 - **Content-Type**: `application/json`
 - **Request Format**: JSON payload with applicant data
@@ -262,11 +257,9 @@ The API should return structured JSON with credit information:
 
 ```json
 {
-  "credit_score": 750,
-  "decision": "approve",
-  "confidence": 0.85,
-  "reasoning": "Strong employment history and low credit utilization",
-  "risk_category": "low"
+  "credit_score": 75,
+  "classification": "Good",
+  "explanation": "Strong employment history and low credit utilization"
 }
 ```
 
@@ -302,7 +295,6 @@ The API should return structured JSON with credit information:
 ### ✅ **Consistency Analysis** 🔄
 **Deterministic behavior and repeatability validation with enhanced statistical power**
 
-- **Expanded Sample Size**: Tests 50 samples by default (increased from 10) for better reliability
 - **Exact Match Testing**: Identical inputs produce identical outputs
 - **Temporal Consistency**: Stability across different time periods
 - **Hash-based Tracking**: Precise duplicate input identification
@@ -322,7 +314,6 @@ The API should return structured JSON with credit information:
 ### ✅ **Robustness Analysis** 🛡️
 **Adversarial testing and model stability assessment with comprehensive coverage**
 
-- **Enhanced Testing Scale**: 50 adversarial examples by default (increased from 20)
 - **5 Perturbation Types**: 
   - Numerical noise injection
   - Text typo introduction
@@ -333,10 +324,6 @@ The API should return structured JSON with credit information:
 - **Confidence Analysis**: Prediction confidence stability
 - **Failure Case Detection**: Identifies problematic scenarios
 - **Comprehensive Coverage**: More test cases for better reliability assessment
-
-### 🔮 **Planned Features**
-- **Transparency Analysis**: Model explainability and interpretability assessment
-- **Drift Analysis**: Temporal model performance monitoring and degradation detection
 
 ---
 
@@ -391,12 +378,6 @@ Each analysis generates a professional HTML report with:
 - **Failure Cases**: Specific scenarios where model fails
 - **Stability Metrics**: Confidence and decision reliability
 
-### **Report Features**
-- **Professional Styling**: Modern CSS with responsive design
-- **Interactive Visualizations**: Charts, graphs, and data tables
-- **Print-Friendly**: Optimized for PDF generation and printing
-- **Mobile Responsive**: Works on desktop, tablet, and mobile devices
-- **Audit Trail**: Timestamps and methodology documentation
 
 ---
 
@@ -414,11 +395,6 @@ Each analysis generates a professional HTML report with:
 - **Logging Optimization**: Structured logging with rotation
 - **Resource Cleanup**: Proper thread and connection management
 - **Smart Caching System**: API response caching with selective clearing
-- **Enhanced Sample Sizes**: Increased default sample sizes for better statistical validity
-  - Accuracy: All available data (no artificial limits)
-  - Consistency: 50 samples (up from 10)
-  - Robustness: 50 adversarial examples (up from 20)
-  - Configurable: All sample sizes can be customized via function parameters
 - **Cache Management**: Web interface for clearing stale cached data
 
 ### **Web Interface**
@@ -486,7 +462,6 @@ python tests/demo_robustness.py    # Robustness analysis demo
 - 🇪🇺 **EU AI Act**: AI system risk assessment and documentation
 - 📊 **ISO 42001**: AI management systems compliance
 - 🛡️ **GDPR Article 22**: Automated decision-making transparency
-- 🇺🇸 **Fair Housing Act**: Housing-related credit fairness
 
 ### **Organizational Benefits**
 - **Risk Mitigation**: Early detection of bias and performance issues
@@ -501,7 +476,6 @@ python tests/demo_robustness.py    # Robustness analysis demo
 - **Insurance**: Underwriting fairness assessment
 - **Fintech**: Digital lending platform validation
 - **Consulting**: AI audit and compliance services
-- **Research**: Academic AI fairness studies
 
 ---
 
@@ -510,9 +484,8 @@ python tests/demo_robustness.py    # Robustness analysis demo
 ### **Extending the System**
 - **New Analysis Modules**: Add custom evaluation algorithms
 - **Custom Metrics**: Implement domain-specific fairness measures
-- **Report Templates**: Customize HTML output formatting
 - **Data Sources**: Integrate additional demographic datasets
-- **API Integrations**: Support for different authentication methods
+- **API Integrations**: Support for different authentication methods and JSON structures
 
 ### **Configuration Options**
 - Bias threshold customization
@@ -541,15 +514,8 @@ python tests/demo_robustness.py    # Robustness analysis demo
 
 ### **Future Enhancements** 🔮
 - 🤖 **AI-Powered Insights**: GPT-assisted analysis and recommendations
-- 🔄 **CI/CD Integration**: Automated testing in ML pipelines
-- 📱 **Mobile App**: Native mobile application for on-the-go analysis
+- 🔄 **CI/CD Integration**: Automated testing in pipelines
 - 🌐 **Cloud Deployment**: Scalable cloud infrastructure options
-
-### **Long-term Vision** 🚀
-- **Comprehensive AI Governance Platform**: End-to-end AI validation suite
-- **Industry Templates**: Sector-specific analysis configurations
-- **Real-time Monitoring**: Production model performance tracking
-- **Automated Remediation**: AI-powered bias correction suggestions
 
 ---
 
@@ -582,25 +548,6 @@ While this tool helps assess AI fairness and performance, it is the organization
 
 ---
 
-## 🤝 Contributing
-
-We welcome contributions to improve this AI validation platform!
-
-### **How to Contribute**
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
-### **Areas for Contribution**
-- 🔬 **New Analysis Methods**: Additional fairness metrics and validation techniques
-- 📊 **Visualization Enhancements**: Improved charts and interactive components
-- 🌍 **Localization**: Multi-language support and regional compliance frameworks
-- ⚡ **Performance Optimization**: Efficiency improvements and scalability enhancements
-- 📚 **Documentation**: Guides, tutorials, and best practices
-- 🧪 **Testing**: Additional test cases and validation scenarios
-
 ### **Development Guidelines**
 - Follow existing code style and conventions
 - Add unit tests for new functionality
@@ -608,21 +555,15 @@ We welcome contributions to improve this AI validation platform!
 - Ensure backward compatibility when possible
 - Include clear commit messages and PR descriptions
 
----
-
-**Built with ❤️ for responsible AI development**
 
 ---
 
 ## 📬 Support & Contact
 
 - 🐛 **Issues**: Report bugs and feature requests via GitHub Issues
-- 💬 **Discussions**: Join our community discussions
-- 📧 **Contact**: Reach out for collaboration opportunities
 - 📚 **Documentation**: Complete technical documentation available
 
 ---
 
-**Built with ❤️ for responsible AI and fair algorithmic decision-making**
 
-*© 2025 — Credit Scoring LLM Validator. Advancing fairness in financial AI systems.*
+*© 2025 — FS MDAM Experential Learning Group 4. Credit Scoring LLM Validator. Advancing fairness in financial AI systems.*
