@@ -32,6 +32,7 @@ Each guide provides detailed implementation information, usage examples, interpr
 * **Robustness Testing**: Adversarial input and stability assessment
 
 ### 🌐 **Modern Web Interface**
+* **Integrated Test Data Generation**: Create custom test datasets directly from the web UI
 * Real-time progress tracking with dynamic status updates
 * Professional HTML reports with interactive visualizations
 * Asynchronous processing prevents browser timeouts
@@ -39,10 +40,13 @@ Each guide provides detailed implementation information, usage examples, interpr
 * **Integrated Cache Management**: Clear cached data directly from the web interface
 
 ### 🎯 **Realistic Test Data Generation**
+* **Web Interface Generation**: Generate test data directly from the web UI with custom record counts
+* **Command Line Support**: Traditional script-based generation for automation
 * German-specific demographic distributions
 * Age-appropriate employment status patterns
 * Educational system modeling (vocational training, degrees)
 * Non-binary gender representation and diversity
+* **Customizable Sample Sizes**: Generate anywhere from 10 to 1000+ records
 
 ### 🔒 **Enterprise-Ready Security**
 * Basic Auth support with secure credential handling
@@ -53,6 +57,13 @@ Each guide provides detailed implementation information, usage examples, interpr
 ---
 
 ## 🆕 Latest Enhancements
+
+### **Integrated Test Data Generation** 🎯
+- **Web UI Integration**: Generate test data directly from the web interface
+- **Custom Record Counts**: Specify exact number of records (10-1000+)
+- **Real-time Progress**: Live status updates during generation
+- **Instant Availability**: Generated data immediately ready for analysis
+- **German Demographics**: Realistic population distributions and patterns
 
 ### **Multi-Metric Analysis System** �
 - **Five Analysis Types**: Accuracy, bias/fairness, consistency, data quality, and robustness
@@ -136,17 +147,29 @@ pip install -r requirements.txt
 
 **Key dependencies**: Flask, pandas, requests, Jinja2, numpy, scipy, matplotlib
 
-### 2. **Generate Test Data** (Optional)
+### 2. **Generate Test Data**
 
+You can generate test data in two ways:
+
+#### **Option A: Web Interface (Recommended)**
+1. Start the application: `python app.py`
+2. Open `http://localhost:5000` in your browser
+3. Click **"Generate Test Data"** button
+4. **Custom Record Count**: Enter desired number of records (10-1000+)
+5. **Real-time Feedback**: Watch progress with live status updates
+6. **Instant Availability**: Generated data is immediately available for analysis
+
+#### **Option B: Command Line**
 ```bash
 python generator/testdata_generator.py
 ```
 
-Creates realistic German demographic test data with:
+**Generated Data Features**:
 - Proper age-employment distributions
 - German education system levels
 - Realistic income and credit patterns
 - Diverse demographic representation
+- **Customizable Volume**: Generate the exact number of test records you need
 
 ### 3. **Start the Application**
 
@@ -158,19 +181,24 @@ The web interface runs on `http://localhost:5000`
 
 ### 4. **Run Analysis**
 
-1. **Configure API Settings**:
+1. **Generate Test Data (If Needed)**:
+   - Click **"Generate Test Data"** button in the web interface
+   - Enter desired number of records (recommended: 100-500 for comprehensive testing)
+   - Wait for generation to complete with real-time progress updates
+
+2. **Configure API Settings**:
    - Enter your credit scoring API URL
    - Provide authentication credentials
    - Test connection before analysis
 
-2. **Select Analysis Types**:
+3. **Select Analysis Types**:
    - ✅ Accuracy Analysis
    - ✅ Bias & Fairness Analysis  
    - ✅ Consistency Analysis
    - ✅ Data Quality Analysis
    - ✅ Robustness Analysis
 
-3. **Manage Cache (Optional)**:
+4. **Manage Cache (Optional)**:
    - Clear specific analysis caches to force fresh data
    - Use "Clear ALL caches" after sample size updates
    - Balance between speed (cached) and freshness (cleared)
@@ -501,7 +529,8 @@ python tests/demo_robustness.py    # Robustness analysis demo
 - ✅ **Core Analysis Suite**: Accuracy, bias, consistency, data quality, robustness
 - ✅ **Professional Reporting**: HTML reports with visualizations
 - ✅ **Web Interface**: Modern UI with real-time progress tracking
-- ✅ **German Demographics**: Realistic test data generation
+- ✅ **Integrated Test Data Generation**: Web UI and command-line generation with custom record counts
+- ✅ **German Demographics**: Realistic population distributions and demographic modeling
 - ✅ **Comprehensive Testing**: Unit and integration test coverage
 
 ### **Next Phase** 🚧
