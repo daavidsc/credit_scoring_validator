@@ -70,7 +70,7 @@ def simulate_real_world_analysis():
                 {
                     "status": "success",
                     "parsed": {
-                        "credit_score": 600 + (i % 200),
+                        "credit_score": 60 + (i % 40),  # Generate scores 60-99 for 0-100 scale
                         "classification": ["Poor", "Average", "Good"][i % 3],
                         "explanation": f"Robustness test result {i+1}"
                     }
@@ -86,7 +86,7 @@ def simulate_real_world_analysis():
             {
                 "status": "success",
                 "parsed": {
-                    "credit_score": 700 + (i % 100),
+                    "credit_score": 70 + (i % 30),  # Generate scores 70-99 for 0-100 scale
                     "classification": "Good",
                     "explanation": f"Consistency analysis {i+1}"
                 }

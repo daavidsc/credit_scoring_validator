@@ -222,12 +222,12 @@ def extract_decision_and_confidence(response) -> Tuple[Optional[str], Optional[f
         elif classification in ["poor", "bad", "denied", "deny", "reject"]:
             decision = "deny"
         elif classification in ["average", "moderate"]:
-            # Use credit score threshold for average cases
-            if credit_score is not None:
-                if credit_score >= 700:
-                    decision = "approve"
-                elif credit_score < 600:
-                    decision = "deny"
+            # Use credit score threshold for average cases (API returns 0-100)
+        if credit_score is not None:
+            if credit_score >= 70:
+                decision = "approve"
+            elif credit_score < 60:
+                decision = "deny"
                 else:
                     decision = "conditional"
         
@@ -248,7 +248,7 @@ def extract_decision_and_confidence(response) -> Tuple[Optional[str], Optional[f
         
         # Use credit score as confidence proxy if no explicit confidence
         if confidence is None and credit_score is not None:
-            confidence = min(credit_score / 850.0, 1.0)  # Normalize to 0-1
+            confidence = min(credit_score / 100.0, 1.0)  # Normalize 0-100 to 0-1
         
         return decision, confidence
     

@@ -190,15 +190,15 @@ def parse_credit_decision(response) -> Tuple[Optional[str], Optional[float], str
         elif "class:poor" in text_lower or "class:bad" in text_lower:
             decision = "deny"
         elif "class:average" in text_lower or "class:moderate" in text_lower:
-            # Use credit score threshold for borderline cases
+            # Use credit score threshold for borderline cases (API returns 0-100)
             if "score:" in text_lower:
                 import re
                 score_match = re.search(r'score:(\d+)', text_lower)
                 if score_match:
                     score = int(score_match.group(1))
-                    if score >= 700:
+                    if score >= 70:
                         decision = "approve"
-                    elif score < 600:
+                    elif score < 60:
                         decision = "deny"
                     else:
                         decision = "conditional"
@@ -217,12 +217,12 @@ def parse_credit_decision(response) -> Tuple[Optional[str], Optional[float], str
             confidence = 0.6
         elif "low confidence" in text_lower:
             confidence = 0.4
-        # Use credit score as confidence proxy
+        # Use credit score as confidence proxy (API returns 0-100)
         elif "score:" in text_lower:
             score_match = re.search(r'score:(\d+)', text_lower)
             if score_match:
                 score = int(score_match.group(1))
-                confidence = min(score / 850.0, 1.0)  # Normalize to [0,1]
+                confidence = min(score / 100.0, 1.0)  # Normalize 0-100 to 0-1
     except:
         pass
     
