@@ -57,6 +57,48 @@
             align-items: center;
             justify-content: center;
         }
+
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-left: 5px solid;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-toast.success {
+            border-left-color: #10b981;
+        }
+
+        .notification-toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .notification-toast .close-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .notification-toast .close-btn:hover {
+            background-color: #f3f4f6;
+        }
     </style>
 </head>
 
@@ -471,6 +513,7 @@
             document.getElementById('closeTestDataModal').addEventListener('click', closeTestDataModal);
             document.getElementById('cancelTestData').addEventListener('click', closeTestDataModal);
             document.getElementById('confirmTestDataGeneration').addEventListener('click', confirmTestDataGeneration);
+            document.getElementById('closeToast').addEventListener('click', hideNotification);
             
             // Close modal when clicking outside
             document.getElementById('settingsModal').addEventListener('click', function(e) {
@@ -490,6 +533,62 @@
             const currentModel = document.getElementById('modelField').value;
             document.getElementById('currentModel').textContent = currentModel;
         });
+
+        // Notification Functions
+        function showNotification(type, title, message, details = null) {
+            const toast = document.getElementById('notificationToast');
+            const icon = document.getElementById('toastIcon');
+            const titleEl = document.getElementById('toastTitle');
+            const messageEl = document.getElementById('toastMessage');
+            const detailsEl = document.getElementById('toastDetails');
+            
+            // Set content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            if (details) {
+                detailsEl.textContent = details;
+                detailsEl.classList.remove('hidden');
+            } else {
+                detailsEl.classList.add('hidden');
+            }
+            
+            // Set icon and styling based on type
+            if (type === 'success') {
+                toast.className = 'notification-toast success';
+                icon.innerHTML = `
+                    <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                `;
+            } else if (type === 'error') {
+                toast.className = 'notification-toast error';
+                icon.innerHTML = `
+                    <div class="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                `;
+            }
+            
+            // Show notification
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+
+        function hideNotification() {
+            const toast = document.getElementById('notificationToast');
+            toast.classList.remove('show');
+        }
 
         // Test Data Modal Functions
         function openTestDataModal() {
@@ -548,8 +647,13 @@
                         </svg>
                     `;
                     
-                    // Show notification
-                    alert(`Test data generated successfully! Generated ${data.records_count} records in ${data.file_path}`);
+                    // Show beautiful notification
+                    showNotification(
+                        'success',
+                        '🎉 Test Data Generated Successfully!',
+                        `Created ${data.records_count} realistic test records with German demographics`,
+                        `Saved to: ${data.file_path} • Ready for credit scoring analysis`
+                    );
                 } else {
                     // Show error state
                     generateBtn.className = generateBtn.className.replace('text-orange-500', 'text-red-500');
@@ -559,7 +663,12 @@
                         </svg>
                     `;
                     
-                    alert(`Error generating test data: ${data.error}`);
+                    showNotification(
+                        'error',
+                        '❌ Generation Failed',
+                        'Unable to generate test data',
+                        `Error: ${data.error}`
+                    );
                 }
             })
             .catch(error => {
@@ -570,7 +679,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 `;
-                alert('Error generating test data. Please check the console for details.');
+                
+                showNotification(
+                    'error',
+                    '🔧 Connection Error',
+                    'Failed to connect to the server',
+                    'Please check your connection and try again'
+                );
             })
             .finally(() => {
                 // Reset button after 2 seconds
@@ -719,6 +834,31 @@
                 <button type="button" id="cancelTestData" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
                 <button type="button" id="confirmTestDataGeneration" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Generate Data</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="notification-toast">
+        <div class="p-4 flex items-start space-x-3">
+            <div id="toastIcon" class="flex-shrink-0 mt-0.5">
+                <!-- Icon will be inserted here -->
+            </div>
+            <div class="flex-1 min-w-0">
+                <div id="toastTitle" class="text-sm font-medium text-gray-900">
+                    <!-- Title will be inserted here -->
+                </div>
+                <div id="toastMessage" class="text-sm text-gray-500 mt-1">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div id="toastDetails" class="text-xs text-gray-400 mt-2 hidden">
+                    <!-- Additional details will be inserted here -->
+                </div>
+            </div>
+            <button id="closeToast" class="close-btn flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
     </div>
 </body>
