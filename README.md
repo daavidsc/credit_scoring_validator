@@ -16,7 +16,6 @@ Detailed implementation guides for each analysis metric:
 * 🔍 **[Data Quality Guide](DATA_QUALITY_GUIDE.md)** - Data integrity, completeness, and error rate analysis
 * 🛡️ **[Robustness Analysis Guide](ROBUSTNESS_GUIDE.md)** - Adversarial testing and model stability assessment
 * 🔬 **[Transparency Guide](TRANSPARENCY_GUIDE.md)** - Model explainability and interpretability *(planned)*
-* 📈 **[Drift Analysis Guide](DRIFT_GUIDE.md)** - Model performance monitoring over time *(planned)*
 
 Each guide provides detailed implementation information, usage examples, interpretation guidelines, and best practices.
 
