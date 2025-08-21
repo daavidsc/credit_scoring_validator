@@ -46,15 +46,15 @@
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Executive Summary</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="text-center">
-                    <div class="text-3xl font-bold score-excellent">91.1%</div>
+                    <div class="text-3xl font-bold score-excellent">98.2%</div>
                     <div class="text-sm text-gray-600">Overall Robustness Score</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-blue-600">89.6%</div>
+                    <div class="text-3xl font-bold text-blue-600">98.3%</div>
                     <div class="text-sm text-gray-600">Decision Consistency</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold text-green-600">135</div>
+                    <div class="text-3xl font-bold text-green-600">234</div>
                     <div class="text-sm text-gray-600">Test Cases</div>
                 </div>
             </div>
@@ -70,10 +70,10 @@
                         How consistently the model makes the same decision when input is perturbed.
                     </p>
                     <div class="bg-gray-200 rounded-full h-4 mb-2">
-                        <div class="bg-blue-600 h-4 rounded-full" style="width: 89.6%"></div>
+                        <div class="bg-blue-600 h-4 rounded-full" style="width: 98.3%"></div>
                     </div>
                     <div class="text-sm text-gray-600">
-                        121 / 135 consistent decisions
+                        230 / 234 consistent decisions
                     </div>
                 </div>
                 
@@ -84,9 +84,9 @@
                     </p>
                     
                     <div class="text-sm">
-                        <div>Mean difference: 0.056</div>
-                        <div>Max difference: 0.240</div>
-                        <div>Std deviation: 0.078</div>
+                        <div>Mean difference: 0.020</div>
+                        <div>Max difference: 0.140</div>
+                        <div>Std deviation: 0.039</div>
                     </div>
                     
                 </div>
@@ -101,20 +101,20 @@
                 <div class="perturbation-card">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-medium text-gray-700">Noise Numerical</h3>
-                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">27 tests</span>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">46 tests</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
                             <span class="text-gray-600">Consistency Rate:</span>
-                            <span class="font-medium ml-2">96.3%</span>
+                            <span class="font-medium ml-2">91.3%</span>
                         </div>
                         <div>
                             <span class="text-gray-600">Avg Confidence Drop:</span>
-                            <span class="font-medium ml-2">0.008</span>
+                            <span class="font-medium ml-2">0.020</span>
                         </div>
                         <div>
                             <span class="text-gray-600">Max Confidence Drop:</span>
-                            <span class="font-medium ml-2">0.080</span>
+                            <span class="font-medium ml-2">0.140</span>
                         </div>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                 <div class="perturbation-card">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-medium text-gray-700">Typos Text</h3>
-                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">27 tests</span>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">47 tests</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
@@ -143,7 +143,7 @@
                 <div class="perturbation-card">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-medium text-gray-700">Case Change</h3>
-                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">27 tests</span>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">47 tests</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
@@ -164,7 +164,7 @@
                 <div class="perturbation-card">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-medium text-gray-700">Missing Values</h3>
-                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">27 tests</span>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">47 tests</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
@@ -185,20 +185,20 @@
                 <div class="perturbation-card">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-medium text-gray-700">Extreme Values</h3>
-                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">27 tests</span>
+                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">47 tests</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
                             <span class="text-gray-600">Consistency Rate:</span>
-                            <span class="font-medium ml-2">51.9%</span>
+                            <span class="font-medium ml-2">100.0%</span>
                         </div>
                         <div>
                             <span class="text-gray-600">Avg Confidence Drop:</span>
-                            <span class="font-medium ml-2">0.148</span>
+                            <span class="font-medium ml-2">0.000</span>
                         </div>
                         <div>
                             <span class="text-gray-600">Max Confidence Drop:</span>
-                            <span class="font-medium ml-2">0.240</span>
+                            <span class="font-medium ml-2">0.000</span>
                         </div>
                     </div>
                 </div>
@@ -223,74 +223,24 @@
                 
                 <div class="failure-case">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="font-medium text-red-700">Noise Numerical</span>
                         <span class="text-sm text-gray-600">
-                            good → average
+                            average → good
                         </span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
                             <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:76 class:Good reason:The credit score is classified as Good based on the provided data. The applicant has a stable employment status with a decent income, no existing loans or payment defaults, ...</div>
+                            <div class="text-gray-600 mt-1">score:68 class:Average reason:The credit score is based on the provided data. The individual has a stable employment history, a good income, and a moderate level of credit utilization. However, there ...</div>
                         </div>
                         <div>
                             <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:62 class:Average reason:The credit score is classified as Average. The employment duration is low, and there have been 2 payment defaults and 12 credit inquiries in the last 6 months, which slig...</div>
+                            <div class="text-gray-600 mt-1">score:78 class:Good reason:The credit score is 78, classified as Good. The applicant has a stable employment history of 34 years with a high income of 115527.0 EUR/month. Although there is one payment...</div>
                         </div>
                     </div>
                     
                     <div class="text-sm text-gray-600 mt-2">
-                        Confidence: 0.76 → 0.62
-                        (Δ 0.14)
-                    </div>
-                    
-                </div>
-                
-                <div class="failure-case">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
-                        <span class="text-sm text-gray-600">
-                            average → poor
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:68 class:Average reason:The employment duration is very low for a retired individual, which may indicate inconsistency in the data provided. The number of existing loans and the used credit amou...</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:23 class:Poor reason:The provided income of 300000.0 EUR/month is unusually high and may be a data entry error. The employment status is listed as retired, which is typically associated with low...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-sm text-gray-600 mt-2">
-                        Confidence: 0.68 → 0.77
-                        (Δ 0.09)
-                    </div>
-                    
-                </div>
-                
-                <div class="failure-case">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
-                        <span class="text-sm text-gray-600">
-                            average → poor
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:68 class:Average reason:The address stability is low, which may indicate a higher risk. The used credit is slightly higher than the credit limit. The income is high, but the household size shoul...</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:42 class:Poor reason:The credit score is low due to inconsistencies and missing data. The employment duration of 60 years is unrealistic, and the address stability of 0 years raises concerns. Ad...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-sm text-gray-600 mt-2">
-                        Confidence: 0.68 → 0.58
+                        Confidence: 0.68 → 0.78
                         (Δ 0.10)
                     </div>
                     
@@ -298,32 +248,7 @@
                 
                 <div class="failure-case">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
-                        <span class="text-sm text-gray-600">
-                            average → poor
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:62 class:Average reason:The employment status of retired with 0 years of employment duration raises concerns about income stability. With 4 existing loans and a payment default, the credit score...</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:32 class:Poor reason:The credit score is low due to high used credit compared to the credit limit, significant payment defaults, and a high number of credit inquiries in the last 6 months. The e...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-sm text-gray-600 mt-2">
-                        Confidence: 0.62 → 0.68
-                        (Δ 0.06)
-                    </div>
-                    
-                </div>
-                
-                <div class="failure-case">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="font-medium text-red-700">Noise Numerical</span>
                         <span class="text-sm text-gray-600">
                             good → average
                         </span>
@@ -331,86 +256,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
                             <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is based on the provided financial information and employment stability. The candidate has a good income, low credit utilization, no payment defaults, and a...</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is 82, classified as Good. The income is sufficient, employment status is stable, and there are no payment defaults or recent credit inquiries. However, the...</div>
                         </div>
                         <div>
                             <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:64 class:Average reason:The credit score is classified as Average. The address stability is low, which may indicate a higher risk. The number of credit inquiries in the last 6 months is high, su...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-sm text-gray-600 mt-2">
-                        Confidence: 0.82 → 0.64
-                        (Δ 0.18)
-                    </div>
-                    
-                </div>
-                
-                <div class="failure-case">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
-                        <span class="text-sm text-gray-600">
-                            good → poor
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is 82, classified as Good. The candidate has a stable employment history of 24 years and a high income of 113502.0 EUR/month. They have managed their credit...</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:42 class:Poor reason:The credit score is low due to high credit inquiries in the last 6 months and lack of address stability. The income provided seems unusually high for typical German employme...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-sm text-gray-600 mt-2">
-                        Confidence: 0.82 → 0.58
-                        (Δ 0.24)
-                    </div>
-                    
-                </div>
-                
-                <div class="failure-case">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
-                        <span class="text-sm text-gray-600">
-                            good → poor
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:76 class:Good reason:The credit score is good based on the provided data. The applicant has a stable employment status with a decent income. The used credit is within the credit limit, and there...</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:45 class:Poor reason:The credit score is lower than average due to high used credit compared to the credit limit, which indicates a high debt-to-credit ratio. Additionally, there have been 2 pay...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-sm text-gray-600 mt-2">
-                        Confidence: 0.76 → 0.55
-                        (Δ 0.21)
-                    </div>
-                    
-                </div>
-                
-                <div class="failure-case">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
-                        <span class="text-sm text-gray-600">
-                            good → poor
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is 82, classified as Good. The applicant has a stable employment status as a self-employed individual with 6 years of experience. The used credit is within ...</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:32 class:Poor reason:The address stability is very low, which may indicate a higher risk. The used credit amount is significantly higher than the credit limit, which is a red flag for financial ...</div>
+                            <div class="text-gray-600 mt-1">score:68 class:Average reason:The employment duration is very short, which may indicate instability. The used credit is higher than the credit limit, which is a red flag. While there are no payment de...</div>
                         </div>
                     </div>
                     
@@ -423,19 +273,44 @@
                 
                 <div class="failure-case">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
+                        <span class="font-medium text-red-700">Noise Numerical</span>
                         <span class="text-sm text-gray-600">
-                            good → poor
+                            average → good
                         </span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
                             <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is 82, classified as Good. The applicant has a stable employment status with a decent income, low credit utilization, no payment defaults, and no recent cre...</div>
+                            <div class="text-gray-600 mt-1">score:68 class:Average reason:The credit score is classified as Average. The candidate's income, employment status, and credit history are positive factors. However, the number of credit inquiries in ...</div>
                         </div>
                         <div>
                             <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:32 class:Poor reason:The credit score is low due to high existing loans, low credit limit, high payment defaults, and a significant number of credit inquiries in the last 6 months. The employmen...</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is 82, classifying the applicant as 'Good'. The applicant has a stable employment status with a decent income, low credit utilization, no payment defaults, ...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 mt-2">
+                        Confidence: 0.68 → 0.82
+                        (Δ 0.14)
+                    </div>
+                    
+                </div>
+                
+                <div class="failure-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-red-700">Noise Numerical</span>
+                        <span class="text-sm text-gray-600">
+                            good → average
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="font-medium text-gray-700">Original Response:</div>
+                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is good based on the provided data. The applicant has a stable employment status with a decent income, low credit utilization, no payment defaults, and a mo...</div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-700">Perturbed Response:</div>
+                            <div class="text-gray-600 mt-1">score:68 class:Average reason:The credit score is based on the provided data. The applicant's income, employment status, employment duration, existing loans, credit usage, payment history, and credit ...</div>
                         </div>
                     </div>
                     
@@ -446,35 +321,6 @@
                     
                 </div>
                 
-                <div class="failure-case">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium text-red-700">Extreme Values</span>
-                        <span class="text-sm text-gray-600">
-                            good → average
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="font-medium text-gray-700">Original Response:</div>
-                            <div class="text-gray-600 mt-1">score:82 class:Good reason:The credit score is 82, classifying the applicant as 'Good'. The applicant has a stable employment history of 9 years, a low level of used credit compared to the credit limi...</div>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-700">Perturbed Response:</div>
-                            <div class="text-gray-600 mt-1">score:64 class:Average reason:The employment duration is very short, which may indicate instability. The household size is unusually large, which could impact financial stability. The used credit is h...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-sm text-gray-600 mt-2">
-                        Confidence: 0.82 → 0.64
-                        (Δ 0.18)
-                    </div>
-                    
-                </div>
-                
-                
-                <div class="text-sm text-gray-600 text-center">
-                    ... and 4 more failure cases
-                </div>
                 
             </div>
         </div>
@@ -510,7 +356,7 @@
         
         <!-- Footer -->
         <div class="text-center text-sm text-gray-500 mt-8">
-            Generated on 2025-08-21 11:47:00
+            Generated on 2025-08-21 14:46:19
         </div>
     </div>
     
@@ -518,12 +364,12 @@
         // Create perturbation impact chart
         const perturbationData = {
             x: ['Noise Numerical','Typos Text','Case Change','Missing Values','Extreme Values'],
-            y: [0.9629629629629629,1.0,1.0,1.0,0.5185185185185185],
+            y: [0.9130434782608695,1.0,1.0,1.0,1.0],
             type: 'bar',
             marker: {
-                color: ['#059669','#059669','#059669','#059669','#d97706']
+                color: ['#059669','#059669','#059669','#059669','#059669']
             },
-            text: ['96.3%','100.0%','100.0%','100.0%','51.9%'],
+            text: ['91.3%','100.0%','100.0%','100.0%','100.0%'],
             textposition: 'auto'
         };
         
