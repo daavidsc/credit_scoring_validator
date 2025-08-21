@@ -133,7 +133,7 @@ def demographic_parity(responses, protected_attr, positive_class="Good"):
             # If no classification, use score threshold (e.g., >= 70 is positive for 0-100 scale)
             try:
                 score_val = float(credit_score)
-                is_positive = score_val >= 70  # Threshold for 0-100 scale
+                is_positive = score_val >= 70  # Threshold for 0-100 scale. Maybe make configurable later
             except (ValueError, TypeError):
                 groups[group]["errors"] += 1
         
@@ -228,7 +228,7 @@ def counterfactual_fairness(df, protected_attr, values, sample_size=100):
             if original_score is not None and cf_score is not None:
                 try:
                     score_diff = abs(float(original_score) - float(cf_score))
-                    score_changed = score_diff >= 10  # Significant difference for 0-100 scale
+                    score_changed = score_diff >= 10  # Significant difference for 0-100 scale, maybe make threshold configurable later
                 except (ValueError, TypeError):
                     pass
 

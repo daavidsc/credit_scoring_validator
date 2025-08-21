@@ -9,9 +9,7 @@ from utils.logger import setup_logger
 
 logger = setup_logger("accuracy", "results/logs/accuracy.log")
 
-# Import additional functions we'll need
 from api.client import send_request
-
 
 def save_jsonl(data, path):
     """Save data as JSONL format"""
@@ -102,7 +100,7 @@ def extract_predictions_and_ground_truth(responses: List[Dict], ground_truth_sou
     Extract predictions and ground truth from API responses.
     
     For credit scoring, we need to establish ground truth. Since this is synthetic data,
-    we'll create a simple rule-based ground truth based on financial indicators.
+    we calculate a simple rule-based ground truth based on financial indicators.
     
     Returns:
         Tuple of (predicted_scores, predicted_classes, true_scores, true_classes)
@@ -148,6 +146,9 @@ def calculate_ground_truth(input_data: Dict) -> Tuple[float, str]:
     """
     Calculate ground truth credit score and classification based on financial indicators.
     This is a simplified rule-based approach for synthetic data validation.
+
+    Future enhancement: Make thresholds configurable.
+
     """
     score = 50  # Base score
     
@@ -387,7 +388,7 @@ def analyze_score_distribution(predicted_scores: List[float], true_scores: List[
 
 def run_accuracy_analysis(response_path: str = "results/responses/bias_fairness.jsonl") -> Dict[str, Any]:
     """
-    Run comprehensive accuracy analysis on credit scoring predictions
+    Run accuracy analysis on credit scoring predictions
     
     Args:
         response_path: Path to JSONL file containing API responses
@@ -499,4 +500,3 @@ def run_accuracy_analysis(response_path: str = "results/responses/bias_fairness.
 
 if __name__ == "__main__":
     results = run_accuracy_analysis()
-    print(json.dumps(results, indent=2))
