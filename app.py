@@ -33,7 +33,8 @@ def clear_analysis_cache(cache_options):
     cache_files = {
         "clear_bias_cache": "results/responses/bias_fairness.jsonl",
         "clear_consistency_cache": "results/responses/consistency.jsonl", 
-        "clear_robustness_cache": "results/responses/robustness.jsonl"
+        "clear_robustness_cache": "results/responses/robustness.jsonl",
+        "clear_data_quality_cache": "results/responses/all_responses.jsonl"
     }
     
     cleared_files = []
@@ -89,7 +90,7 @@ def run_analysis_background(form_data):
         config.MODEL = form_data.get("model", "gpt-3.5-turbo-0125")
         
         results = {}
-        total_analyses = sum([form_data["run_bias"], form_data["run_accuracy"], form_data["run_robustness"], form_data["run_consistency"]])
+        total_analyses = sum([form_data["run_bias"], form_data["run_accuracy"], form_data["run_robustness"], form_data["run_consistency"], form_data["run_data_quality"]])
         
         # Define realistic progress ranges based on actual analysis time
         # These percentages reflect the relative time each analysis takes
@@ -179,24 +180,30 @@ def run_analysis_background(form_data):
             analysis_status["message"] = f"Building consistency report..."
             build_consistency_report(consistency_results)
         
-        # Run comprehensive data quality analysis on all collected responses
-        start_progress, end_progress = progress_ranges["data_quality"]
-        analysis_status["progress"] = start_progress
-        analysis_status["message"] = "Running comprehensive data quality analysis..."
-        
-        from analysis.data_quality_analyzer import set_status_reference as set_dq_status_reference
-        set_dq_status_reference(analysis_status)
-        
-        data_quality_results = run_comprehensive_data_quality_analysis()
-        results["comprehensive_data_quality"] = data_quality_results
-        
-        # Build comprehensive data quality report
-        analysis_status["progress"] = end_progress - 1
-        analysis_status["message"] = "Building comprehensive data quality report..."
-        build_comprehensive_data_quality_report(data_quality_results)
+        # Run comprehensive data quality analysis on all collected responses (if selected)
+        if form_data["run_data_quality"]:
+            start_progress, end_progress = progress_ranges["data_quality"]
+            analysis_status["progress"] = start_progress
+            analysis_status["message"] = "Running comprehensive data quality analysis..."
+            
+            from analysis.data_quality_analyzer import set_status_reference as set_dq_status_reference
+            set_dq_status_reference(analysis_status)
+            
+            data_quality_results = run_comprehensive_data_quality_analysis()
+            results["comprehensive_data_quality"] = data_quality_results
+            
+            # Build comprehensive data quality report
+            analysis_status["progress"] = end_progress - 1
+            analysis_status["message"] = "Building comprehensive data quality report..."
+            build_comprehensive_data_quality_report(data_quality_results)
+            
+            total_responses = data_quality_results['total_responses_analyzed']
+        else:
+            # Count responses from other analyses if data quality wasn't run
+            total_responses = sum(len(results.get(key, {}).get('responses', [])) for key in results.keys())
         
         analysis_status["progress"] = 100
-        analysis_status["message"] = f"All analyses completed! Processed {data_quality_results['total_responses_analyzed']} total API responses."
+        analysis_status["message"] = f"All analyses completed! Processed {total_responses} total API responses."
         analysis_status["completed"] = True
         analysis_status["running"] = False
         
@@ -220,11 +227,13 @@ def index():
         "run_accuracy": False,
         "run_robustness": False,
         "run_consistency": False,
+        "run_data_quality": False,
         "model": "gpt-3.5-turbo-0125",
         # Cache management defaults
         "clear_bias_cache": False,
         "clear_consistency_cache": False,
         "clear_robustness_cache": False,
+        "clear_data_quality_cache": False,
         "clear_all_cache": False
     }
     return render_template("index.html", form_data=form_data)
@@ -246,16 +255,18 @@ def start_analysis():
         "run_accuracy": request.form.get("run_accuracy") == "on",
         "run_robustness": request.form.get("run_robustness") == "on",
         "run_consistency": request.form.get("run_consistency") == "on",
+        "run_data_quality": request.form.get("run_data_quality") == "on",
         "model": request.form.get("model", "gpt-3.5-turbo-0125"),
         # Cache management options
         "clear_bias_cache": request.form.get("clear_bias_cache") == "on",
         "clear_consistency_cache": request.form.get("clear_consistency_cache") == "on",
         "clear_robustness_cache": request.form.get("clear_robustness_cache") == "on",
+        "clear_data_quality_cache": request.form.get("clear_data_quality_cache") == "on",
         "clear_all_cache": request.form.get("clear_all_cache") == "on"
     }
     
     # Validate that at least one analysis is selected
-    if not (form_data["run_bias"] or form_data["run_accuracy"] or form_data["run_robustness"] or form_data["run_consistency"]):
+    if not (form_data["run_bias"] or form_data["run_accuracy"] or form_data["run_robustness"] or form_data["run_consistency"] or form_data["run_data_quality"]):
         return jsonify({"error": "Please select at least one analysis to run."}), 400
     
     # Validate required fields for analyses that need API calls
@@ -310,6 +321,14 @@ def view_consistency_report():
     if not os.path.exists(report_file):
         return "Consistency report not found. Please run the consistency analysis first.", 404
     return send_from_directory("reports/generated", "consistency_report.html")
+
+
+@app.route("/data_quality_report")
+def view_data_quality_report():
+    report_file = "reports/generated/comprehensive_data_quality_report.html"
+    if not os.path.exists(report_file):
+        return "Data quality report not found. Please run the data quality analysis first.", 404
+    return send_from_directory("reports/generated", "comprehensive_data_quality_report.html")
 
 
 @app.route("/generate_test_data", methods=["POST"])

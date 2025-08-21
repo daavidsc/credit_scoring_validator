@@ -20,6 +20,34 @@ def set_status_reference(status_ref):
     global analysis_status
     analysis_status = status_ref
 
+def calculate_confidence_from_score(credit_score: float) -> float:
+    """
+    Calculate confidence based on how far the score is from the neutral point (50).
+    
+    Scores near 0 or 100 indicate high model confidence (clear poor/good decisions)
+    Scores near 50 indicate lower confidence (borderline cases)
+    
+    Args:
+        credit_score: Credit score from 0-100
+        
+    Returns:
+        Confidence value from 0.5 to 1.0
+    """
+    if credit_score is None:
+        return None
+    
+    # Distance from neutral (50) indicates confidence
+    # Scores near 0 or 100 = high confidence  
+    # Scores near 50 = low confidence
+    distance_from_middle = abs(credit_score - 50) / 50
+    
+    # Map to confidence range 0.5 to 1.0
+    # Distance 0 (score=50) → confidence 0.5
+    # Distance 1 (score=0 or 100) → confidence 1.0
+    confidence = 0.5 + distance_from_middle * 0.5
+    
+    return min(confidence, 1.0)
+
 def save_jsonl(data, path):
     """Save data as JSONL format"""
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -248,9 +276,9 @@ def parse_credit_decision(response) -> Tuple[Optional[str], Optional[float], str
     # Handle structured format (score:X class:Y reason:Z)
     if "class:" in text_lower:
         if "class:good" in text_lower or "class:approved" in text_lower:
-            decision = "approve"
+            decision = "good"
         elif "class:poor" in text_lower or "class:bad" in text_lower or "class:denied" in text_lower:
-            decision = "deny"
+            decision = "poor"
         elif "class:average" in text_lower or "class:moderate" in text_lower:
             # For average, check score if available (API returns scores 0-100)
             if "score:" in text_lower:
@@ -259,17 +287,21 @@ def parse_credit_decision(response) -> Tuple[Optional[str], Optional[float], str
                 if score_match:
                     score = int(score_match.group(1))
                     if score >= 70:
-                        decision = "approve"
+                        decision = "good"  # High average treated as good
                     elif score < 60:
-                        decision = "deny"
+                        decision = "poor"  # Low average treated as poor
                     else:
-                        decision = "conditional"
+                        decision = "average"  # True average
+            else:
+                decision = "average"  # Default for average without score
     else:
-        # Handle traditional text format
-        if "approve" in text_lower or "approved" in text_lower:
-            decision = "approve"
-        elif "deny" in text_lower or "denied" in text_lower or "reject" in text_lower:
-            decision = "deny"
+        # Handle traditional text format (Good/Average/Poor classifications and legacy approve/deny)
+        if "good" in text_lower or "approve" in text_lower or "approved" in text_lower:
+            decision = "good"
+        elif "poor" in text_lower or "deny" in text_lower or "denied" in text_lower or "reject" in text_lower:
+            decision = "poor"
+        elif "average" in text_lower or "moderate" in text_lower:
+            decision = "average"
     
     # Extract confidence (look for percentages or confidence indicators)
     confidence = None
@@ -285,11 +317,11 @@ def parse_credit_decision(response) -> Tuple[Optional[str], Optional[float], str
         elif "low confidence" in text_lower:
             confidence = 0.4
         elif "score:" in text_lower:
-            # Use credit score as confidence proxy if no explicit confidence (API returns 0-100)
+            # Use improved score-based confidence proxy if no explicit confidence (API returns 0-100)
             score_match = re.search(r'score:(\d+)', text_lower)
             if score_match:
                 score = int(score_match.group(1))
-                confidence = min(score / 100.0, 1.0)  # Normalize 0-100 to 0-1
+                confidence = calculate_confidence_from_score(score)
     except:
         pass
     

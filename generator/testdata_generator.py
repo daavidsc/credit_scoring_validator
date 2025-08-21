@@ -164,7 +164,7 @@ def generate_test_data(num_records=1, locales=['de_DE'], nationality_distributio
         record["credit_inquiries_last_6_months"] = random.choices(inquiries, weights=weights, k=1)[0]
 
         # Use random.choices for weighted selection of housing_status
-        housing_status_distribution = [('owner', 0.45), ('renter', 0.45), ('subsidized_housing', 0.05), ('other', 0.05)]
+        housing_status_distribution = [('owner', 0.45), ('renter', 0.45), ('subsidized_housing', 0.05), ('living_with_parents', 0.05)]
         housing_statuses, weights = zip(*housing_status_distribution)
         record["housing_status"] = random.choices(housing_statuses, weights=weights, k=1)[0]
 

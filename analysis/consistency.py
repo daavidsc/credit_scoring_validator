@@ -28,6 +28,34 @@ def set_status_reference(status_ref):
     global analysis_status
     analysis_status = status_ref
 
+def calculate_confidence_from_score(credit_score: float) -> float:
+    """
+    Calculate confidence based on how far the score is from the neutral point (50).
+    
+    Scores near 0 or 100 indicate high model confidence (clear poor/good decisions)
+    Scores near 50 indicate lower confidence (borderline cases)
+    
+    Args:
+        credit_score: Credit score from 0-100
+        
+    Returns:
+        Confidence value from 0.5 to 1.0
+    """
+    if credit_score is None:
+        return None
+    
+    # Distance from neutral (50) indicates confidence
+    # Scores near 0 or 100 = high confidence  
+    # Scores near 50 = low confidence
+    distance_from_middle = abs(credit_score - 50) / 50
+    
+    # Map to confidence range 0.5 to 1.0
+    # Distance 0 (score=50) → confidence 0.5
+    # Distance 1 (score=0 or 100) → confidence 1.0
+    confidence = 0.5 + distance_from_middle * 0.5
+    
+    return min(confidence, 1.0)
+
 def save_jsonl(data, path):
     """Save data as JSONL format"""
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -102,23 +130,25 @@ def extract_decision_and_confidence(response) -> Tuple[Optional[str], Optional[f
                 credit_score = parsed.get("credit_score")
                 explanation = parsed.get("explanation", "").lower()
                 
-                # Map classification to decision
+                # Map classification to decision (handles Good/Average/Poor from API)
                 decision = None
                 if classification in ["good", "approved", "approve"]:
-                    decision = "approve"
+                    decision = "good"
                 elif classification in ["poor", "bad", "denied", "deny", "reject"]:
-                    decision = "deny"
+                    decision = "poor"
                 elif classification in ["average", "moderate"]:
                     # Use credit score if available (API returns scores 0-100)
                     if credit_score is not None:
                         if credit_score >= 70:
-                            decision = "approve"
+                            decision = "good"  # High average treated as good
                         elif credit_score < 60:
-                            decision = "deny"
+                            decision = "poor"  # Low average treated as poor
                         else:
-                            decision = "conditional"  # Average score
+                            decision = "average"  # True average
+                    else:
+                        decision = "average"  # Default for average without score
                 
-                # Extract confidence from explanation or use credit score as proxy
+                # Extract confidence from explanation or use improved score-based proxy
                 confidence = None
                 if explanation:
                     import re
@@ -132,9 +162,9 @@ def extract_decision_and_confidence(response) -> Tuple[Optional[str], Optional[f
                     elif "low confidence" in explanation:
                         confidence = 0.5
                 
-                # Use credit score as confidence proxy if no explicit confidence
+                # Use improved score-based confidence proxy if no explicit confidence
                 if confidence is None and credit_score is not None:
-                    confidence = min(credit_score / 100.0, 1.0)  # Normalize 0-100 to 0-1
+                    confidence = calculate_confidence_from_score(credit_score)
                 
                 return decision, confidence
             else:
@@ -149,12 +179,14 @@ def extract_decision_and_confidence(response) -> Tuple[Optional[str], Optional[f
     # Fallback to text-based extraction
     text_lower = response_text.lower()
     
-    # Extract decision
+    # Extract decision (handles both legacy approve/deny and Good/Average/Poor classifications)
     decision = None
-    if "approve" in text_lower or "approved" in text_lower:
-        decision = "approve"
-    elif "deny" in text_lower or "denied" in text_lower or "reject" in text_lower:
-        decision = "deny"
+    if "good" in text_lower or "approve" in text_lower or "approved" in text_lower:
+        decision = "good"
+    elif "poor" in text_lower or "deny" in text_lower or "denied" in text_lower or "reject" in text_lower:
+        decision = "poor"
+    elif "average" in text_lower or "moderate" in text_lower:
+        decision = "average"
     
     # Extract confidence (look for percentages)
     confidence = None

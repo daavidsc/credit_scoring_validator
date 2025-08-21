@@ -187,6 +187,10 @@
                     <input type="checkbox" name="run_consistency" {% if form_data.run_consistency %}checked{% endif %} class="accent-blue-500">
                     <span class="text-gray-800">Consistency Testing</span>
                 </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="run_data_quality" {% if form_data.run_data_quality %}checked{% endif %} class="accent-blue-500">
+                    <span class="text-gray-800">Data Quality Analysis</span>
+                </label>
             </div>
         </div>
 
@@ -207,6 +211,10 @@
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" name="clear_robustness_cache" class="accent-red-500">
                         <span class="text-sm text-gray-700">Clear Robustness cache</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" name="clear_data_quality_cache" class="accent-red-500">
+                        <span class="text-sm text-gray-700">Clear Data Quality cache</span>
                     </label>
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" name="clear_all_cache" class="accent-red-500">
@@ -253,6 +261,12 @@
                         🔄 View Consistency Testing Report
                     </a>
                 </div>
+                <div id="dataQualityReportButton" class="hidden">
+                    <a href="/data_quality_report"
+                        class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-md shadow inline-block">
+                        📊 View Data Quality Analysis Report
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -273,8 +287,9 @@
                 fetch('/report').then(response => response.ok),
                 fetch('/accuracy_report').then(response => response.ok),
                 fetch('/robustness_report').then(response => response.ok),
-                fetch('/consistency_report').then(response => response.ok)
-            ]).then(([biasExists, accuracyExists, robustnessExists, consistencyExists]) => {
+                fetch('/consistency_report').then(response => response.ok),
+                fetch('/data_quality_report').then(response => response.ok)
+            ]).then(([biasExists, accuracyExists, robustnessExists, consistencyExists, dataQualityExists]) => {
                 if (biasExists) {
                     showPreviousReport('bias');
                 }
@@ -286,6 +301,9 @@
                 }
                 if (consistencyExists) {
                     showPreviousReport('consistency');
+                }
+                if (dataQualityExists) {
+                    showPreviousReport('dataQuality');
                 }
             }).catch(error => {
                 console.log('No previous reports found');
@@ -308,6 +326,9 @@
             }
             if (document.querySelector('input[name="run_consistency"]').checked) {
                 currentAnalyses.push('consistency');
+            }
+            if (document.querySelector('input[name="run_data_quality"]').checked) {
+                currentAnalyses.push('dataQuality');
             }
             
             // Show loading indicator
@@ -449,6 +470,13 @@
                         fetch('/consistency_report').then(response => {
                             if (response.ok) {
                                 showCurrentReport('consistency');
+                            }
+                        }).catch(() => {});
+                    } else if (analysis === 'dataQuality') {
+                        // Verify the report actually exists before showing
+                        fetch('/data_quality_report').then(response => {
+                            if (response.ok) {
+                                showCurrentReport('dataQuality');
                             }
                         }).catch(() => {});
                     }
@@ -718,6 +746,9 @@
             } else if (type === 'consistency') {
                 buttonId = 'consistencyReportButton';
                 linkText = '🔄 View Previous Consistency Report <span class="text-xs opacity-75">(from last run)</span>';
+            } else if (type === 'dataQuality') {
+                buttonId = 'dataQualityReportButton';
+                linkText = '📊 View Previous Data Quality Report <span class="text-xs opacity-75">(from last run)</span>';
             }
             
             const button = document.getElementById(buttonId);
@@ -749,6 +780,10 @@
                 buttonId = 'consistencyReportButton';
                 linkText = '🔄 View Consistency Testing Report <span class="text-xs opacity-75">(✨ just generated)</span>';
                 bgColor = 'bg-indigo-500 hover:bg-indigo-600';
+            } else if (type === 'dataQuality') {
+                buttonId = 'dataQualityReportButton';
+                linkText = '📊 View Data Quality Analysis Report <span class="text-xs opacity-75">(✨ just generated)</span>';
+                bgColor = 'bg-amber-500 hover:bg-amber-600';
             }
             
             const button = document.getElementById(buttonId);
