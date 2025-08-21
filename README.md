@@ -6,9 +6,9 @@ Built for rigorous testing of AI decision systems in regulated financial context
 
 ---
 
-## 📚 Analysis Implementation Guides
+## 📚 Analysis Guides
 
-Detailed implementation guides for each analysis metric:
+Detailed guides for each analysis metric:
 
 * 📊 **[Accuracy Analysis Guide](ACCURACY_GUIDE.md)** - Model prediction accuracy assessment and ground truth validation
 * ⚖️ **[Bias & Fairness Guide](BIAS_FAIRNESS_GUIDE.md)** - Fair lending compliance and demographic parity analysis
@@ -103,35 +103,72 @@ credit_scoring_validator/
 ├── app.py                          # Flask web app with async analysis
 ├── config.py                       # API configuration and paths
 ├── requirements.txt                # Python dependencies
+├── *.md                           # Comprehensive analysis guides
+│   ├── ACCURACY_GUIDE.md          # Model prediction accuracy assessment
+│   ├── BIAS_FAIRNESS_GUIDE.md     # Fair lending compliance analysis
+│   ├── CONSISTENCY_GUIDE.md       # Deterministic behavior validation
+│   ├── DATA_QUALITY_GUIDE.md      # Data integrity and error analysis
+│   ├── ROBUSTNESS_GUIDE.md        # Adversarial testing and stability
+│   └── TRANSPARENCY_GUIDE.md      # LIME explainability and quality assessment
 ├── data/
 │   └── testdata.csv               # Generated test dataset (German demographics)
 ├── generator/
 │   └── testdata_generator.py      # Realistic demographic data generation
 ├── api/
 │   └── client.py                  # Enhanced API client with error handling
-├── analysis/
-│   └── bias_fairness.py           # Advanced bias detection algorithms
+├── analysis/                      # Complete analysis module suite
+│   ├── accuracy.py                # Ground truth validation and regression metrics
+│   ├── bias_fairness.py           # Advanced bias detection algorithms
+│   ├── consistency.py             # Deterministic behavior and repeatability
+│   ├── data_quality.py            # API response integrity monitoring
+│   ├── data_quality_analyzer.py   # Comprehensive data quality assessment
+│   ├── drift.py                   # Model performance drift detection
+│   ├── robustness.py              # Adversarial testing and perturbation analysis
+│   └── transparency.py            # LIME explanations and interpretability
 ├── reports/
 │   ├── report_builder.py          # Professional HTML report generation
-│   ├── templates/
-│   │   └── report_template.html   # Jinja2 template for bias reports
-│   └── generated/
-│       └── bias_report.html       # Generated analysis reports
+│   ├── templates/                 # Jinja2 templates for all analysis types
+│   │   ├── accuracy_template.html          # Accuracy analysis reports
+│   │   ├── consistency_template.html       # Consistency validation reports
+│   │   ├── robustness_template.html        # Robustness testing reports
+│   │   ├── comprehensive_data_quality_template.html  # Data quality reports
+│   │   └── report_template.html            # General bias/fairness reports
+│   └── generated/                 # Auto-generated analysis reports
+│       ├── accuracy_report.html           # Model prediction accuracy
+│       ├── bias_report.html               # Fairness and demographic analysis
+│       ├── consistency_report.html        # Deterministic behavior
+│       ├── comprehensive_data_quality_report.html  # Data integrity
+│       └── robustness_report.html         # Adversarial testing results
 ├── templates/
 │   └── index.html                 # Modern web UI with progress tracking
 ├── results/
-│   ├── logs/                      # Detailed logging for debugging
-│   │   ├── api_client.log        # API call logs
-│   │   └── bias_fairness.log     # Analysis process logs
-│   └── responses/
-│       └── bias_fairness.jsonl    # Collected API responses
-├── tests/
+│   ├── logs/                      # Detailed logging for all analysis types
+│   │   ├── accuracy.log           # Accuracy analysis logs
+│   │   ├── api_client.log         # API call logs
+│   │   ├── bias_fairness.log      # Bias analysis logs
+│   │   ├── consistency.log        # Consistency testing logs
+│   │   ├── data_quality.log       # Data quality logs
+│   │   └── robustness.log         # Robustness testing logs
+│   └── responses/                 # Collected API responses by analysis type
+│       ├── accuracy.jsonl         # Accuracy test responses
+│       ├── bias_fairness.jsonl    # Bias analysis responses
+│       ├── consistency.jsonl      # Consistency test responses
+│       ├── data_quality.jsonl     # Data quality responses
+│       └── robustness.jsonl       # Robustness test responses
+├── tests/                         # Comprehensive testing suite
+│   ├── test_accuracy.py           # Accuracy analysis tests
 │   ├── test_api_client.py         # API integration tests
-│   ├── test_bias_fairness.py      # Bias analysis tests
+│   ├── test_bias_fairness.py      # Bias detection tests
+│   ├── test_consistency.py        # Consistency validation tests
+│   ├── test_data_quality.py       # Data quality tests
+│   ├── test_robustness.py         # Robustness testing tests
+│   ├── demo_*.py                  # Interactive demonstration scripts
 │   └── test_app.py                # Web application tests
 └── utils/
-    ├── logger.py                   # Centralized logging setup
-    └── file_io.py                 # File handling utilities
+    ├── file_io.py                 # File handling utilities
+    ├── logger.py                  # Centralized logging setup
+    ├── progress.py                # Real-time progress tracking
+    └── response_collector.py      # API response collection and caching
 ```
 
 ---
