@@ -25,10 +25,56 @@ analysis_status = {
     "message": "Ready to start analysis"
 }
 
+def archive_existing_reports():
+    """Archive existing reports to timestamped archive directory"""
+    import os
+    import shutil
+    from datetime import datetime
+    
+    reports_dir = "reports/generated"
+    archive_base_dir = "reports/archive"
+    
+    # Check if there are any reports to archive
+    if not os.path.exists(reports_dir):
+        return []
+    
+    # Get list of existing reports
+    report_files = []
+    for file in os.listdir(reports_dir):
+        if file.endswith('.html'):
+            report_files.append(file)
+    
+    if not report_files:
+        return []
+    
+    # Create timestamped archive directory
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    archive_dir = os.path.join(archive_base_dir, f"archive_{timestamp}")
+    os.makedirs(archive_dir, exist_ok=True)
+    
+    # Move reports to archive
+    archived_files = []
+    for report_file in report_files:
+        src_path = os.path.join(reports_dir, report_file)
+        dst_path = os.path.join(archive_dir, report_file)
+        try:
+            shutil.move(src_path, dst_path)
+            archived_files.append(report_file)
+        except Exception as e:
+            print(f"Warning: Could not archive {report_file}: {e}")
+    
+    if archived_files:
+        print(f"📁 Archived {len(archived_files)} reports to {archive_dir}")
+    
+    return archived_files
+
 def clear_analysis_cache(cache_options):
     """Clear cached response files based on user selections"""
     import os
     import glob
+    
+    # Archive existing reports before clearing cache
+    archived_files = archive_existing_reports()
     
     cache_files = {
         "clear_bias_cache": "results/responses/bias_fairness.jsonl",
@@ -50,7 +96,7 @@ def clear_analysis_cache(cache_options):
                     cleared_files.append(os.path.basename(file))
                 except OSError:
                     pass
-        return cleared_files
+        return {"cleared_files": cleared_files, "archived_files": archived_files}
     
     # Clear specific caches
     for option, file_path in cache_files.items():
@@ -61,7 +107,7 @@ def clear_analysis_cache(cache_options):
             except OSError:
                 pass
     
-    return cleared_files
+    return {"cleared_files": cleared_files, "archived_files": archived_files}
 
 def run_analysis_background(form_data):
     """Run the analysis in the background and update status"""
@@ -72,10 +118,27 @@ def run_analysis_background(form_data):
         reset_collector()
         
         # Clear cached data if requested
-        cleared_files = clear_analysis_cache(form_data)
+        cache_result = clear_analysis_cache(form_data)
+        
+        # Handle the response based on whether it's the old format (list) or new format (dict)
+        if isinstance(cache_result, dict):
+            cleared_files = cache_result.get("cleared_files", [])
+            archived_files = cache_result.get("archived_files", [])
+        else:
+            # Backward compatibility with old format
+            cleared_files = cache_result
+            archived_files = []
+        
+        # Create status message
+        message_parts = []
+        if archived_files:
+            message_parts.append(f"Archived {len(archived_files)} reports")
         if cleared_files:
-            analysis_status["message"] = f"Cleared cache files: {', '.join(cleared_files)}"
-            time.sleep(1)  # Brief pause to show the message
+            message_parts.append(f"Cleared cache files: {', '.join(cleared_files)}")
+        
+        if message_parts:
+            analysis_status["message"] = " | ".join(message_parts)
+            time.sleep(2)  # Brief pause to show the message
         
         analysis_status["running"] = True
         analysis_status["completed"] = False
@@ -405,6 +468,111 @@ def generate_test_data():
             'success': False,
             'error': str(e)
         }), 500
+
+
+@app.route("/api/archives")
+def get_archives():
+    """Get list of archived reports"""
+    import os
+    from datetime import datetime
+    
+    try:
+        archive_base_dir = "reports/archive"
+        archives = []
+        
+        if not os.path.exists(archive_base_dir):
+            return jsonify({"archives": []})
+        
+        # Get all archive directories
+        archive_dirs = []
+        for item in os.listdir(archive_base_dir):
+            item_path = os.path.join(archive_base_dir, item)
+            if os.path.isdir(item_path) and item.startswith('archive_'):
+                archive_dirs.append(item)
+        
+        # Sort by creation time (newest first)
+        archive_dirs.sort(reverse=True)
+        
+        for archive_dir in archive_dirs:
+            archive_path = os.path.join(archive_base_dir, archive_dir)
+            
+            # Extract timestamp from directory name
+            timestamp_str = archive_dir.replace('archive_', '')
+            try:
+                # Parse timestamp: YYYYMMDD_HHMMSS
+                timestamp = datetime.strptime(timestamp_str, '%Y%m%d_%H%M%S')
+                formatted_date = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                formatted_date = timestamp_str
+            
+            # Get list of reports in this archive
+            reports = []
+            for file in os.listdir(archive_path):
+                if file.endswith('.html'):
+                    file_path = os.path.join(archive_path, file)
+                    file_size = os.path.getsize(file_path)
+                    
+                    # Format file size
+                    if file_size < 1024:
+                        size_str = f"{file_size} B"
+                    elif file_size < 1024 * 1024:
+                        size_str = f"{file_size / 1024:.1f} KB"
+                    else:
+                        size_str = f"{file_size / (1024 * 1024):.1f} MB"
+                    
+                    reports.append({
+                        "name": file,
+                        "size": size_str,
+                        "bytes": file_size
+                    })
+            
+            # Sort reports by name for consistent display
+            reports.sort(key=lambda x: x['name'])
+            
+            if reports:  # Only include archives that have reports
+                archives.append({
+                    "name": archive_dir,
+                    "date": formatted_date,
+                    "timestamp": timestamp_str,
+                    "reports": reports,
+                    "total_size": sum(r['bytes'] for r in reports)
+                })
+        
+        return jsonify({"archives": archives})
+        
+    except Exception as e:
+        return jsonify({
+            "error": f"Failed to load archives: {str(e)}",
+            "archives": []
+        }), 500
+
+
+@app.route("/api/archive/<archive_name>/<report_name>")
+def get_archived_report(archive_name, report_name):
+    """Serve an archived report file"""
+    import os
+    from flask import abort
+    
+    try:
+        # Validate archive and report names to prevent directory traversal
+        if '..' in archive_name or '..' in report_name:
+            abort(400)
+        
+        # Check if archive exists
+        archive_path = os.path.join("reports/archive", archive_name)
+        if not os.path.exists(archive_path) or not os.path.isdir(archive_path):
+            abort(404)
+        
+        # Check if report exists
+        report_path = os.path.join(archive_path, report_name)
+        if not os.path.exists(report_path) or not report_name.endswith('.html'):
+            abort(404)
+        
+        # Serve the file
+        return send_from_directory(archive_path, report_name)
+        
+    except Exception as e:
+        abort(500)
 
 
 if __name__ == "__main__":

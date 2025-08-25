@@ -15,7 +15,8 @@ Detailed guides for each analysis metric:
 * 🔄 **[Consistency Analysis Guide](CONSISTENCY_GUIDE.md)** - Deterministic behavior and repeatability validation
 * 🔍 **[Data Quality Guide](DATA_QUALITY_GUIDE.md)** - Data integrity, completeness, and error rate analysis
 * 🛡️ **[Robustness Analysis Guide](ROBUSTNESS_GUIDE.md)** - Adversarial testing and model stability assessment
-* 🔬 **[Transparency Guide](TRANSPARENCY_GUIDE.md)** - Model explainability and interpretability *(planned)*
+* � **[Report Archiving Guide](ARCHIVING_GUIDE.md)** - Automatic report preservation during cache clearing
+* �🔬 **[Transparency Guide](TRANSPARENCY_GUIDE.md)** - Model explainability and interpretability *(planned)*
 
 Each guide provides detailed implementation information, usage examples, interpretation guidelines, and best practices.
 
@@ -36,7 +37,7 @@ Each guide provides detailed implementation information, usage examples, interpr
 * Professional HTML reports with interactive visualizations
 * Asynchronous processing prevents browser timeouts
 * Mobile-responsive design with modern UI components
-* **Integrated Cache Management**: Clear cached data directly from the web interface
+* **Integrated Cache Management**: Clear cached data directly from the web interface with automatic report archiving
 
 ### 🎯 **Realistic Test Data Generation**
 * **Web Interface Generation**: Generate test data directly from the web UI with custom record counts
@@ -233,6 +234,8 @@ The web interface runs on `http://localhost:5000`
    - Clear specific analysis caches to force fresh data
    - Use "Clear ALL caches" after sample size updates
    - Balance between speed (cached) and freshness (cleared)
+   - **Auto-Archive Reports**: Existing reports are automatically archived before cache clearing
+   - **Archived Reports**: Saved in `reports/archive/archive_YYYYMMDD_HHMMSS/` with timestamps
 
 4. **Monitor Progress**: Real-time status updates with progress bars
 
@@ -431,7 +434,7 @@ Each analysis generates a professional HTML report with:
 - **Logging Optimization**: Structured logging with rotation
 - **Resource Cleanup**: Proper thread and connection management
 - **Smart Caching System**: API response caching with selective clearing
-- **Cache Management**: Web interface for clearing stale cached data
+- **Cache Management**: Web interface for clearing stale cached data with automatic report archiving
 
 ### **Web Interface**
 - **Modern UI**: TailwindCSS with animated components

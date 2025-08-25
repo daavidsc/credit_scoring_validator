@@ -30,8 +30,16 @@ def test_cache_clearing():
     # Test clearing specific cache
     print("\n🎯 Test 1: Clear consistency cache only")
     cache_options = {"clear_consistency_cache": True}
-    cleared = clear_analysis_cache(cache_options)
-    print(f"   Cleared files: {cleared}")
+    result = clear_analysis_cache(cache_options)
+    
+    # Handle both old and new return formats
+    if isinstance(result, dict):
+        cleared = result.get("cleared_files", [])
+        archived = result.get("archived_files", [])
+        print(f"   Cleared files: {cleared}")
+        print(f"   Archived files: {archived}")
+    else:
+        print(f"   Cleared files: {result}")
     
     # Check state after partial clear
     print("\n📂 After clearing consistency cache:")
@@ -42,8 +50,16 @@ def test_cache_clearing():
     # Test clearing all cache
     print("\n🎯 Test 2: Clear all cache")
     cache_options = {"clear_all_cache": True}
-    cleared = clear_analysis_cache(cache_options)
-    print(f"   Cleared files: {cleared}")
+    result = clear_analysis_cache(cache_options)
+    
+    # Handle both old and new return formats
+    if isinstance(result, dict):
+        cleared = result.get("cleared_files", [])
+        archived = result.get("archived_files", [])
+        print(f"   Cleared files: {cleared}")
+        print(f"   Archived files: {archived}")
+    else:
+        print(f"   Cleared files: {result}")
     
     # Check final state
     print("\n📂 After clearing all cache:")
