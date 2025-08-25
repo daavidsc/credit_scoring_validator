@@ -99,6 +99,133 @@
         .notification-toast .close-btn:hover {
             background-color: #f3f4f6;
         }
+
+        /* Dark Mode Styles */
+        .dark {
+            color-scheme: dark;
+        }
+
+        .dark body {
+            background-color: #111827;
+            color: #f9fafb;
+        }
+
+        .dark #analysisForm {
+            background-color: #1f2937;
+            color: #f9fafb;
+            border: 1px solid #374151;
+        }
+
+        .dark h2 {
+            color: #93c5fd;
+        }
+
+        .dark .text-gray-500 {
+            color: #9ca3af !important;
+        }
+
+        .dark .text-gray-600 {
+            color: #d1d5db !important;
+        }
+
+        .dark .text-gray-700 {
+            color: #e5e7eb !important;
+        }
+
+        .dark .text-gray-800 {
+            color: #f3f4f6 !important;
+        }
+
+        .dark .text-gray-900 {
+            color: #f9fafb !important;
+        }
+
+        .dark .bg-white {
+            background-color: #1f2937 !important;
+        }
+
+        .dark .bg-gray-50 {
+            background-color: #374151 !important;
+        }
+
+        .dark .bg-gray-100 {
+            background-color: #4b5563 !important;
+        }
+
+        .dark .border-gray-200 {
+            border-color: #4b5563 !important;
+        }
+
+        .dark .border-gray-300 {
+            border-color: #6b7280 !important;
+        }
+
+        .dark input, .dark select, .dark textarea {
+            background-color: #374151;
+            border-color: #4b5563;
+            color: #f9fafb;
+        }
+
+        .dark input:focus, .dark select:focus, .dark textarea:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .dark .modal > div {
+            background-color: #1f2937 !important;
+            border: 1px solid #374151;
+        }
+
+        .dark .border-b {
+            border-color: #374151 !important;
+        }
+
+        .dark .border-t {
+            border-color: #374151 !important;
+        }
+
+        .dark .hover\:bg-gray-100:hover {
+            background-color: #374151 !important;
+        }
+
+        .dark .hover\:bg-gray-50:hover {
+            background-color: #4b5563 !important;
+        }
+
+        .dark .hover\:text-gray-600:hover {
+            color: #d1d5db !important;
+        }
+
+        .dark .hover\:text-gray-700:hover {
+            color: #e5e7eb !important;
+        }
+
+        .dark .hover\:text-gray-800:hover {
+            color: #f3f4f6 !important;
+        }
+
+        .dark button:not(.bg-blue-600):not(.bg-green-600):not(.bg-red-600):not(.bg-gray-600) {
+            color: #e5e7eb;
+        }
+
+        .dark .notification-toast {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+        }
+
+        .dark .spinner {
+            border-color: #374151;
+            border-top-color: #60a5fa;
+        }
+
+        .dark .progress-bar {
+            background-color: #60a5fa;
+        }
+
+        /* Dark mode transitions */
+        body, #analysisForm, input, select, textarea, .modal > div {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
     </style>
 </head>
 
@@ -513,6 +640,10 @@
             // Set current model value in the dropdown
             const currentModel = document.getElementById('modelField').value;
             document.getElementById('modelSelect').value = currentModel;
+            
+            // Set current dark mode state
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            document.getElementById('darkModeToggle').checked = isDarkMode;
         }
 
         function closeSettingsModal() {
@@ -522,6 +653,10 @@
         function saveSettings() {
             const selectedModel = document.getElementById('modelSelect').value;
             document.getElementById('modelField').value = selectedModel;
+            
+            // Handle dark mode toggle
+            const darkModeEnabled = document.getElementById('darkModeToggle').checked;
+            toggleDarkMode(darkModeEnabled);
             
             // Update the settings display
             document.getElementById('currentModel').textContent = selectedModel;
@@ -535,6 +670,32 @@
             setTimeout(() => {
                 settingsBtn.className = originalColor;
             }, 1000);
+        }
+
+        // Dark Mode Functionality
+        function toggleDarkMode(enabled) {
+            if (enabled) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('darkMode', 'false');
+            }
+        }
+
+        function initializeDarkMode() {
+            // Check localStorage for saved preference
+            const savedDarkMode = localStorage.getItem('darkMode');
+            
+            // Check system preference if no saved preference
+            const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Apply dark mode if saved as true or if system prefers dark and no saved preference
+            const shouldUseDarkMode = savedDarkMode === 'true' || (savedDarkMode === null && systemPrefersDark);
+            
+            if (shouldUseDarkMode) {
+                document.documentElement.classList.add('dark');
+            }
         }
 
         // Archive Modal Functionality
@@ -650,6 +811,9 @@
 
         // Add event listeners when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize dark mode based on saved preference or system preference
+            initializeDarkMode();
+            
             document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
             document.getElementById('closeModal').addEventListener('click', closeSettingsModal);
             document.getElementById('saveSettings').addEventListener('click', saveSettings);
@@ -945,6 +1109,23 @@
                         <option value="gpt-5-nano">GPT-5 Nano</option>
                     </select>
                     <p class="text-xs text-gray-500 mt-1">Currently using: <span id="currentModel" class="font-mono">gpt-5-nano</span></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Theme</label>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">🌙</span>
+                            <div>
+                                <span class="text-sm font-medium text-gray-900">Dark Mode</span>
+                                <p class="text-xs text-gray-500">Toggle dark/light theme</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="darkModeToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
                 </div>
             </div>
             
