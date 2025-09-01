@@ -1,0 +1,2533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparency Analysis Report</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .score-excellent { color: #059669; }
+        .score-good { color: #0891b2; }
+        .score-fair { color: #d97706; }
+        .score-poor { color: #dc2626; }
+        
+        .transparency-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .explanation-example {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .lime-feature {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            background: #f3f4f6;
+        }
+        
+        .lime-positive { background: #dcfce7; border-left: 4px solid #16a34a; }
+        .lime-negative { background: #fee2e2; border-left: 4px solid #dc2626; }
+        
+        .dimension-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            background: #f8fafc;
+        }
+        
+        .quality-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .category-excellent { background: #dcfce7; color: #166534; }
+        .category-good { background: #dbeafe; color: #1e40af; }
+        .category-fair { background: #fed7aa; color: #c2410c; }
+        .category-poor { background: #fee2e2; color: #991b1b; }
+        
+        .recommendation {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 1rem;
+            background: #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-excellent { background: #10b981; }
+        .progress-good { background: #3b82f6; }
+        .progress-fair { background: #f59e0b; }
+        .progress-poor { background: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Header -->
+            <div class="metric-card mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🔍 Transparency Analysis Report</h1>
+                <p class="text-gray-600">Comprehensive analysis of model explanation quality, interpretability, and compliance</p>
+                <p class="text-sm text-gray-500 mt-2">Generated on 2025-09-01 12:41:34</p>
+            </div>
+
+            <!-- Overall Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Overall Quality Score</h3>
+                    <div class="text-3xl font-bold score-poor mb-2">37.4</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-poor" 
+                             style="width: 37.374471524839706%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">10 explanations analyzed</p>
+                </div>
+                
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Compliance Rate</h3>
+                    <div class="text-3xl font-bold text-green-600">
+                        100.0%
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-excellent" 
+                             style="width: 100.0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">10/10 compliant</p>
+                </div>
+                
+                
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">LIME Quality</h3>
+                    <div class="text-3xl font-bold text-green-600">
+                        0.700
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-excellent" 
+                             style="width: 70.0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">Avg R² Score</p>
+                </div>
+                
+                
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Quality Distribution</h3>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="quality-category category-excellent">
+                            0 Excellent
+                        </div>
+                        <div class="quality-category category-good">
+                            0 Good
+                        </div>
+                        <div class="quality-category category-fair">
+                            0 Fair
+                        </div>
+                        <div class="quality-category category-poor">
+                            10 Poor
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dimension Analysis -->
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">📊 8-Dimensional Quality Analysis</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                🎯 Faithfulness
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.15 - 0.65
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-yellow-600">
+                                0.40
+                            </div>
+                            <div class="text-xs text-gray-500">±0.19</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                🔗 LIME Alignment
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.00 - 0.70
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-red-600">
+                                0.16
+                            </div>
+                            <div class="text-xs text-gray-500">±0.20</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                📝 Specificity
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.40 - 0.60
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-yellow-600">
+                                0.50
+                            </div>
+                            <div class="text-xs text-gray-500">±0.10</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                📋 Completeness
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.00 - 0.00
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-red-600">
+                                0.00
+                            </div>
+                            <div class="text-xs text-gray-500">±0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                ⚖️ Consistency
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.64 - 0.97
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-green-600">
+                                0.82
+                            </div>
+                            <div class="text-xs text-gray-500">±0.12</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                🔄 Counterfactual
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.00 - 1.00
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-yellow-600">
+                                0.55
+                            </div>
+                            <div class="text-xs text-gray-500">±0.27</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                📖 Readability
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.80 - 1.00
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-green-600">
+                                0.96
+                            </div>
+                            <div class="text-xs text-gray-500">±0.08</div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">💡 Recommendations</h2>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Overall transparency quality is poor - significant improvements needed</p>
+                </div>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Explanations often lack grounding in actual input values</p>
+                </div>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Explanations poorly aligned with feature importance</p>
+                </div>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Explanations are too vague - need more specific details</p>
+                </div>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Explanations miss important factors identified by LIME</p>
+                </div>
+                
+            </div>
+            
+
+            <!-- Detailed Examples -->
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">🔍 Example Analyses</h2>
+                <p class="text-gray-600 mb-4">Detailed breakdown of explanation quality for sample credit decisions</p>
+                
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #1
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                34.2
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 65</div>
+                            <div><strong>Income:</strong> $101,692</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> retired</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 62,
+    "classification": "Average",
+    "explanation": "The employment duration is very short for a retired individual, which may indicate inconsistency in the data provided. The used credit is relatively high compared to the credit limit. While there are no payment defaults or recent credit inquiries, the overall financial picture is not optimal. The household size could also impact the financial stability.",
+    "metadata": {
+      "created_at": 1756729310,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fde0cbc81a18355850d0638a7a80dd761b563c71ef0",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 535,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 85,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 620
+      },
+      "output": [
+        {
+          "id": "msg_68b58fde9a3881a18c6de596b5299a2d0dd761b563c71ef0",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 62,\n  \"classification\": \"Average\",\n  \"explanation\": \"The employment duration is very short for a retired individual, which may indicate inconsistency in the data provided. The used credit is relatively high compared to the credit limit. While there are no payment defaults or recent credit inquiries, the overall financial picture is not optimal. The household size could also impact the financial stability.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 62,
+    "classification": "Average",
+    "explanation": "The employment duration is very short for a retired individual, which may indicate inconsistency in the data provided. The used credit is relatively high compared to the credit limit. While there are no payment defaults or recent credit inquiries, the overall financial picture is not optimal. The household size could also impact the financial stability."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 1.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-red-600">
+                                    0.25
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.10
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-blue-600">
+                                    0.60
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-green-600">
+                                    0.89
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.50
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #2
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                26.9
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 35</div>
+                            <div><strong>Income:</strong> $54,184</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> employed</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 82,
+    "classification": "Good",
+    "explanation": "The credit score is good based on the provided data. The applicant has a stable employment history of 16 years and a relatively low number of existing loans. The used credit is below the credit limit, and there are no payment defaults. However, there have been multiple credit inquiries in the last 6 months, which slightly impacts the score. Overall, the applicant's financial profile is strong, leading to a good credit classification.",
+    "metadata": {
+      "created_at": 1756729311,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fdf867081a2bfcf2b98b9727c21022074e9c4502af8",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 535,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 109,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 644
+      },
+      "output": [
+        {
+          "id": "msg_68b58fe0556881a29dff257b28c28d7d022074e9c4502af8",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 82,\n  \"classification\": \"Good\",\n  \"explanation\": \"The credit score is good based on the provided data. The applicant has a stable employment history of 16 years and a relatively low number of existing loans. The used credit is below the credit limit, and there are no payment defaults. However, there have been multiple credit inquiries in the last 6 months, which slightly impacts the score. Overall, the applicant's financial profile is strong, leading to a good credit classification.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 82,
+    "classification": "Good",
+    "explanation": "The credit score is good based on the provided data. The applicant has a stable employment history of 16 years and a relatively low number of existing loans. The used credit is below the credit limit, and there are no payment defaults. However, there have been multiple credit inquiries in the last 6 months, which slightly impacts the score. Overall, the applicant's financial profile is strong, leading to a good credit classification."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 1.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-red-600">
+                                    0.15
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.10
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.40
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-blue-600">
+                                    0.72
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.50
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #3
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                26.4
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 33</div>
+                            <div><strong>Income:</strong> $71,863</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> employed</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 82,
+    "classification": "Good",
+    "explanation": "The credit score is based on the provided data. The candidate has a stable employment history, a good income, low credit utilization, no payment defaults, and a moderate number of credit inquiries. However, the number of credit inquiries in the last 6 months is slightly higher than ideal, which may indicate increased credit risk. The score is in the 'Good' range, but the candidate should be cautious with further credit applications to maintain a strong credit profile.",
+    "metadata": {
+      "created_at": 1756729313,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fe1837081a38b83ac4124192ca0035cb919d4d30a86",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 536,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 115,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 651
+      },
+      "output": [
+        {
+          "id": "msg_68b58fe1d8e481a3921dc3406b99488a035cb919d4d30a86",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 82,\n  \"classification\": \"Good\",\n  \"explanation\": \"The credit score is based on the provided data. The candidate has a stable employment history, a good income, low credit utilization, no payment defaults, and a moderate number of credit inquiries. However, the number of credit inquiries in the last 6 months is slightly higher than ideal, which may indicate increased credit risk. The score is in the 'Good' range, but the candidate should be cautious with further credit applications to maintain a strong credit profile.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 82,
+    "classification": "Good",
+    "explanation": "The credit score is based on the provided data. The candidate has a stable employment history, a good income, low credit utilization, no payment defaults, and a moderate number of credit inquiries. However, the number of credit inquiries in the last 6 months is slightly higher than ideal, which may indicate increased credit risk. The score is in the 'Good' range, but the candidate should be cautious with further credit applications to maintain a strong credit profile."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Employment Employed</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Housing Mortgage</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Employment Retired</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Employment Self Employed</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Housing Own</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Employment Unemployed</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 0.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-red-600">
+                                    0.30
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.40
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-blue-600">
+                                    0.64
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.50
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-blue-600">
+                                    0.80
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #4
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                40.1
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 67</div>
+                            <div><strong>Income:</strong> $120,498</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> retired</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 62,
+    "classification": "Average",
+    "explanation": "The employment duration is 0 years which may indicate a lack of stable income source. There is a payment default and multiple existing loans, suggesting financial strain. The used credit is close to the credit limit. The income is high, but the overall financial situation is risky.",
+    "metadata": {
+      "created_at": 1756729315,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fe3bff08191bb1a209acd1cc25709d3a35ec5c3cb98",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 535,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 78,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 613
+      },
+      "output": [
+        {
+          "id": "msg_68b58fe41f488191869ef2528b288b0909d3a35ec5c3cb98",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 62,\n  \"classification\": \"Average\",\n  \"explanation\": \"The employment duration is 0 years which may indicate a lack of stable income source. There is a payment default and multiple existing loans, suggesting financial strain. The used credit is close to the credit limit. The income is high, but the overall financial situation is risky.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 62,
+    "classification": "Average",
+    "explanation": "The employment duration is 0 years which may indicate a lack of stable income source. There is a payment default and multiple existing loans, suggesting financial strain. The used credit is close to the credit limit. The income is high, but the overall financial situation is risky."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 1.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.40
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.20
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-blue-600">
+                                    0.60
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-green-600">
+                                    0.86
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.50
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #5
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                46.6
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 65</div>
+                            <div><strong>Income:</strong> $134,976</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> retired</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 62,
+    "classification": "Average",
+    "explanation": "The employment duration is very low for a retired individual, which may indicate inconsistency in the data provided. The used credit is slightly higher than the credit limit. While the income is high, the employment status and duration raise concerns about the stability of income. No payment defaults or credit inquiries in the last 6 months are positive indicators. The household size is average, and the address stability is good.",
+    "metadata": {
+      "created_at": 1756729317,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fe5778c819198ea351c0470f5d60f4c80efab1bbbcf",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 537,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 103,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 640
+      },
+      "output": [
+        {
+          "id": "msg_68b58fe625f881918ab99d7715bb03d90f4c80efab1bbbcf",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 62,\n  \"classification\": \"Average\",\n  \"explanation\": \"The employment duration is very low for a retired individual, which may indicate inconsistency in the data provided. The used credit is slightly higher than the credit limit. While the income is high, the employment status and duration raise concerns about the stability of income. No payment defaults or credit inquiries in the last 6 months are positive indicators. The household size is average, and the address stability is good.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 62,
+    "classification": "Average",
+    "explanation": "The employment duration is very low for a retired individual, which may indicate inconsistency in the data provided. The used credit is slightly higher than the credit limit. While the income is high, the employment status and duration raise concerns about the stability of income. No payment defaults or credit inquiries in the last 6 months are positive indicators. The household size is average, and the address stability is good."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 1.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-blue-600">
+                                    0.65
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.20
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-blue-600">
+                                    0.60
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-green-600">
+                                    0.89
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.50
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #6
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                55.8
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 51</div>
+                            <div><strong>Income:</strong> $76,562</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> student</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 68,
+    "classification": "Average",
+    "explanation": "The employment status provided is 'student', which may indicate a lower income level. The employment duration of 0 years might suggest a lack of stable income. While the credit inquiries and payment defaults are in good standing, the high number of existing loans and relatively high used credit compared to the credit limit could be a concern. The conservative approach is taken due to the lack of employment history and the high existing loan count.",
+    "metadata": {
+      "created_at": 1756729319,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fe70ddc81a286257c7b2fa1c3cb0783fabd266c6547",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 534,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 107,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 641
+      },
+      "output": [
+        {
+          "id": "msg_68b58fe782f481a28a22e05bb2e7a4700783fabd266c6547",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 68,\n  \"classification\": \"Average\",\n  \"explanation\": \"The employment status provided is 'student', which may indicate a lower income level. The employment duration of 0 years might suggest a lack of stable income. While the credit inquiries and payment defaults are in good standing, the high number of existing loans and relatively high used credit compared to the credit limit could be a concern. The conservative approach is taken due to the lack of employment history and the high existing loan count.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 68,
+    "classification": "Average",
+    "explanation": "The employment status provided is 'student', which may indicate a lower income level. The employment duration of 0 years might suggest a lack of stable income. While the credit inquiries and payment defaults are in good standing, the high number of existing loans and relatively high used credit compared to the credit limit could be a concern. The conservative approach is taken due to the lack of employment history and the high existing loan count."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 1.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.55
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-blue-600">
+                                    0.70
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-blue-600">
+                                    0.60
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-blue-600">
+                                    0.65
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-blue-600">
+                                    0.80
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #7
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                41.0
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 70</div>
+                            <div><strong>Income:</strong> $139,150</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> employed</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 68,
+    "classification": "Average",
+    "explanation": "The credit score is classified as Average. The candidate's employment status, stable income, and address stability are positive factors. However, the number of existing loans, payment defaults, and recent credit inquiries have a negative impact on the score. The used credit is close to the credit limit, which raises concerns. The missing information about housing expenses and household income could not be factored in, leading to a conservative scoring approach.",
+    "metadata": {
+      "created_at": 1756729320,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fe89e30819ca5e1646f3173c5cb0503beb1cb12c9fb",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 537,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 108,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 645
+      },
+      "output": [
+        {
+          "id": "msg_68b58fe8e750819cb801a8a390457c940503beb1cb12c9fb",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 68,\n  \"classification\": \"Average\",\n  \"explanation\": \"The credit score is classified as Average. The candidate's employment status, stable income, and address stability are positive factors. However, the number of existing loans, payment defaults, and recent credit inquiries have a negative impact on the score. The used credit is close to the credit limit, which raises concerns. The missing information about housing expenses and household income could not be factored in, leading to a conservative scoring approach.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 68,
+    "classification": "Average",
+    "explanation": "The credit score is classified as Average. The candidate's employment status, stable income, and address stability are positive factors. However, the number of existing loans, payment defaults, and recent credit inquiries have a negative impact on the score. The used credit is close to the credit limit, which raises concerns. The missing information about housing expenses and household income could not be factored in, leading to a conservative scoring approach."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Employment Employed</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Employment Retired</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Housing Rent</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Housing Own</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Housing Mortgage</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Employment Unemployed</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 0.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-blue-600">
+                                    0.65
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.40
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-green-600">
+                                    0.88
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #8
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                27.1
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 51</div>
+                            <div><strong>Income:</strong> $77,606</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> employed</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 82,
+    "classification": "Good",
+    "explanation": "The credit score is based on the provided data. All plausibility checks hold. The applicant has a stable employment history, low credit utilization, no payment defaults, and a moderate number of credit inquiries. The address stability signal is strong. No protected attributes were used in the scoring process.",
+    "metadata": {
+      "created_at": 1756729321,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fe9d14081a09544766098fd1af30816ab44555da658",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 540,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 82,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 622
+      },
+      "output": [
+        {
+          "id": "msg_68b58fea23e881a098b799c22451bcc60816ab44555da658",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 82,\n  \"classification\": \"Good\",\n  \"explanation\": \"The credit score is based on the provided data. All plausibility checks hold. The applicant has a stable employment history, low credit utilization, no payment defaults, and a moderate number of credit inquiries. The address stability signal is strong. No protected attributes were used in the scoring process.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 82,
+    "classification": "Good",
+    "explanation": "The credit score is based on the provided data. All plausibility checks hold. The applicant has a stable employment history, low credit utilization, no payment defaults, and a moderate number of credit inquiries. The address stability signal is strong. No protected attributes were used in the scoring process."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 1.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-red-600">
+                                    0.15
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.10
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.40
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-blue-600">
+                                    0.74
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.50
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #9
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                31.2
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 64</div>
+                            <div><strong>Income:</strong> $125,856</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> employed</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 82,
+    "classification": "Good",
+    "explanation": "The credit score is based on solid financial indicators such as high income, long employment duration, low credit utilization, no payment defaults, and stable address history. The candidate's credit behavior is positive with a low number of credit inquiries. However, the number of existing loans is relatively high, which slightly lowers the score. Overall, the candidate demonstrates good creditworthiness. No protected attributes were used in the scoring process.",
+    "metadata": {
+      "created_at": 1756729323,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58feb8c3481a2a9df62505592499d06d32995c0b37ce0",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 536,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 107,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 643
+      },
+      "output": [
+        {
+          "id": "msg_68b58fec021481a2b4f0f4e62a3dfd9d06d32995c0b37ce0",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 82,\n  \"classification\": \"Good\",\n  \"explanation\": \"The credit score is based on solid financial indicators such as high income, long employment duration, low credit utilization, no payment defaults, and stable address history. The candidate's credit behavior is positive with a low number of credit inquiries. However, the number of existing loans is relatively high, which slightly lowers the score. Overall, the candidate demonstrates good creditworthiness. No protected attributes were used in the scoring process.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 82,
+    "classification": "Good",
+    "explanation": "The credit score is based on solid financial indicators such as high income, long employment duration, low credit utilization, no payment defaults, and stable address history. The candidate's credit behavior is positive with a low number of credit inquiries. However, the number of existing loans is relatively high, which slightly lowers the score. Overall, the candidate demonstrates good creditworthiness. No protected attributes were used in the scoring process."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Housing Rent</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Housing Own</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-positive">
+                                    <span>Employment Employed</span>
+                                    <span class="font-mono">+0.000</span>
+                                </div>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Employment Unemployed</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Housing Mortgage</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                                <div class="lime-feature lime-negative">
+                                    <span>Age</span>
+                                    <span class="font-mono">-0.000</span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 0.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-red-600">
+                                    0.30
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-blue-600">
+                                    0.60
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-green-600">
+                                    0.97
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #10
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                44.4
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 54</div>
+                            <div><strong>Income:</strong> $82,219</div>
+                            <div><strong>Credit Score:</strong> </div>
+                            <div><strong>Employment:</strong> employed</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {
+  "raw_response": {
+    "credit_score": 76,
+    "classification": "Good",
+    "explanation": "The credit score is 76, classified as Good. The applicant has a stable employment history of 9 years with a solid income of 82219.0 EUR/month. The used credit is slightly below the credit limit, with no payment defaults or recent credit inquiries. However, the applicant has 4 existing loans, which could be a risk factor. The housing status is as a renter, and the address stability is high at 15 years.",
+    "metadata": {
+      "created_at": 1756729325,
+      "status": "completed",
+      "background": false,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "prompt_cache_key": null,
+      "reasoning": {
+        "effort": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "store": true,
+      "temperature": 0.1,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 1.0,
+      "truncation": "disabled",
+      "user": null,
+      "metadata": {},
+      "id": "resp_68b58fed3d2c81979910b6dbf66c5738039b3f154fb51f16",
+      "model": "gpt-3.5-turbo-0125",
+      "object": "response",
+      "usage": {
+        "input_tokens": 534,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 115,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 649
+      },
+      "output": [
+        {
+          "id": "msg_68b58fedc5f88197ad8f4dbc5344d629039b3f154fb51f16",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "{\n  \"credit_score\": 76,\n  \"classification\": \"Good\",\n  \"explanation\": \"The credit score is 76, classified as Good. The applicant has a stable employment history of 9 years with a solid income of 82219.0 EUR/month. The used credit is slightly below the credit limit, with no payment defaults or recent credit inquiries. However, the applicant has 4 existing loans, which could be a risk factor. The housing status is as a renter, and the address stability is high at 15 years.\"\n}"
+            }
+          ],
+          "role": "assistant"
+        }
+      ],
+      "api_provider": "openai"
+    }
+  },
+  "parsed": {
+    "credit_score": 76,
+    "classification": "Good",
+    "explanation": "The credit score is 76, classified as Good. The applicant has a stable employment history of 9 years with a solid income of 82219.0 EUR/month. The used credit is slightly below the credit limit, with no payment defaults or recent credit inquiries. However, the applicant has 4 existing loans, which could be a risk factor. The housing status is as a renter, and the address stability is high at 15 years."
+  },
+  "status": "success",
+  "status_code": 200
+}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 1.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-blue-600">
+                                    0.65
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.20
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.40
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-green-600">
+                                    0.96
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.50
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Technical Details -->
+            <div class="metric-card">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ Technical Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Analysis Configuration</h4>
+                        <ul class="text-gray-600">
+                            <li>• LIME samples: 200 per explanation</li>
+                            <li>• Consistency samples: 2 per profile</li>
+                            <li>• Feature perturbation: 20% strength</li>
+                            <li>• Importance threshold: 0.1</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Quality Weights</h4>
+                        <ul class="text-gray-600">
+                            <li>• Faithfulness: 25%</li>
+                            <li>• LIME Alignment: 25%</li>
+                            <li>• Specificity: 15%</li>
+                            <li>• Completeness: 15%</li>
+                            <li>• Consistency: 10%</li>
+                            <li>• Counterfactual: 5%</li>
+                            <li>• Readability: 5%</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Summary Statistics</h4>
+                        <ul class="text-gray-600">
+                            <li>• Min Score: 26.4</li>
+                            <li>• Max Score: 55.8</li>
+                            <li>• Median Score: 37.1</li>
+                            <li>• Std Deviation: 9.4</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

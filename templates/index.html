@@ -320,6 +320,10 @@
                     <span class="text-gray-800">Consistency Testing</span>
                 </label>
                 <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="run_transparency" {% if form_data.run_transparency %}checked{% endif %} class="accent-blue-500">
+                    <span class="text-gray-800">Transparency Analysis</span>
+                </label>
+                <label class="flex items-center space-x-2">
                     <input type="checkbox" name="run_data_quality" {% if form_data.run_data_quality %}checked{% endif %} class="accent-blue-500">
                     <span class="text-gray-800">Data Quality Analysis</span>
                 </label>
@@ -343,6 +347,10 @@
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" name="clear_robustness_cache" class="accent-red-500">
                         <span class="text-sm text-gray-700">Clear Robustness cache</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" name="clear_transparency_cache" class="accent-red-500">
+                        <span class="text-sm text-gray-700">Clear Transparency cache</span>
                     </label>
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" name="clear_data_quality_cache" class="accent-red-500">
@@ -393,6 +401,12 @@
                         🔄 View Consistency Testing Report
                     </a>
                 </div>
+                <div id="transparencyReportButton" class="hidden">
+                    <a href="/transparency_report"
+                        class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-md shadow inline-block">
+                        🔍 View Transparency Analysis Report
+                    </a>
+                </div>
                 <div id="dataQualityReportButton" class="hidden">
                     <a href="/data_quality_report"
                         class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-md shadow inline-block">
@@ -420,8 +434,9 @@
                 fetch('/accuracy_report').then(response => response.ok),
                 fetch('/robustness_report').then(response => response.ok),
                 fetch('/consistency_report').then(response => response.ok),
+                fetch('/transparency_report').then(response => response.ok),
                 fetch('/data_quality_report').then(response => response.ok)
-            ]).then(([biasExists, accuracyExists, robustnessExists, consistencyExists, dataQualityExists]) => {
+            ]).then(([biasExists, accuracyExists, robustnessExists, consistencyExists, transparencyExists, dataQualityExists]) => {
                 if (biasExists) {
                     showPreviousReport('bias');
                 }
@@ -433,6 +448,9 @@
                 }
                 if (consistencyExists) {
                     showPreviousReport('consistency');
+                }
+                if (transparencyExists) {
+                    showPreviousReport('transparency');
                 }
                 if (dataQualityExists) {
                     showPreviousReport('dataQuality');
@@ -458,6 +476,9 @@
             }
             if (document.querySelector('input[name="run_consistency"]').checked) {
                 currentAnalyses.push('consistency');
+            }
+            if (document.querySelector('input[name="run_transparency"]').checked) {
+                currentAnalyses.push('transparency');
             }
             if (document.querySelector('input[name="run_data_quality"]').checked) {
                 currentAnalyses.push('dataQuality');
@@ -1037,6 +1058,9 @@
             } else if (type === 'consistency') {
                 buttonId = 'consistencyReportButton';
                 linkText = '🔄 View Previous Consistency Report <span class="text-xs opacity-75">(from last run)</span>';
+            } else if (type === 'transparency') {
+                buttonId = 'transparencyReportButton';
+                linkText = '🔍 View Previous Transparency Report <span class="text-xs opacity-75">(from last run)</span>';
             } else if (type === 'dataQuality') {
                 buttonId = 'dataQualityReportButton';
                 linkText = '📊 View Previous Data Quality Report <span class="text-xs opacity-75">(from last run)</span>';
@@ -1071,6 +1095,10 @@
                 buttonId = 'consistencyReportButton';
                 linkText = '🔄 View Consistency Testing Report <span class="text-xs opacity-75">(✨ just generated)</span>';
                 bgColor = 'bg-indigo-500 hover:bg-indigo-600';
+            } else if (type === 'transparency') {
+                buttonId = 'transparencyReportButton';
+                linkText = '🔍 View Transparency Analysis Report <span class="text-xs opacity-75">(✨ just generated)</span>';
+                bgColor = 'bg-teal-500 hover:bg-teal-600';
             } else if (type === 'dataQuality') {
                 buttonId = 'dataQualityReportButton';
                 linkText = '📊 View Data Quality Analysis Report <span class="text-xs opacity-75">(✨ just generated)</span>';

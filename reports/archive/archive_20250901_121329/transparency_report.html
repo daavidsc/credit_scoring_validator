@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparency Analysis Report</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .score-excellent { color: #059669; }
+        .score-good { color: #0891b2; }
+        .score-fair { color: #d97706; }
+        .score-poor { color: #dc2626; }
+        
+        .transparency-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .explanation-example {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .lime-feature {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            background: #f3f4f6;
+        }
+        
+        .lime-positive { background: #dcfce7; border-left: 4px solid #16a34a; }
+        .lime-negative { background: #fee2e2; border-left: 4px solid #dc2626; }
+        
+        .dimension-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            background: #f8fafc;
+        }
+        
+        .quality-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .category-excellent { background: #dcfce7; color: #166534; }
+        .category-good { background: #dbeafe; color: #1e40af; }
+        .category-fair { background: #fed7aa; color: #c2410c; }
+        .category-poor { background: #fee2e2; color: #991b1b; }
+        
+        .recommendation {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 1rem;
+            background: #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-excellent { background: #10b981; }
+        .progress-good { background: #3b82f6; }
+        .progress-fair { background: #f59e0b; }
+        .progress-poor { background: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Header -->
+            <div class="metric-card mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🔍 Transparency Analysis Report</h1>
+                <p class="text-gray-600">Comprehensive analysis of model explanation quality, interpretability, and compliance</p>
+                <p class="text-sm text-gray-500 mt-2">Generated on 2025-09-01 12:11:24</p>
+            </div>
+
+            <!-- Overall Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Overall Quality Score</h3>
+                    <div class="text-3xl font-bold score-poor mb-2">30.1</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-poor" 
+                             style="width: 30.055555555555554%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">1 explanations analyzed</p>
+                </div>
+                
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Compliance Rate</h3>
+                    <div class="text-3xl font-bold text-green-600">
+                        100.0%
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-excellent" 
+                             style="width: 100.0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">1/1 compliant</p>
+                </div>
+                
+                
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">LIME Quality</h3>
+                    <div class="text-3xl font-bold text-green-600">
+                        1.000
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-excellent" 
+                             style="width: 100.0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">Avg R² Score</p>
+                </div>
+                
+                
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Quality Distribution</h3>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="quality-category category-excellent">
+                            0 Excellent
+                        </div>
+                        <div class="quality-category category-good">
+                            0 Good
+                        </div>
+                        <div class="quality-category category-fair">
+                            0 Fair
+                        </div>
+                        <div class="quality-category category-poor">
+                            1 Poor
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dimension Analysis -->
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">📊 8-Dimensional Quality Analysis</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                🎯 Faithfulness
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.12 - 0.12
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-red-600">
+                                0.12
+                            </div>
+                            <div class="text-xs text-gray-500">±0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                🔗 LIME Alignment
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.20 - 0.20
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-red-600">
+                                0.20
+                            </div>
+                            <div class="text-xs text-gray-500">±0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                📝 Specificity
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.50 - 0.50
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-yellow-600">
+                                0.50
+                            </div>
+                            <div class="text-xs text-gray-500">±0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                📋 Completeness
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.00 - 0.00
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-red-600">
+                                0.00
+                            </div>
+                            <div class="text-xs text-gray-500">±0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                ⚖️ Consistency
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 1.00 - 1.00
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-green-600">
+                                1.00
+                            </div>
+                            <div class="text-xs text-gray-500">±0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                🔄 Counterfactual
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.00 - 0.00
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-red-600">
+                                0.00
+                            </div>
+                            <div class="text-xs text-gray-500">±0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                📖 Readability
+                                
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: 0.90 - 0.90
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-green-600">
+                                0.90
+                            </div>
+                            <div class="text-xs text-gray-500">±0.00</div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">💡 Recommendations</h2>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Overall transparency quality is poor - significant improvements needed</p>
+                </div>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Explanations often lack grounding in actual input values</p>
+                </div>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Explanations poorly aligned with feature importance</p>
+                </div>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Explanations are too vague - need more specific details</p>
+                </div>
+                
+                <div class="recommendation">
+                    <p class="text-gray-800">Explanations miss important factors identified by LIME</p>
+                </div>
+                
+            </div>
+            
+
+            <!-- Detailed Examples -->
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">🔍 Example Analyses</h2>
+                <p class="text-gray-600 mb-4">Detailed breakdown of explanation quality for sample credit decisions</p>
+                
+                
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #1
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-poor">
+                                Poor
+                            </span>
+                            <span class="text-lg font-bold text-red-600">
+                                30.1
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> 35</div>
+                            <div><strong>Income:</strong> $75,000</div>
+                            <div><strong>Credit Score:</strong> 720</div>
+                            <div><strong>Employment:</strong> employed</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            Your loan application has been approved based on your excellent credit score of 720 and stable employment history. Your income of $75,000 provides sufficient capacity for loan repayment. However, your debt-to-income ratio of 30% is at the upper limit of our preferred range. To maintain your good standing, consider reducing existing debt.
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: 1.000
+                        </p>
+                    </div>
+                    
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Faithfulness</span>
+                                <span class="font-mono text-red-600">
+                                    0.12
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Lime Alignment</span>
+                                <span class="font-mono text-red-600">
+                                    0.20
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Specificity</span>
+                                <span class="font-mono text-yellow-600">
+                                    0.50
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Completeness</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Consistency</span>
+                                <span class="font-mono text-green-600">
+                                    1.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Counterfactual</span>
+                                <span class="font-mono text-red-600">
+                                    0.00
+                                </span>
+                            </div>
+                            
+                            <div class="dimension-score text-xs">
+                                <span>Readability</span>
+                                <span class="font-mono text-green-600">
+                                    0.90
+                                </span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            
+                            <span class="text-green-600">✅ Compliant</span>
+                            
+                        </div>
+                        
+                        <div class="text-gray-500">
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Technical Details -->
+            <div class="metric-card">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ Technical Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Analysis Configuration</h4>
+                        <ul class="text-gray-600">
+                            <li>• LIME samples: 200 per explanation</li>
+                            <li>• Consistency samples: 2 per profile</li>
+                            <li>• Feature perturbation: 20% strength</li>
+                            <li>• Importance threshold: 0.1</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Quality Weights</h4>
+                        <ul class="text-gray-600">
+                            <li>• Faithfulness: 25%</li>
+                            <li>• LIME Alignment: 25%</li>
+                            <li>• Specificity: 15%</li>
+                            <li>• Completeness: 15%</li>
+                            <li>• Consistency: 10%</li>
+                            <li>• Counterfactual: 5%</li>
+                            <li>• Readability: 5%</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Summary Statistics</h4>
+                        <ul class="text-gray-600">
+                            <li>• Min Score: 30.1</li>
+                            <li>• Max Score: 30.1</li>
+                            <li>• Median Score: 30.1</li>
+                            <li>• Std Deviation: 0.0</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

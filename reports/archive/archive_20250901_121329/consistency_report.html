@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consistency Analysis Report</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .score-excellent { color: #059669; }
+        .score-good { color: #0891b2; }
+        .score-fair { color: #d97706; }
+        .score-poor { color: #dc2626; }
+        
+        .consistency-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .inconsistent-case {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .consistent-case {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .response-comparison {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Consistency Analysis Report</h1>
+        
+        <!-- Executive Summary -->
+        <div class="metric-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Executive Summary</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center">
+                    <div class="text-3xl font-bold score-good">87.2%</div>
+                    <div class="text-sm text-gray-600">Overall Consistency Score</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600">100.0%</div>
+                    <div class="text-sm text-gray-600">Decision Consistency</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600">80.0%</div>
+                    <div class="text-sm text-gray-600">Confidence Consistency</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-600">10</div>
+                    <div class="text-sm text-gray-600">Test Cases</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Consistency Metrics -->
+        <div class="metric-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Consistency Metrics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h3 class="font-medium text-gray-700 mb-2">Perfect Consistency</h3>
+                    <p class="text-sm text-gray-600 mb-2">
+                        Identical responses for the same input data.
+                    </p>
+                    <div class="bg-gray-200 rounded-full h-4 mb-2">
+                        <div class="bg-green-600 h-4 rounded-full" style="width: 30.0%"></div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        30.0% of inputs had identical responses
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-gray-700 mb-2">Decision Consistency</h3>
+                    <p class="text-sm text-gray-600 mb-2">
+                        Same approve/deny decision across repeated calls.
+                    </p>
+                    <div class="bg-gray-200 rounded-full h-4 mb-2">
+                        <div class="bg-blue-600 h-4 rounded-full" style="width: 100.0%"></div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        100.0% had consistent decisions
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-gray-700 mb-2">Confidence Stability</h3>
+                    <p class="text-sm text-gray-600 mb-2">
+                        Confidence scores within 5% tolerance.
+                    </p>
+                    <div class="bg-gray-200 rounded-full h-4 mb-2">
+                        <div class="bg-purple-600 h-4 rounded-full" style="width: 80.0%"></div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        80.0% had stable confidence
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistical Analysis -->
+        <div class="metric-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Statistical Analysis</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-medium text-gray-700 mb-3">Text Similarity Statistics</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Mean Similarity:</span>
+                            <span class="font-medium">0.658</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Standard Deviation:</span>
+                            <span class="font-medium">0.317</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Minimum Similarity:</span>
+                            <span class="font-medium">0.172</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Maximum Similarity:</span>
+                            <span class="font-medium">1.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-gray-700 mb-3">Response Summary</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total API Calls:</span>
+                            <span class="font-medium">30</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Unique Inputs Tested:</span>
+                            <span class="font-medium">10</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Avg Calls per Input:</span>
+                            <span class="font-medium">3.0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Inconsistent Cases:</span>
+                            <span class="font-medium text-red-600">7</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Visualization -->
+        <div class="metric-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Consistency Score Distribution</h2>
+            <div id="consistency-distribution" style="height: 400px;"></div>
+        </div>
+        
+        <!-- Per-Input Analysis -->
+        <div class="metric-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Per-Input Analysis</h2>
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 1</span>
+                        <div class="flex space-x-2">
+                            
+                                
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Decision OK</span>
+                                
+                                
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Confidence OK</span>
+                                
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">0.251</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:62 class:average reason:the candidate's credit score is classified as average. the employment ...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:62 class:average reason:the employment duration is very short for the income level, which may ...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 2</span>
+                        <div class="flex space-x-2">
+                            
+                                
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Decision OK</span>
+                                
+                                
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Confidence OK</span>
+                                
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">0.450</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks a...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks a...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 3</span>
+                        <div class="flex space-x-2">
+                            
+                                
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Decision OK</span>
+                                
+                                
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Confidence OK</span>
+                                
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">0.334</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:82 class:good reason:the credit score is 82, classified as good. the candidate has a stable em...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:82 class:good reason:the credit score is based on the candidate's stable employment, good inco...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 4</span>
+                        <div class="flex space-x-2">
+                            
+                                
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Decision OK</span>
+                                
+                                
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Confidence OK</span>
+                                
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">2</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">0.860</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks a...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks h...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="consistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 5</span>
+                        <div class="flex space-x-2">
+                            
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Perfect</span>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">1</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">1.000</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> {'error_type': 'http_error', 'error': '422 client error: unprocessable entity for url: https://stunn...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> {'error_type': 'http_error', 'error': '422 client error: unprocessable entity for url: https://stunn...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="consistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 6</span>
+                        <div class="flex space-x-2">
+                            
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Perfect</span>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">1</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">1.000</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> {'error_type': 'http_error', 'error': '422 client error: unprocessable entity for url: https://stunn...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> {'error_type': 'http_error', 'error': '422 client error: unprocessable entity for url: https://stunn...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="consistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 7</span>
+                        <div class="flex space-x-2">
+                            
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Perfect</span>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">1</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">1.000</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:64 class:average reason:the address stability is very low, which may indicate a recent move or...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:64 class:average reason:the address stability is very low, which may indicate a recent move or...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 8</span>
+                        <div class="flex space-x-2">
+                            
+                                
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Decision OK</span>
+                                
+                                
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Confidence OK</span>
+                                
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">2</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">0.524</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:82 class:good reason:the credit score is 82, classified as good. the applicant has a stable em...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:82 class:good reason:the credit score is based on the provided financial information and emplo...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 9</span>
+                        <div class="flex space-x-2">
+                            
+                                
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Decision OK</span>
+                                
+                                
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Confidence OK</span>
+                                
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">0.785</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:64 class:average reason:the address stability is low, which may indicate a higher risk. the us...
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:62 class:average reason:the address stability is low which may indicate a higher risk. the use...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Input 10</span>
+                        <div class="flex space-x-2">
+                            
+                                
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Decision OK</span>
+                                
+                                
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Confidence OK</span>
+                                
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Unique Responses:</span>
+                            <span class="font-medium">3</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Text Similarity:</span>
+                            <span class="font-medium">0.375</span>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-1">Sample Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:62 class:average reason:the employment duration is very short, which may indicate instability....
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:62 class:average reason:the employment duration is low, and there are existing payment default...
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- Inconsistent Cases -->
+        
+        <div class="metric-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Detailed Inconsistency Analysis</h2>
+            <p class="text-sm text-gray-600 mb-4">
+                Cases where the model produced different responses for identical inputs.
+            </p>
+            <div class="space-y-4 max-h-96 overflow-y-auto">
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-medium text-red-700">Inconsistent Case 1</span>
+                        <div class="flex space-x-1">
+                            
+                                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Text Dissimilarity</span>
+                            
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mb-2">
+                        <span class="text-sm font-medium text-gray-700">Decisions:</span>
+                        <span class="text-sm">average, average, average</span>
+                    </div>
+                    
+                    
+                    
+                    <div class="mb-3">
+                        <span class="text-sm font-medium text-gray-700">Confidences:</span>
+                        <span class="text-sm">0.62, 0.62, 0.62</span>
+                    </div>
+                    
+                    
+                    <div class="space-y-2">
+                        <div class="text-sm font-medium text-gray-700">All Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:62 class:average reason:the candidate's credit score is classified as average. the employment status being 'retired' with no
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:62 class:average reason:the employment duration is very short for the income level, which may indicate a potential risk. the
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 3:</strong> score:62 class:average reason:the candidate's employment status as retired with no income raises concerns about repayment capacity
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-medium text-red-700">Inconsistent Case 2</span>
+                        <div class="flex space-x-1">
+                            
+                                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Text Dissimilarity</span>
+                            
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mb-2">
+                        <span class="text-sm font-medium text-gray-700">Decisions:</span>
+                        <span class="text-sm">good, good, good</span>
+                    </div>
+                    
+                    
+                    
+                    <div class="mb-3">
+                        <span class="text-sm font-medium text-gray-700">Confidences:</span>
+                        <span class="text-sm">0.8200000000000001, 0.8200000000000001, 0.8200000000000001</span>
+                    </div>
+                    
+                    
+                    <div class="space-y-2">
+                        <div class="text-sm font-medium text-gray-700">All Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks are met. the applicant has a
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks are met, and the applicant d
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 3:</strong> score:82 class:good reason:the credit score is 82, classified as good. the applicant has a stable employment status with a dece
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-medium text-red-700">Inconsistent Case 3</span>
+                        <div class="flex space-x-1">
+                            
+                                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Text Dissimilarity</span>
+                            
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mb-2">
+                        <span class="text-sm font-medium text-gray-700">Decisions:</span>
+                        <span class="text-sm">good, good, good</span>
+                    </div>
+                    
+                    
+                    
+                    <div class="mb-3">
+                        <span class="text-sm font-medium text-gray-700">Confidences:</span>
+                        <span class="text-sm">0.8200000000000001, 0.8200000000000001, 0.8200000000000001</span>
+                    </div>
+                    
+                    
+                    <div class="space-y-2">
+                        <div class="text-sm font-medium text-gray-700">All Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:82 class:good reason:the credit score is 82, classified as good. the candidate has a stable employment history, low credi
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:82 class:good reason:the credit score is based on the candidate's stable employment, good income, low credit utilization,
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 3:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks are met. the applicant has a
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-medium text-red-700">Inconsistent Case 4</span>
+                        <div class="flex space-x-1">
+                            
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mb-2">
+                        <span class="text-sm font-medium text-gray-700">Decisions:</span>
+                        <span class="text-sm">good, good, good</span>
+                    </div>
+                    
+                    
+                    
+                    <div class="mb-3">
+                        <span class="text-sm font-medium text-gray-700">Confidences:</span>
+                        <span class="text-sm">0.8200000000000001, 0.8200000000000001, 0.8200000000000001</span>
+                    </div>
+                    
+                    
+                    <div class="space-y-2">
+                        <div class="text-sm font-medium text-gray-700">All Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks are met. the applicant's cre
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks hold. the applicant's credit
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 3:</strong> score:82 class:good reason:the credit score is based on the provided data. all plausibility checks hold. the applicant's credit
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="inconsistent-case">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-medium text-red-700">Inconsistent Case 5</span>
+                        <div class="flex space-x-1">
+                            
+                                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Text Dissimilarity</span>
+                            
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mb-2">
+                        <span class="text-sm font-medium text-gray-700">Decisions:</span>
+                        <span class="text-sm">good, good, good</span>
+                    </div>
+                    
+                    
+                    
+                    <div class="mb-3">
+                        <span class="text-sm font-medium text-gray-700">Confidences:</span>
+                        <span class="text-sm">0.8200000000000001, 0.8200000000000001, 0.8200000000000001</span>
+                    </div>
+                    
+                    
+                    <div class="space-y-2">
+                        <div class="text-sm font-medium text-gray-700">All Responses:</div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 1:</strong> score:82 class:good reason:the credit score is 82, classified as good. the applicant has a stable employment history of 37 year
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 2:</strong> score:82 class:good reason:the credit score is based on the provided financial information and employment stability. the applic
+                        </div>
+                        
+                        <div class="response-comparison">
+                            <strong>Response 3:</strong> score:82 class:good reason:the credit score is 82, classified as good. the applicant has a stable employment history of 37 year
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                
+                <div class="text-sm text-gray-600 text-center">
+                    ... and 2 more inconsistent cases
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <!-- Recommendations -->
+        <div class="metric-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Recommendations</h2>
+            <div class="space-y-2 text-sm text-gray-700">
+                
+                <div class="flex items-start space-x-2">
+                    <span class="text-yellow-500 mt-1">⚠</span>
+                    <span>Good consistency, but some responses vary. Consider investigating inconsistent cases.</span>
+                </div>
+                
+                
+                
+                
+                <div class="flex items-start space-x-2">
+                    <span class="text-blue-500 mt-1">i</span>
+                    <span>Set model parameters (temperature, seed) to ensure deterministic behavior.</span>
+                </div>
+                
+                <div class="flex items-start space-x-2">
+                    <span class="text-blue-500 mt-1">i</span>
+                    <span>Implement response caching for identical inputs to improve consistency.</span>
+                </div>
+                
+                <div class="flex items-start space-x-2">
+                    <span class="text-blue-500 mt-1">i</span>
+                    <span>Regular consistency testing should be part of your model monitoring.</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center text-sm text-gray-500 mt-8">
+            Generated on 2025-08-25 14:21:19
+        </div>
+    </div>
+    
+    <script>
+        // Create consistency score distribution chart
+        const consistencyScores = [0.2514367816091954,0.45036075036075035,0.3342175066312998,0.8596491228070176,1.0,1.0,1.0,0.5238095238095237,0.7848484848484848,0.3752425781411288];
+        
+        const histogramData = {
+            x: consistencyScores,
+            type: 'histogram',
+            nbinsx: 20,
+            marker: {
+                color: 'rgba(67, 56, 202, 0.7)',
+                line: {
+                    color: 'rgba(67, 56, 202, 1)',
+                    width: 1
+                }
+            }
+        };
+        
+        const layout = {
+            title: 'Distribution of Text Similarity Scores',
+            xaxis: { 
+                title: 'Text Similarity Score',
+                range: [0, 1]
+            },
+            yaxis: { title: 'Frequency' },
+            margin: { t: 50, b: 60, l: 60, r: 50 }
+        };
+        
+        Plotly.newPlot('consistency-distribution', [histogramData], layout, {responsive: true});
+    </script>
+</body>
+</html>

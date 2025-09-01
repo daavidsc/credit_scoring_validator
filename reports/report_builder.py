@@ -124,6 +124,50 @@ def build_consistency_report(data, output_filename="consistency_report.html"):
 
     print(f"✅ Consistency Report saved to {output_path}")
 
+def build_transparency_report(data, output_filename="transparency_report.html"):
+    """Build transparency analysis report"""
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+    template = env.get_template("transparency_template.html")
+    
+    # Extract summary data
+    summary = data.get("summary", {})
+    
+    # Determine score class for styling
+    avg_quality_score = summary.get("average_quality_score", 0)
+    if avg_quality_score >= 90:
+        score_class = "score-excellent"
+    elif avg_quality_score >= 80:
+        score_class = "score-good"
+    elif avg_quality_score >= 70:
+        score_class = "score-fair"
+    else:
+        score_class = "score-poor"
+    
+    # Prepare template variables
+    template_vars = {
+        "summary": summary,
+        "average_quality_score": avg_quality_score,
+        "score_class": score_class,
+        "total_analyzed": summary.get("total_analyzed", 0),
+        "compliance_rate": summary.get("compliance_rate", 0),
+        "category_distribution": summary.get("category_distribution", {}),
+        "dimension_analysis": summary.get("dimension_analysis", {}),
+        "lime_quality": summary.get("lime_quality", {}),
+        "recommendations": summary.get("recommendations", []),
+        "detailed_results": data.get("detailed_results", [])[:10],  # Show first 10 detailed results
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    rendered = template.render(**template_vars)
+
+    output_path = os.path.join(OUTPUT_DIR, output_filename)
+    with open(output_path, "w") as f:
+        f.write(rendered)
+
+    print(f"✅ Transparency Report saved to {output_path}")
+
 def build_comprehensive_data_quality_report(data, output_filename="comprehensive_data_quality_report.html"):
     """Build comprehensive data quality report from analysis results"""
     os.makedirs(OUTPUT_DIR, exist_ok=True)

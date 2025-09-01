@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparency Analysis Report</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .score-excellent { color: #059669; }
+        .score-good { color: #0891b2; }
+        .score-fair { color: #d97706; }
+        .score-poor { color: #dc2626; }
+        
+        .transparency-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .explanation-example {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .lime-feature {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            background: #f3f4f6;
+        }
+        
+        .lime-positive { background: #dcfce7; border-left: 4px solid #16a34a; }
+        .lime-negative { background: #fee2e2; border-left: 4px solid #dc2626; }
+        
+        .dimension-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            background: #f8fafc;
+        }
+        
+        .quality-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .category-excellent { background: #dcfce7; color: #166534; }
+        .category-good { background: #dbeafe; color: #1e40af; }
+        .category-fair { background: #fed7aa; color: #c2410c; }
+        .category-poor { background: #fee2e2; color: #991b1b; }
+        
+        .recommendation {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 1rem;
+            background: #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-excellent { background: #10b981; }
+        .progress-good { background: #3b82f6; }
+        .progress-fair { background: #f59e0b; }
+        .progress-poor { background: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Header -->
+            <div class="metric-card mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🔍 Transparency Analysis Report</h1>
+                <p class="text-gray-600">Comprehensive analysis of model explanation quality, interpretability, and compliance</p>
+                <p class="text-sm text-gray-500 mt-2">Generated on {{ timestamp }}</p>
+            </div>
+
+            <!-- Overall Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Overall Quality Score</h3>
+                    <div class="text-3xl font-bold {{ score_class }} mb-2">{{ "%.1f"|format(average_quality_score) }}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill {% if average_quality_score >= 90 %}progress-excellent{% elif average_quality_score >= 80 %}progress-good{% elif average_quality_score >= 70 %}progress-fair{% else %}progress-poor{% endif %}" 
+                             style="width: {{ average_quality_score }}%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">{{ total_analyzed }} explanations analyzed</p>
+                </div>
+                
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Compliance Rate</h3>
+                    <div class="text-3xl font-bold {% if compliance_rate >= 0.95 %}text-green-600{% elif compliance_rate >= 0.9 %}text-blue-600{% elif compliance_rate >= 0.8 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                        {{ "%.1f"|format(compliance_rate * 100) }}%
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill {% if compliance_rate >= 0.95 %}progress-excellent{% elif compliance_rate >= 0.9 %}progress-good{% elif compliance_rate >= 0.8 %}progress-fair{% else %}progress-poor{% endif %}" 
+                             style="width: {{ compliance_rate * 100 }}%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">{{ summary.total_compliant }}/{{ total_analyzed }} compliant</p>
+                </div>
+                
+                {% if lime_quality %}
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">LIME Quality</h3>
+                    <div class="text-3xl font-bold {% if lime_quality.average_r2 >= 0.7 %}text-green-600{% elif lime_quality.average_r2 >= 0.5 %}text-blue-600{% elif lime_quality.average_r2 >= 0.3 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                        {{ "%.3f"|format(lime_quality.average_r2) }}
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill {% if lime_quality.average_r2 >= 0.7 %}progress-excellent{% elif lime_quality.average_r2 >= 0.5 %}progress-good{% elif lime_quality.average_r2 >= 0.3 %}progress-fair{% else %}progress-poor{% endif %}" 
+                             style="width: {{ lime_quality.average_r2 * 100 }}%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">Avg R² Score</p>
+                </div>
+                {% endif %}
+                
+                <div class="metric-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Quality Distribution</h3>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="quality-category category-excellent">
+                            {{ category_distribution.get('excellent', 0) }} Excellent
+                        </div>
+                        <div class="quality-category category-good">
+                            {{ category_distribution.get('good', 0) }} Good
+                        </div>
+                        <div class="quality-category category-fair">
+                            {{ category_distribution.get('fair', 0) }} Fair
+                        </div>
+                        <div class="quality-category category-poor">
+                            {{ category_distribution.get('poor', 0) }} Poor
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dimension Analysis -->
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">📊 8-Dimensional Quality Analysis</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for dimension, stats in dimension_analysis.items() %}
+                    <div class="dimension-score">
+                        <div>
+                            <span class="font-semibold text-gray-700">
+                                {% if dimension == 'faithfulness' %}🎯 Faithfulness
+                                {% elif dimension == 'lime_alignment' %}🔗 LIME Alignment
+                                {% elif dimension == 'specificity' %}📝 Specificity
+                                {% elif dimension == 'completeness' %}📋 Completeness
+                                {% elif dimension == 'consistency' %}⚖️ Consistency
+                                {% elif dimension == 'counterfactual' %}🔄 Counterfactual
+                                {% elif dimension == 'readability' %}📖 Readability
+                                {% else %}{{ dimension.title() }}
+                                {% endif %}
+                            </span>
+                            <div class="text-xs text-gray-500">
+                                Range: {{ "%.2f"|format(stats.min) }} - {{ "%.2f"|format(stats.max) }}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold {% if stats.average >= 0.8 %}text-green-600{% elif stats.average >= 0.6 %}text-blue-600{% elif stats.average >= 0.4 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                                {{ "%.2f"|format(stats.average) }}
+                            </div>
+                            <div class="text-xs text-gray-500">±{{ "%.2f"|format(stats.std) }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            {% if recommendations %}
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">💡 Recommendations</h2>
+                {% for recommendation in recommendations %}
+                <div class="recommendation">
+                    <p class="text-gray-800">{{ recommendation }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Detailed Examples -->
+            <div class="metric-card mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">🔍 Example Analyses</h2>
+                <p class="text-gray-600 mb-4">Detailed breakdown of explanation quality for sample credit decisions</p>
+                
+                {% for result in detailed_results %}
+                <div class="transparency-card mb-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Analysis #{{ loop.index }}
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="quality-category category-{{ result.quality_category }}">
+                                {{ result.quality_category.title() }}
+                            </span>
+                            <span class="text-lg font-bold {% if result.quality_score >= 90 %}text-green-600{% elif result.quality_score >= 80 %}text-blue-600{% elif result.quality_score >= 70 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                                {{ "%.1f"|format(result.quality_score) }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Summary -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📋 Profile</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            <div><strong>Age:</strong> {{ result.profile.age }}</div>
+                            <div><strong>Income:</strong> ${{ "{:,}".format(result.profile.income) }}</div>
+                            <div><strong>Credit Score:</strong> {{ result.profile.credit_score }}</div>
+                            <div><strong>Employment:</strong> {{ result.profile.employment_status }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">💬 Explanation</h4>
+                        <div class="explanation-example">
+                            {{ result.explanation_text }}
+                        </div>
+                    </div>
+                    
+                    <!-- LIME Features -->
+                    {% if result.lime_results and not result.lime_results.get('error') %}
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 LIME Top Features</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <h5 class="text-sm font-medium text-green-700 mb-1">Positive Impact</h5>
+                                {% for feature, importance in result.lime_results.top_positive_features[:3] %}
+                                <div class="lime-feature lime-positive">
+                                    <span>{{ feature.replace('_', ' ').title() }}</span>
+                                    <span class="font-mono">+{{ "%.3f"|format(importance) }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-red-700 mb-1">Negative Impact</h5>
+                                {% for feature, importance in result.lime_results.top_negative_features[:3] %}
+                                <div class="lime-feature lime-negative">
+                                    <span>{{ feature.replace('_', ' ').title() }}</span>
+                                    <span class="font-mono">{{ "%.3f"|format(importance) }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            LIME R² Score: {{ "%.3f"|format(result.lime_results.local_model_r2) }}
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Quality Breakdown -->
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-gray-700 mb-2">📊 Quality Breakdown</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                            {% if result.quality_details and result.quality_details.dimension_scores %}
+                            {% for dimension, score in result.quality_details.dimension_scores.items() %}
+                            <div class="dimension-score text-xs">
+                                <span>{{ dimension.replace('_', ' ').title() }}</span>
+                                <span class="font-mono {% if score >= 0.8 %}text-green-600{% elif score >= 0.6 %}text-blue-600{% elif score >= 0.4 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                                    {{ "%.2f"|format(score) }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance Status -->
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-2">
+                            {% if result.is_compliant %}
+                            <span class="text-green-600">✅ Compliant</span>
+                            {% else %}
+                            <span class="text-red-600">❌ Non-Compliant</span>
+                            {% endif %}
+                        </div>
+                        {% if result.analysis_results.compliance %}
+                        <div class="text-gray-500">
+                            {% if result.analysis_results.compliance.total_violations > 0 %}
+                            {{ result.analysis_results.compliance.total_violations }} violations found
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Technical Details -->
+            <div class="metric-card">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">⚙️ Technical Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Analysis Configuration</h4>
+                        <ul class="text-gray-600">
+                            <li>• LIME samples: 200 per explanation</li>
+                            <li>• Consistency samples: 2 per profile</li>
+                            <li>• Feature perturbation: 20% strength</li>
+                            <li>• Importance threshold: 0.1</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Quality Weights</h4>
+                        <ul class="text-gray-600">
+                            <li>• Faithfulness: 25%</li>
+                            <li>• LIME Alignment: 25%</li>
+                            <li>• Specificity: 15%</li>
+                            <li>• Completeness: 15%</li>
+                            <li>• Consistency: 10%</li>
+                            <li>• Counterfactual: 5%</li>
+                            <li>• Readability: 5%</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Summary Statistics</h4>
+                        <ul class="text-gray-600">
+                            <li>• Min Score: {{ "%.1f"|format(summary.min_quality_score) }}</li>
+                            <li>• Max Score: {{ "%.1f"|format(summary.max_quality_score) }}</li>
+                            <li>• Median Score: {{ "%.1f"|format(summary.median_quality_score) }}</li>
+                            <li>• Std Deviation: {{ "%.1f"|format(summary.std_quality_score) }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

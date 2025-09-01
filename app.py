@@ -9,8 +9,9 @@ from analysis.bias_fairness import run_bias_analysis
 from analysis.accuracy import run_accuracy_analysis
 from analysis.robustness import run_robustness_analysis
 from analysis.consistency import run_consistency_analysis
+from analysis.transparency import run_transparency_analysis
 from analysis.data_quality_analyzer import run_comprehensive_data_quality_analysis
-from reports.report_builder import build_bias_fairness_report, build_accuracy_report, build_robustness_report, build_consistency_report, build_comprehensive_data_quality_report
+from reports.report_builder import build_bias_fairness_report, build_accuracy_report, build_robustness_report, build_consistency_report, build_transparency_report, build_comprehensive_data_quality_report
 from utils.response_collector import reset_collector
 import config
 
@@ -80,6 +81,7 @@ def clear_analysis_cache(cache_options):
         "clear_bias_cache": "results/responses/bias_fairness.jsonl",
         "clear_consistency_cache": "results/responses/consistency.jsonl", 
         "clear_robustness_cache": "results/responses/robustness.jsonl",
+        "clear_transparency_cache": "results/responses/transparency.jsonl",
         "clear_data_quality_cache": "results/responses/all_responses.jsonl"
     }
     
@@ -153,16 +155,17 @@ def run_analysis_background(form_data):
         config.MODEL = form_data.get("model", "gpt-3.5-turbo-0125")
         
         results = {}
-        total_analyses = sum([form_data["run_bias"], form_data["run_accuracy"], form_data["run_robustness"], form_data["run_consistency"], form_data["run_data_quality"]])
+        total_analyses = sum([form_data["run_bias"], form_data["run_accuracy"], form_data["run_robustness"], form_data["run_consistency"], form_data["run_transparency"], form_data["run_data_quality"]])
         
         # Define realistic progress ranges based on actual analysis time
         # These percentages reflect the relative time each analysis takes
         progress_ranges = {
-            "bias_fairness": (10, 60),      # 50% of total time (many API calls)
-            "robustness": (60, 80),         # 20% of total time (200+ API calls) 
-            "consistency": (80, 87),        # 7% of total time (~30 API calls)
-            "accuracy": (87, 93),           # 6% of total time (mostly data analysis)
-            "data_quality": (93, 98)        # 5% of total time (analysis only)
+            "bias_fairness": (10, 55),      # 45% of total time (many API calls)
+            "robustness": (55, 72),         # 17% of total time (200+ API calls) 
+            "transparency": (72, 83),       # 11% of total time (LIME + analysis)
+            "consistency": (83, 89),        # 6% of total time (~30 API calls)
+            "accuracy": (89, 94),           # 5% of total time (mostly data analysis)
+            "data_quality": (94, 98)        # 4% of total time (analysis only)
         }
         
         current_analysis = 0
@@ -243,6 +246,25 @@ def run_analysis_background(form_data):
             analysis_status["message"] = f"Building consistency report..."
             build_consistency_report(consistency_results)
         
+        # Run transparency analysis if selected
+        if form_data["run_transparency"]:
+            current_analysis += 1
+            start_progress, end_progress = progress_ranges["transparency"]
+            analysis_status["progress"] = start_progress
+            analysis_status["message"] = f"Running transparency analysis ({current_analysis}/{total_analyses})..."
+            
+            # Pass status reference to transparency analysis
+            from analysis.transparency import set_status_reference
+            set_status_reference(analysis_status, start_progress, end_progress - start_progress)
+            
+            transparency_results = run_transparency_analysis()
+            results["transparency"] = transparency_results
+            
+            # Build transparency report
+            analysis_status["progress"] = end_progress - 1
+            analysis_status["message"] = f"Building transparency report..."
+            build_transparency_report(transparency_results)
+        
         # Run comprehensive data quality analysis on all collected responses (if selected)
         if form_data["run_data_quality"]:
             start_progress, end_progress = progress_ranges["data_quality"]
@@ -290,12 +312,14 @@ def index():
         "run_accuracy": False,
         "run_robustness": False,
         "run_consistency": False,
+        "run_transparency": False,
         "run_data_quality": False,
         "model": "gpt-3.5-turbo-0125",
         # Cache management defaults
         "clear_bias_cache": False,
         "clear_consistency_cache": False,
         "clear_robustness_cache": False,
+        "clear_transparency_cache": False,
         "clear_data_quality_cache": False,
         "clear_all_cache": False
     }
@@ -318,26 +342,28 @@ def start_analysis():
         "run_accuracy": request.form.get("run_accuracy") == "on",
         "run_robustness": request.form.get("run_robustness") == "on",
         "run_consistency": request.form.get("run_consistency") == "on",
+        "run_transparency": request.form.get("run_transparency") == "on",
         "run_data_quality": request.form.get("run_data_quality") == "on",
         "model": request.form.get("model", "gpt-3.5-turbo-0125"),
         # Cache management options
         "clear_bias_cache": request.form.get("clear_bias_cache") == "on",
         "clear_consistency_cache": request.form.get("clear_consistency_cache") == "on",
         "clear_robustness_cache": request.form.get("clear_robustness_cache") == "on",
+        "clear_transparency_cache": request.form.get("clear_transparency_cache") == "on",
         "clear_data_quality_cache": request.form.get("clear_data_quality_cache") == "on",
         "clear_all_cache": request.form.get("clear_all_cache") == "on"
     }
     
     # Validate that at least one analysis is selected
-    if not (form_data["run_bias"] or form_data["run_accuracy"] or form_data["run_robustness"] or form_data["run_consistency"] or form_data["run_data_quality"]):
+    if not (form_data["run_bias"] or form_data["run_accuracy"] or form_data["run_robustness"] or form_data["run_consistency"] or form_data["run_transparency"] or form_data["run_data_quality"]):
         return jsonify({"error": "Please select at least one analysis to run."}), 400
     
     # Validate required fields for analyses that need API calls
-    if (form_data["run_bias"] or form_data["run_robustness"] or form_data["run_consistency"]) and not all([form_data["api_url"], form_data["username"], form_data["password"]]):
-        return jsonify({"error": "Please fill in all API configuration fields for bias/robustness/consistency analysis."}), 400
+    if (form_data["run_bias"] or form_data["run_robustness"] or form_data["run_consistency"] or form_data["run_transparency"]) and not all([form_data["api_url"], form_data["username"], form_data["password"]]):
+        return jsonify({"error": "Please fill in all API configuration fields for bias/robustness/consistency/transparency analysis."}), 400
     
     # For accuracy analysis, we can run it on existing data even without API credentials
-    if form_data["run_bias"] or form_data["run_accuracy"] or form_data["run_robustness"] or form_data["run_consistency"]:
+    if form_data["run_bias"] or form_data["run_accuracy"] or form_data["run_robustness"] or form_data["run_consistency"] or form_data["run_transparency"]:
         # Start analysis in background thread
         thread = threading.Thread(target=run_analysis_background, args=(form_data,))
         thread.daemon = True
@@ -384,6 +410,14 @@ def view_consistency_report():
     if not os.path.exists(report_file):
         return "Consistency report not found. Please run the consistency analysis first.", 404
     return send_from_directory("reports/generated", "consistency_report.html")
+
+
+@app.route("/transparency_report")
+def view_transparency_report():
+    report_file = "reports/generated/transparency_report.html"
+    if not os.path.exists(report_file):
+        return "Transparency report not found. Please run the transparency analysis first.", 404
+    return send_from_directory("reports/generated", "transparency_report.html")
 
 
 @app.route("/data_quality_report")

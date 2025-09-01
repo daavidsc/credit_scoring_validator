@@ -1,11 +1,11 @@
 name,gender,nationality,ethnicity,age,income,employment_status,existing_loans,loan_amount,credit_limit,used_credit,payment_defaults,credit_inquiries_last_6_months,housing_status,address_stability_years,household_size,employment_duration_years,disability_status,education_level,marital_status,postal_code,language_preference
-Emil Weber,male,DE,white,58,82828,employed,2,9063,42191,259,0,0,renter,46,3,31,none,lower_secondary_education,married,19684,de
-Hannah Wagner,female,DE,white,33,71449,employed,0,0,59167,40829,0,4,renter,32,1,4,none,intermediate_secondary_education,single,76784,de
-Riccardo De Rosa,male,IT,white,49,113323,employed,4,18725,16190,15576,0,1,living_with_parents,25,2,6,none,vocational_training,married,88726,de
-Şerife Kara,female,TR,other,71,140847,retired,3,18696,84908,55497,0,2,owner,60,1,0,none,intermediate_secondary_education,married,24140,de
-Elias Becker,male,DE,white,64,107527,employed,5,15420,27708,16810,0,1,owner,28,2,47,none,intermediate_secondary_education,divorced,58657,de
-Andreea Dumitru,female,RO,white,25,55473,employed,1,3860,29674,1779,0,0,owner,19,5,0,severe_disability,vocational_training,married,22964,de
-Paul Weber,male,DE,white,26,20000,employed,5,20169,5553,5431,2,5,owner,23,3,2,none,lower_secondary_education,married,61832,de
-Mila Fischer,female,DE,white,32,61945,employed,2,10545,50839,16108,0,3,owner,31,2,16,none,vocational_training,widowed,00901,de
-Stanisław Wojciechowski,male,PL,white,21,35383,unemployed,5,22329,85180,71301,0,0,owner,21,2,0,none,upper_secondary_education,single,16616,de
-Emma Becker,female,DE,white,53,76202,employed,2,10015,91444,42179,0,3,owner,9,5,25,none,intermediate_secondary_education,married,07162,de
+Leon Weber,male,DE,white,67,120498,retired,2,9299,34212,19829,1,2,renter,12,5,0,none,intermediate_secondary_education,single,44515,de
+Koa Taylor,male,NZ,white,35,54184,employed,3,12658,52650,40950,0,4,owner,6,4,16,none,intermediate_secondary_education,married,46348,de
+Gabriel Simon,male,FR,white,51,76562,student,3,8835,31930,9843,0,0,renter,40,1,0,none,upper_secondary_education,married,78948,de
+Mia Weber,female,DE,asian,64,125856,employed,4,13141,39704,16370,0,4,living_with_parents,9,2,43,none,lower_secondary_education,single,12989,de
+Eymen Çetin,male,TR,other,51,77606,employed,1,11243,37721,24047,0,1,owner,44,2,10,none,bachelor_degree,registered_partnership,34425,de
+Henry Schneider,male,DE,white,33,71863,employed,3,3535,13086,1686,0,4,renter,33,1,12,none,bachelor_degree,widowed,60806,de
+Clara Fischer,female,DE,other,54,82219,employed,4,12852,51300,48735,0,0,renter,15,2,9,none,bachelor_degree,single,53288,de
+Mia Weber,female,DE,white,65,134976,retired,3,16033,36556,17128,0,0,renter,43,2,0,none,intermediate_secondary_education,divorced,14413,de
+Emma Müller,female,DE,white,65,101692,retired,1,8100,49297,21018,0,0,renter,64,3,0,none,intermediate_secondary_education,single,22142,de
+Eevi Turunen,female,FI,white,70,139150,employed,4,19348,16231,13322,2,5,owner,27,4,38,none,lower_secondary_education,married,50246,de
