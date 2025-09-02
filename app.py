@@ -17,6 +17,12 @@ import config
 
 app = Flask(__name__)
 
+# Configure Flask app for production if deployed
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config.from_object('config_prod.Config')
+else:
+    app.config['SECRET_KEY'] = 'dev-secret-key'
+
 # Global variables to track analysis progress
 analysis_status = {
     "running": False,
@@ -326,6 +332,16 @@ def index():
     return render_template("index.html", form_data=form_data)
 
 
+@app.route("/health")
+def health_check():
+    """Health check endpoint for Render deployment monitoring"""
+    return jsonify({
+        "status": "healthy",
+        "service": "credit-scoring-validator",
+        "version": "1.0.0"
+    })
+
+
 @app.route("/start_analysis", methods=["POST"])
 def start_analysis():
     """Start the analysis in the background"""
@@ -610,4 +626,7 @@ def get_archived_report(archive_name, report_name):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # For local development only
+    # In production, gunicorn will run the app
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
