@@ -4,7 +4,7 @@ echo "🚀 Testing Credit Scoring Validator deployment setup..."
 
 # Test 1: Check if required files exist
 echo "📁 Checking required files..."
-files=("app.py" "gunicorn.conf.py" "start.sh" "requirements.txt" "render.yaml" "auth/__init__.py" "auth/user_manager.py" "auth/forms.py")
+files=("app.py" "gunicorn.conf.py" "start.sh" "requirements.txt" "render.yaml" "auth/__init__.py" "auth/user_manager.py" "auth/forms.py" "templates/login.html" "templates/profile.html" "templates/change_password.html" "templates/admin_users.html" "templates/admin_create_user.html")
 for file in "${files[@]}"; do
     if [ -f "$file" ]; then
         echo "✅ $file exists"
