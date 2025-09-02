@@ -15,8 +15,7 @@ Detailed guides for each analysis metric:
 * 🔄 **[Consistency Analysis Guide](CONSISTENCY_GUIDE.md)** - Deterministic behavior and repeatability validation
 * 🔍 **[Data Quality Guide](DATA_QUALITY_GUIDE.md)** - Data integrity, completeness, and error rate analysis
 * 🛡️ **[Robustness Analysis Guide](ROBUSTNESS_GUIDE.md)** - Adversarial testing and model stability assessment
-* � **[Report Archiving Guide](ARCHIVING_GUIDE.md)** - Automatic report preservation during cache clearing
-* �🔬 **[Transparency Guide](TRANSPARENCY_GUIDE.md)** - Model explainability and interpretability *(planned)*
+* �🔬 **[Transparency Guide](TRANSPARENCY_GUIDE.md)** - Model explainability and interpretability
 
 Each guide provides detailed implementation information, usage examples, interpretation guidelines, and best practices.
 
