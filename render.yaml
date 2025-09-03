@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: credit-scoring-validator
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: ./start.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.6
+      - key: PORT
+        value: 10000
+      - key: FLASK_ENV
+        value: production
+    healthCheckPath: /
+    disk:
+      name: credit-scoring-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

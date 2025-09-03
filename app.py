@@ -1,6 +1,7 @@
 # app.py
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, flash
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 import os
 import threading
 import time
@@ -13,9 +14,40 @@ from analysis.transparency import run_transparency_analysis
 from analysis.data_quality_analyzer import run_comprehensive_data_quality_analysis
 from reports.report_builder import build_bias_fairness_report, build_accuracy_report, build_robustness_report, build_consistency_report, build_transparency_report, build_comprehensive_data_quality_report
 from utils.response_collector import reset_collector
+from auth.user_manager import UserManager, User
+from auth.forms import LoginForm, CreateUserForm, ChangePasswordForm
 import config
 
 app = Flask(__name__)
+
+# Configure Flask app for production if deployed
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config.from_object('config_prod.Config')
+else:
+    app.config['SECRET_KEY'] = 'dev-secret-key'
+
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+login_manager.login_message = 'Please log in to access this page.'
+login_manager.login_message_category = 'info'
+
+# Setup default admin user if none exist
+with app.app_context():
+    default_password = UserManager.setup_default_admin()
+    if default_password:
+        print("\n" + "="*60)
+        print("🔑 IMPORTANT: Default admin credentials created!")
+        print(f"   Username: admin")
+        print(f"   Password: {default_password}")
+        print("   ⚠️  Please save this password securely!")
+        print("="*60 + "\n")
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Load user for Flask-Login"""
+    return UserManager.get_user(user_id)
 
 # Global variables to track analysis progress
 analysis_status = {
@@ -301,7 +333,39 @@ def run_analysis_background(form_data):
         app.logger.error(f"Full traceback: {traceback.format_exc()}")
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Login page"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = UserManager.authenticate_user(form.username.data, form.password.data)
+        if user:
+            login_user(user, remember=form.remember_me.data)
+            flash('Login successful!', 'success')
+            
+            # Redirect to next page or dashboard
+            next_page = request.args.get('next')
+            if not next_page or not next_page.startswith('/'):
+                next_page = url_for('index')
+            return redirect(next_page)
+        else:
+            flash('Invalid username or password.', 'error')
+    
+    return render_template('login.html', form=form)
+
+@app.route("/logout")
+@login_required
+def logout():
+    """Logout and redirect to login page"""
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('login'))
+
 @app.route("/")
+@login_required
 def index():
     # Provide default form data for template
     form_data = {
@@ -326,7 +390,18 @@ def index():
     return render_template("index.html", form_data=form_data)
 
 
+@app.route("/health")
+def health_check():
+    """Health check endpoint for Render deployment monitoring"""
+    return jsonify({
+        "status": "healthy",
+        "service": "credit-scoring-validator",
+        "version": "1.0.0"
+    })
+
+
 @app.route("/start_analysis", methods=["POST"])
+@login_required
 def start_analysis():
     """Start the analysis in the background"""
     global analysis_status
@@ -375,12 +450,14 @@ def start_analysis():
 
 
 @app.route("/status")
+@login_required
 def get_status():
     """Get the current analysis status"""
     return jsonify(analysis_status)
 
 
 @app.route("/report")
+@login_required
 def view_report():
     report_file = "reports/generated/bias_report.html"
     if not os.path.exists(report_file):
@@ -389,6 +466,7 @@ def view_report():
 
 
 @app.route("/accuracy_report")
+@login_required
 def view_accuracy_report():
     report_file = "reports/generated/accuracy_report.html"
     if not os.path.exists(report_file):
@@ -397,6 +475,7 @@ def view_accuracy_report():
 
 
 @app.route("/robustness_report")
+@login_required
 def view_robustness_report():
     report_file = "reports/generated/robustness_report.html"
     if not os.path.exists(report_file):
@@ -405,6 +484,7 @@ def view_robustness_report():
 
 
 @app.route("/consistency_report")
+@login_required
 def view_consistency_report():
     report_file = "reports/generated/consistency_report.html"
     if not os.path.exists(report_file):
@@ -413,6 +493,7 @@ def view_consistency_report():
 
 
 @app.route("/transparency_report")
+@login_required
 def view_transparency_report():
     report_file = "reports/generated/transparency_report.html"
     if not os.path.exists(report_file):
@@ -421,6 +502,7 @@ def view_transparency_report():
 
 
 @app.route("/data_quality_report")
+@login_required
 def view_data_quality_report():
     report_file = "reports/generated/comprehensive_data_quality_report.html"
     if not os.path.exists(report_file):
@@ -429,6 +511,7 @@ def view_data_quality_report():
 
 
 @app.route("/generate_test_data", methods=["POST"])
+@login_required
 def generate_test_data():
     """Generate test data and save to CSV"""
     try:
@@ -505,6 +588,7 @@ def generate_test_data():
 
 
 @app.route("/api/archives")
+@login_required
 def get_archives():
     """Get list of archived reports"""
     import os
@@ -582,6 +666,7 @@ def get_archives():
 
 
 @app.route("/api/archive/<archive_name>/<report_name>")
+@login_required
 def get_archived_report(archive_name, report_name):
     """Serve an archived report file"""
     import os
@@ -609,5 +694,85 @@ def get_archived_report(archive_name, report_name):
         abort(500)
 
 
+@app.route("/admin/users")
+@login_required
+def admin_users():
+    """Admin page to manage users"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('index'))
+    
+    users = UserManager.get_all_users()
+    return render_template('admin_users.html', users=users)
+
+@app.route("/admin/create_user", methods=["GET", "POST"])
+@login_required
+def admin_create_user():
+    """Admin page to create new users"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('index'))
+    
+    form = CreateUserForm()
+    if form.validate_on_submit():
+        user, message = UserManager.create_user(
+            form.username.data,
+            form.password.data,
+            form.is_admin.data
+        )
+        if user:
+            flash(f'User "{form.username.data}" created successfully!', 'success')
+            return redirect(url_for('admin_users'))
+        else:
+            flash(f'Error creating user: {message}', 'error')
+    
+    return render_template('admin_create_user.html', form=form)
+
+@app.route("/admin/delete_user/<user_id>", methods=["POST"])
+@login_required
+def admin_delete_user(user_id):
+    """Admin endpoint to delete users"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('index'))
+    
+    if user_id == current_user.id:
+        flash('You cannot delete your own account.', 'error')
+        return redirect(url_for('admin_users'))
+    
+    if UserManager.delete_user(user_id):
+        flash('User deleted successfully.', 'success')
+    else:
+        flash('Error deleting user.', 'error')
+    
+    return redirect(url_for('admin_users'))
+
+@app.route("/profile")
+@login_required
+def profile():
+    """User profile page"""
+    return render_template('profile.html', user=current_user)
+
+@app.route("/change_password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    """Change password page"""
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if current_user.check_password(form.current_password.data):
+            # Update password
+            current_user.password_hash = UserManager.hash_password(form.new_password.data)
+            UserManager.save_user(current_user)
+            flash('Password changed successfully!', 'success')
+            return redirect(url_for('profile'))
+        else:
+            flash('Current password is incorrect.', 'error')
+    
+    return render_template('change_password.html', form=form)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    # For local development only
+    # In production, gunicorn will run the app
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)

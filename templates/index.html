@@ -229,7 +229,34 @@
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex items-center justify-center px-4">
+<body class="bg-gray-100 min-h-screen px-4">
+    <!-- User Navigation Bar -->
+    <nav class="bg-white shadow-md border-b border-gray-200 mb-4">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-xl font-bold text-blue-600">🔐 Credit Scoring Validator</h1>
+                    <span class="text-sm text-gray-500">Welcome, {{ current_user.username }}!</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('admin_users') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            👥 Manage Users
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('profile') }}" class="text-gray-600 hover:text-gray-800 text-sm">
+                        👤 Profile
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        🚪 Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="flex items-center justify-center">
     <form method="POST" id="analysisForm" class="bg-white shadow-lg rounded-xl p-8 max-w-xl w-full space-y-6 relative">
         <!-- Settings Icon and Test Data Generator -->
         <div class="absolute top-4 right-4 flex space-x-2">
@@ -422,6 +449,7 @@
             <div id="resultContent" class="bg-gray-100 p-4 rounded-md text-sm border border-gray-300"></div>
         </div>
     </form>
+    </div> <!-- End main content div -->
 
     <script>
         let statusInterval;
